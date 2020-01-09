@@ -1,0 +1,4 @@
+{{- $page := .Site.GetPage (.Get 0) -}}
+{{- with $page -}}
+{{ .Render "summary" }}
+{{- end -}}

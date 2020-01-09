@@ -1,0 +1,126 @@
+/* prefer to use Hugo variable, not SASS so they can be controlled from config */
+{{- $highlightColor := .Site.Params.highlightColor | default "#e22d30" -}}
+{{- $dimColor := .Site.Params.dimColor | default "gray"}}
+{{- $widgetBackground := .Site.Params.widgetBackground | default "#f7f7f7"}}
+{{- $uwred := "$c5050c" -}}
+
+/* important to make the teaser look like a list (undoing what is in content)
+*/
+.teaser .meta a {
+	color: {{- $dimColor -}};
+	font-weight: 400;
+}
+
+.teaser h3 a {
+	color: black;
+}
+
+.mini h3 a {
+	color: black;
+}
+
+/* Make the widgets have their own space */
+.widget {
+	background-color: {{- $widgetBackground -}};
+	padding: 5px;
+}
+
+/* the padding arond the widgets looks terrible for search */
+.widget-search.widget {
+	padding: 0px;
+}
+/* Search widget */
+.widget-search__form {
+	padding:0px;
+	margin:10px;
+	border:0px;
+	background-color: {{- $widgetBackground -}};
+}
+.widget-search__field {
+	margin:0px;
+	width:100%;
+}
+
+/* search results page */
+.search__string {
+	font-weight: 700;
+	font-style: normal;
+}
+.search__context {
+	font-style: italic;
+}
+
+/* Default Widget Spacing is Ugly */
+.widget__title {
+	padding-bottom: 0px;
+	margin: 0 0 .5rem;
+}
+
+/* links come from MD - no easy way to style individually */
+.widget__list li {
+	display: block;
+	padding: 5px 0;
+	border-bottom: 1px dotted #ebebeb;
+}
+
+/* make the logo appear correctly */
+.logo__img {
+	margin-right: 20px;
+	width:3rem; 
+}
+
+
+/* Table of Contents */
+.toc {
+	margin-bottom: 20px;
+	font-weight: 700;
+	color: #0000FF;
+	background: #fff;
+	border-color: #ebebeb;
+	border-style: solid;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 0;
+	border-left-width: 1px;
+}
+
+.toc__title {
+	padding: 5px 10px;
+	color: #fff;
+	text-transform: uppercase;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	background: #2a2a2a;
+}
+
+/* the sidebar TOC - might be a little different than the real toc */
+.toc__sidebar ul {
+	margin: 0;
+	list-style: none;
+}
+.toc__sidebar ul ul a {
+	padding-left: 25px;
+}
+.toc__sidebar ul ul ul a {
+	padding-left: 45px;
+}
+.toc__sidebar ul ul ul ul ul a {
+	padding-left: 65px;
+}
+.toc__sidebar ul ul ul ul ul ul a {
+	padding-left: 85px;
+}
+.toc__sidebar li {
+	margin: 0;
+}
+
+.toc__sidebar a {
+	display: block;
+	padding: 1px 5px;
+}
+
+/* let it light up - rather than underline, since the spacing is tighter
+	.toc__sidebar a:hover { text-decoration: underline; } */

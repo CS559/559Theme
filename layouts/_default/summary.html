@@ -1,0 +1,44 @@
+<article class="list__item post">
+	{{- if .Params.thumbnail }}
+	<figure class="list__thumbnail">
+		<a href="{{ .Permalink }}">
+			<img src="{{ .Params.thumbnail | relURL }}" alt="{{ .Title }}" />
+		</a>
+	</figure>
+	{{- end }}
+	<header class="list__header">
+		<h3 class="list__title post__title ">
+			<a href="{{ .RelPermalink }}" rel="bookmark">
+			{{ .Title }}
+			</a>
+		</h3>
+		{{- with .Params.lead }}
+		<p class="list__lead post__lead">{{ . }}</p>
+		{{- end }}
+		{{ with partial "post_meta.html" . -}}
+		<div class="list__meta meta">{{ . }}</div>
+		{{- end }}
+	</header>
+		{{ with .Params.shortdesc}}
+		<p>
+			<i>{{ . }}</i>
+		</p>
+		{{- end}}
+	<div class="content list__excerpt post__content clearfix">
+		{{ .Summary }}
+		{{- if .Site.Params.myreadmore | default true }}
+		{{- if or .Truncated .Params.summary }}
+		<span class="summary__readmore"><a href="{{ .RelPermalink }}">{{ T "read_more" }}</a></span>
+		{{- else }}
+		<span class="summary__readmore"><a href="{{ .RelPermalink }}">Read formatted page...</a></span>
+		{{- end }}
+		{{- end }}
+		</div>
+	{{- if .Site.Params.readmore }}
+	{{- if or .Truncated .Params.summary }}
+	<div class="list__footer clearfix">
+		<a class="list__footer-readmore btn" href="{{ .RelPermalink }}">{{ T "read_more" }}</a>
+	</div>
+	{{- end }}
+	{{- end }}
+</article>
