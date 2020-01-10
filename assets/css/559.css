@@ -4,6 +4,11 @@
 {{- $widgetBackground := .Site.Params.widgetBackground | default "#f7f7f7"}}
 {{- $uwred := "$c5050c" -}}
 
+/* for some reason, ordered list items are marked as paragraphs by hugo's markdown? */
+ol p {
+	margin-bottom: 0;
+}
+
 /* important to make the teaser look like a list (undoing what is in content)
 */
 .teaser .meta a {
