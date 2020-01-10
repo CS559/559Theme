@@ -1,4 +1,4 @@
-{{/* taken from hugo-theme-learn */}}
+{{/* ispired by hugo-theme-learn */}}
 {{/* see also https://bart.degoe.de/use-hugo-output-formats-to-generate-lunr-index-files */}}
 [{{ range $index, $page := .Site.Pages }}
 {{- if ne $page.Type "json" -}}
