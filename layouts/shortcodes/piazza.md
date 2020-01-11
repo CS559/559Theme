@@ -1,1 +1,1 @@
-[{{- .Get 0 | default "Piazza" -}}]({{- relref . "comingsoon" -}})
+[{{- .Get 0 | default "Piazza" -}}](https://piazza.com/class/k58y3vw56z21il)
