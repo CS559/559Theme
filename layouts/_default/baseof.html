@@ -24,7 +24,7 @@
 		{{ $style := resources.Get "css/style.css" | resources.ExecuteAsTemplate "css/style.css" . | resources.ToCSS -}}
 		<link rel="stylesheet" href="{{ $style.RelPermalink }}">
 	{{/* gleicher - load the 559 SASS file - so we don't need to have it as a custom */}}
-		{{- $mystyle := resources.Get "css/559.css" | resources.ExecuteAsTemplate "css/559.css" . | resources.ToCSS -}}
+		{{- $mystyle := resources.Get "css/559.scss" | resources.ExecuteAsTemplate "css/559.scss" . | resources.ToCSS -}}
 		<link rel="stylesheet" href="{{ $mystyle.RelPermalink }}">
 	{{/* gleicher - make customCSS work correctly */}}
 		{{ $dot := . -}}

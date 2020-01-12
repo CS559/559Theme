@@ -2,7 +2,7 @@
 {{- $highlightColor := .Site.Params.highlightColor | default "#e22d30" -}}
 {{- $dimColor := .Site.Params.dimColor | default "gray"}}
 {{- $widgetBackground := .Site.Params.widgetBackground | default "#f7f7f7"}}
-{{- $uwred := "$c5050c" -}}
+{{- $uwred := "#c5050c" -}}
 
 /* for some reason, ordered list items are marked as paragraphs by hugo's markdown? */
 ol p {
@@ -129,3 +129,43 @@ ol p {
 
 /* let it light up - rather than underline, since the spacing is tighter
 	.toc__sidebar a:hover { text-decoration: underline; } */
+
+/* stuff for expand (adapted from book) */
+$padding-1: 1px;
+$padding-4: 0.25rem;
+$padding-8: 0.5rem;
+$padding-16: 1rem;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$border-radius: 0.15rem;
+
+.book-expand {
+    margin-top: $padding-16;
+    margin-bottom: $padding-16;
+  
+    border: $padding-1 solid $gray-200;
+    border-radius: $border-radius;
+  
+    overflow: hidden;
+  
+    .book-expand-head {
+      background: $gray-100;
+      padding: $padding-8 $padding-16;
+      cursor: pointer;
+    }
+  
+    .book-expand-content {
+      display: none;
+      padding: $padding-16;
+    }
+  
+    input[type="checkbox"]:checked + .book-expand-content {
+      display: block;
+    }
+  }
+
+  .expand__button {
+      color: {{ $uwred }};
+      font-style: italic;
+  }
+  
