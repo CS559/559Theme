@@ -1,8 +1,10 @@
 /* prefer to use Hugo variable, not SASS so they can be controlled from config */
-{{- $highlightColor := .Site.Params.highlightColor | default "#e22d30" -}}
-{{- $dimColor := .Site.Params.dimColor | default "gray"}}
-{{- $widgetBackground := .Site.Params.widgetBackground | default "#f7f7f7"}}
-{{- $uwred := "#c5050c" -}}
+/* but stick them in SASS variables */
+$highlightColor: {{- .Site.Params.highlightColor | default "#e22d30" -}};
+$dimColor: {{- .Site.Params.dimColor | default "gray" }};
+$widgetBackground: {{-  .Site.Params.widgetBackground | default "#f7f7f7"}};
+$uwred: {{- "#c5050c" -}};
+$midgray: {{- "#646569" -}};
 
 /* for some reason, ordered list items are marked as paragraphs by hugo's markdown? */
 ol p {
@@ -12,7 +14,7 @@ ol p {
 /* important to make the teaser look like a list (undoing what is in content)
 */
 .teaser .meta a {
-	color: {{- $dimColor -}};
+	color: $dimColor;
 	font-weight: 400;
 }
 
@@ -26,7 +28,7 @@ ol p {
 
 /* Make the widgets have their own space */
 .widget {
-	background-color: {{- $widgetBackground -}};
+	background-color: $widgetBackground;
 	padding: 5px;
 }
 
@@ -39,7 +41,7 @@ ol p {
 	padding:0px;
 	margin:10px;
 	border:0px;
-	background-color: {{- $widgetBackground -}};
+	background-color: $widgetBackground;
 }
 .widget-search__field {
 	margin:0px;
@@ -165,7 +167,7 @@ $border-radius: 0.15rem;
   }
 
   .expand__button {
-      color: {{ $uwred }};
+      color: $uwred;
       font-style: italic;
   }
   

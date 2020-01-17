@@ -1,11 +1,14 @@
+/* I have utterly failed to get Hugo's SASS to work correctly with the use - even if I did
+ * it wouldn't pre-process things */
 /* Gleicher's hacked version of style.css */
-
 /* prefer to use Hugo variable, not SASS so they can be controlled from config */
-{{- $highlightColor := .Site.Params.highlightColor | default "#e22d30" -}}
-{{- $dimColor := .Site.Params.dimColor | default "gray"}}
-{{- $widgetBackground := .Site.Params.widgetBackground | default "#f7f7f7"}}
-{{- $uwred := "#c5050c" -}}
-{{- $midgray := "#646569" -}}
+/* but stick them in SASS variables */
+$highlightColor: {{- .Site.Params.highlightColor | default "#e22d30" -}};
+$dimColor: {{- .Site.Params.dimColor | default "gray" }};
+$widgetBackground: {{-  .Site.Params.widgetBackground | default "#f7f7f7"}};
+$uwred: {{- "#c5050c" -}};
+$midgray: {{- "#646569" -}};
+
 *,
 *::before,
 *::after {
@@ -142,7 +145,7 @@ textarea {
 
 .btn:hover {
 	color: #fff;
-	background: {{ $highlightColor }};
+	background:  $highlightColor ;
 }
 
 /* Animation */
@@ -201,7 +204,7 @@ a {
 }
 
 a:hover {
-	color: {{ $highlightColor }};
+	color:  $highlightColor ;
 }
 
 hr {
@@ -250,7 +253,7 @@ figure {
 figcaption {
 	margin-top: 4px;
 	margin-top: .25rem;
-	color: {{- $dimColor -}};
+	color: $dimColor;
 }
 
 figcaption h4 {
@@ -307,7 +310,7 @@ blockquote {
 	margin: 0 0 20px;
 	margin: 0 0 1.25rem;
 	line-height: 1.6;
-	border-left: 5px solid {{ $highlightColor }};
+	border-left: 5px solid $highlightColor;
 }
 
 blockquote p:last-child {
@@ -403,7 +406,7 @@ select {
 	font-size: 2rem;
 	font-weight: 700;
 	line-height: 1;
-	color: {{ $uwred }}; //  #000;
+	color: $uwred; 
 	text-transform: uppercase; /* mg - only for title */
 }
 
@@ -415,14 +418,14 @@ select {
 	font-size: 1rem;
 	font-weight: 700;
 	line-height: 1;
-	color: {{ $midgray }};
+	color: $midgray;
 	border-top: 1px solid #ebebeb;
 }
 
 .divider {
 	height: 5px;
 	margin: 0;
-	background: {{ $highlightColor }};
+	background: $highlightColor;
 	border: 0;
 }
 
@@ -459,7 +462,7 @@ select {
 }
 
 :focus > .menu__btn-title {
-	box-shadow: inset 0 0 1px 3px {{ $highlightColor }};
+	box-shadow: inset 0 0 1px 3px $highlightColor;
 }
 
 button:not(:-moz-focusring):focus > .menu__btn-title {
@@ -472,7 +475,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .js .menu__btn--active {
-	color: {{ $highlightColor }};
+	color: $highlightColor;
 }
 
 .menu__list {
@@ -481,7 +484,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item:hover {
-	background: {{ $highlightColor }};
+	background: $highlightColor;
 }
 
 .menu__item:first-child {
@@ -489,7 +492,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item--active {
-	background: {{ $highlightColor }};
+	background: $highlightColor;
 }
 
 .menu__link {
@@ -530,7 +533,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 @media screen and (min-width: 767px) {
 	.menu {
-		border-bottom: 5px solid {{ $highlightColor }};
+		border-bottom: 5px solid $highlightColor;
 	}
 
 	.menu__btn {
@@ -580,11 +583,11 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 .meta,
 .meta a {
-	color: {{- $dimColor -}};
+	color: $dimColor;
 }
 
 .meta a:hover {
-	color: {{ $highlightColor }};
+	color: $highlightColor;
 }
 
 .meta__item {
@@ -640,12 +643,12 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .content a,
 .warning a {
 	font-weight: 700;
-	color: {{ $highlightColor }};
+	color:  $highlightColor ;
 }
 
 .content a:hover,
 .warning a:hover {
-	color: {{ $highlightColor }};
+	color: $highlightColor ;
 	text-decoration: underline;
 }
 
@@ -727,7 +730,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .tags__item:hover {
-	background: {{ $highlightColor }};
+	background: $highlightColor ;
 }
 
 .tags__link,
@@ -742,7 +745,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	height: 32px;
 	padding: 8px;
 	margin-right: 6px;
-	background: {{ $highlightColor }};
+	background: $highlightColor ;
 	fill: #fff;
 }
 
@@ -800,7 +803,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .toc__menu a {
 	display: block;
 	padding: 5px 10px;
-	color: {{ $highlightColor }};
+	color: $highlightColor ;
 	border-bottom: 1px solid #ebebeb;
 }
 
@@ -883,7 +886,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .pagination__item:hover,
 .pagination__item--current {
 	color: #fff;
-	background: {{ $highlightColor }};
+	background: $highlightColor ;
 }
 
 /* Post Navigation */
@@ -1005,7 +1008,7 @@ input[type=reset] {
 
 input[type=submit]:hover,
 input[type=reset]:hover {
-	background: {{ $highlightColor }};
+	background: $highlightColor ;
 }
 
 textarea {
@@ -1034,7 +1037,7 @@ textarea {
 	font-size: 16px;
 	font-size: 1rem;
 	text-transform: uppercase;
-	border-bottom: 3px solid {{ $highlightColor }};
+	border-bottom: 3px solid $highlightColor ;
 }
 
 .widget__item {
@@ -1113,7 +1116,7 @@ textarea {
 
 .widget-languages__link:hover .widget-languages__link-btn {
 	color: #fff;
-	background: {{ $highlightColor }};
+	background: $highlightColor ;
 }
 
 .widget-languages__link-btn {

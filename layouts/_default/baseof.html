@@ -20,8 +20,9 @@
 	{{ printf `<link rel="%s" type="%s" href="%s" title="%s">` .Rel .MediaType.Type .RelPermalink $.Site.Title | safeHTML }}
 	{{ end -}}
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
-	{{/* gleicher - allow for SASS */}}
-		{{ $style := resources.Get "css/style.css" | resources.ExecuteAsTemplate "css/style.css" . | resources.ToCSS -}}
+    {{/* gleicher - allow for SASS */}}
+        {{ $sassoptions := (dict "includePaths" (slice "themes/559Theme/assets/css"))}}
+		{{ $style := resources.Get "css/style.scss" | resources.ExecuteAsTemplate "css/style.scss" . | resources.ToCSS $sassoptions -}}
 		<link rel="stylesheet" href="{{ $style.RelPermalink }}">
 	{{/* gleicher - load the 559 SASS file - so we don't need to have it as a custom */}}
 		{{- $mystyle := resources.Get "css/559.scss" | resources.ExecuteAsTemplate "css/559.scss" . | resources.ToCSS -}}
