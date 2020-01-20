@@ -1,1 +1,0 @@
-[{{- .Get 0 | default "Piazza" -}}](https://canvas.wisc.edu/courses/189896/external_tools/65)
