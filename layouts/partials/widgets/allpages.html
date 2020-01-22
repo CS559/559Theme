@@ -1,0 +1,11 @@
+<div class="widget-links widget">
+    <h4 class="widget__title">Site Pages</h4>
+    <div class="widget__content widget__list">
+        <ul>
+        {{ range .Site.Pages }}
+        <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+        {{ end }}
+        </ul>
+    </div>
+  </div>
+  
