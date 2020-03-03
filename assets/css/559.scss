@@ -6,6 +6,8 @@ $widgetBackground: {{-  .Site.Params.widgetBackground | default "#f7f7f7"}};
 $uwred: {{- "#c5050c" -}};
 $midgray: {{- "#646569" -}};
 
+@import "gallery";
+
 /* for some reason, ordered list items are marked as paragraphs by hugo's markdown? */
 ol p {
 	margin-bottom: 0;
