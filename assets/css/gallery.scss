@@ -1,0 +1,97 @@
+$spacer: 0.8em;
+$hover-background: lightgray;
+$hover-color: white;
+$selected-background: gray;
+$color: black;
+$arrow-size: 2px;
+
+#gallery {
+  display: flex;
+  min-height: 300px;
+
+  #workbook-selector {
+    list-style: none;
+    border-right: solid $selected-background;
+    margin: 0;
+    cursor: default;
+    min-width: 110px;
+    user-select: none;
+
+    li {
+      padding: 0 $spacer;
+      padding-bottom: $spacer/2;
+      margin: 0;
+
+      &:hover:not(.selected) {
+        color: $hover-color;
+        background-color: $hover-background;
+        cursor: pointer;
+      }
+
+      &.selected {
+        font-weight: bold;
+        background-color: $selected-background;
+        color: $hover-color;
+      }
+    }
+  }
+
+  #gallery-display {
+    flex-grow: 1;
+    display: flex;
+
+    .gallery-sidebar {
+      align-items: center;
+      display: flex;
+      padding: 0 $spacer;
+
+      .arrow {
+        border: solid $color;
+        border-width: 0 $arrow-size $arrow-size 0;
+        padding: $arrow-size;
+      }
+
+      &:hover:not(.disabled) {
+        background-color: $hover-background;
+        cursor: pointer;
+
+        .arrow {
+          border-color: $hover-color;
+        }
+      }
+
+      &.disabled .arrow {
+        border-color: $selected-background;
+      }
+
+      &:last-child {
+        .arrow {
+          transform: rotate(-45deg);
+          -webkit-transform: rotate(-45deg);
+        }
+      }
+
+      &:first-child {
+        .arrow {
+          transform: rotate(135deg);
+          -webkit-transform: rotate(135deg);
+        }
+      }
+    }
+
+    #gallery-view {
+      display: flex;
+      flex-grow: 1;
+      padding: 0 $spacer;
+      flex-direction: column;
+
+      .display {
+        margin-bottom: $spacer;
+      }
+
+      .hidden {
+        display: none;
+      }
+    }
+  }
+}
