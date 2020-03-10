@@ -92,6 +92,11 @@ $arrow-size: 2px;
       .hidden {
         display: none;
       }
+
+      #demo-video {
+        filter: brightness(1.3);
+        -webkit-filter: brightness(1.3);
+      }
     }
   }
 }
