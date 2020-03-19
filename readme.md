@@ -3,9 +3,11 @@
 A theme created by Michael Gleicher to make a class web page.
 
 This builds on the "MainRoad" theme - it needs to be "mixed in" to that theme.in the config.toml file, have the line
-````toml
+
+~~~toml
 theme = ["559Theme","mainroad"]
-````
+~~~
+
 and make sure that both mainroad and 559Theme are in the themes directory
 
 - New variables for tuning:
@@ -29,10 +31,39 @@ Changes (not exhaustive):
     - teaser (put a page summary in place)
     - mini (like a tease, but puts the whole page content - has its own layout)
 
-
 Known bugs / missing features:
 - sections are just stuck at the beginning of a page list (and not counted in pagination)
 - make an integrated css (using sass)
+
+## startup process
+
+- hugo new site 
+- git init
+- git submodule add git@github.com:Vimux/Mainroad.git themes/mainroad
+- git submodule add git@github.com:CS559/559Theme.git themes/559Theme
+- git submodule init
+- git submodule update
+- create a config.toml
+
+- create a content/widgetlinks.md  - width headless:true
+### things for the config.toml file
+
+Use both themes: look in 559Theme first
+~~~toml
+theme = ["559Theme","mainroad"]
+~~~
+
+Generate multiple outputs so we can use Lunr:
+~~~
+[outputs]
+home = [ "HTML", "RSS", "JSON"]
+~~~
+
+This is important so that we render HTML in the markdown:
+~~~
+[markup.goldmark.renderer]
+unsafe= true
+~~~
 
 ## Acknowledgement
 
