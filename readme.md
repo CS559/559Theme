@@ -37,6 +37,9 @@ Known bugs / missing features:
 - make an integrated css (using sass)
 - mathjax should include the cool hack that allows us to quote math (see the workbook theme)
 - the new mainroad includes better logo support - revisit how header.html works
+- mainroad doesn't seem to work if the root page is `index.md` - it has to be `_index.md`
+    - workaround: use `_index.md` but make the `mainSections` in config.toml not have any posts
+- lunr search doesn't check page titles (which would be really useful)
 
 ## startup process
 
