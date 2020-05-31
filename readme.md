@@ -26,14 +26,17 @@ Changes (not exhaustive):
 - change the footer credits (i18n/en)
 - SASS friendly CSS loading (baseof)
 - multiple built in CSS files (baseof)
-- less obnoxious read more (summary.html)
+- less obnoxious read more (summary.html) (set myreadmore to true)
 - shortcodes
     - teaser (put a page summary in place)
     - mini (like a tease, but puts the whole page content - has its own layout)
 
 Known bugs / missing features:
 - sections are just stuck at the beginning of a page list (and not counted in pagination)
+    - but note that sections ARE INCLUDED in a pagelist (different than default mainroad)
 - make an integrated css (using sass)
+- mathjax should include the cool hack that allows us to quote math (see the workbook theme)
+- the new mainroad includes better logo support - revisit how header.html works
 
 ## startup process
 
