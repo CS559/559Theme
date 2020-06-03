@@ -50,6 +50,7 @@ Known bugs / missing features:
 - git submodule init
 - git submodule update
 - create a config.toml
+- switch the "expand" shortcode to use HTML details (see book)
 
 - create a content/widgetlinks.md  - width headless:true
 ### things for the config.toml file
