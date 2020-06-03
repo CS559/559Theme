@@ -1,0 +1,54 @@
+{{/*
+    Site Params:
+    videoThumbSize ("180x120")
+
+    CSS:
+    video_summary (for the outer div)
+
+    Hack the default summary (from the 559Theme hack of mainroad)
+    such that:
+    1) if there is any image in the directory (as a resource) - show it as a thumbnail
+        the thumbnail size is a site variable videoThumbSize
+        the actual thumbnail is not shown
+
+    2) Two columns with a flex 
+
+    Taken from MainRoad - but hacked by gleicher
+    - use shortdesc (if it exists)
+    - use "myreadmore" if variable set for less obtrusive readmore link
+    - show readmore button even if a summary provided
+*/}}
+<article class="list__item post">
+<!-- div for each video summary - a separate flexbox -->
+<div class="video__summary" style="display: flex; flex-direction: row; flex-wrap:wrap">
+    <div class="video__thumbnail" style="width:200px">
+        {{ $page := . }}
+        {{ with .Page.Resources.ByType "image" }}
+            {{ range first 1 . }}
+                {{ $thumb := .Fit ( $page.Site.Params.videoThumbSize | default "180x120" )  }}
+                <a href="{{ $page.RelPermalink }}">
+                    <img src="{{ $thumb.RelPermalink }}" alt="{{ .Title }}" />
+                </a>
+            {{ end }}
+        {{ end }}
+    </div><!-- end video_thumbnail -->
+    {{/* took out regular thumbnail */}}
+    <div class="video__summarybody" style="width:300px; flex-grow:1">
+        <header class="list__header">
+            <h3 class="list__title post__title ">
+                <a href="{{ .RelPermalink }}" rel="bookmark">
+                {{ .Title }}
+                </a>
+            </h3>
+            {{- with .Params.lead }}
+            <p class="list__lead post__lead">{{ . }}</p>
+            {{- end }}
+            {{- partial "videoheader.html" . -}}
+        </header>
+        <div class="content list__excerpt post__content clearfix">
+            {{/* This normally would show an excerpt, but I am pulling that - use shortdesc instead */}}
+            <span class="summary__readmore"><a href="{{ .RelPermalink }}">Read formatted page...</a></span>
+        </div>
+    </div><!-- video__summarybody -->
+</div>
+</article>
