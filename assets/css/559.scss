@@ -8,6 +8,27 @@ $midgray: {{- "#646569" -}};
 
 @import "gallery";
 
+/** modified version of BTN for better inline */
+/* Button */
+.inlinebtn {
+	padding: 1px 5px 2px;
+	font-weight: 700;
+	color: #fff;
+	white-space: pre-line;
+	background: darkred;
+}
+
+.inlinebtn:hover {
+	color: #fff;
+	background: black;
+}
+
+/* Animation */
+.inlinebtn {
+	transition: background-color .25s ease-out;
+}
+
+
 /* for some reason, ordered list items are marked as paragraphs by hugo's markdown? */
 ol p {
 	margin-bottom: 0;
