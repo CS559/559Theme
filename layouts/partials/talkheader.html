@@ -1,0 +1,44 @@
+{{/* Header information for a video 
+
+    Note that this does not include the title 
+    (since that might be drawn differently depending on context)
+
+    It is a partial because it appears in both the summary, as well as
+    on the "single page" view of a video.
+    */}}
+<div class="video__head">
+    {{ with partial "post_meta.html" . -}}
+        {{/* don't make this class "post__meta" since we don't want the underline */}}
+        <div>{{ . }}</div>
+    {{- end }}
+    {{- with .Params.vidauthor -}}
+        <div class="video__author">By: {{ . }}</div>
+    {{- end -}}
+    {{ with .Params.shortdesc}}
+    <div class="video__shortdesc">
+        <i>{{ . }}</i>
+    </div> 
+    {{- end -}}   
+    <p class="video__headlinks">
+        {{- with .Params.slideshare -}}
+            <a href="{{ . }}">(SlideShare)</a>&nbsp;
+        {{- end -}}
+        {{- with .Params.paperpage -}}
+            <a href="{{ . }}">(Paper Page)</a>&nbsp;
+        {{- end -}}
+        {{- with .Params.youtube -}}
+            <a href="https://www.youtube.com/watch?v={{- . -}}">(YouTube)</a>&nbsp;
+        {{- end -}}
+        {{- with .RelPermalink -}}
+            <a href="{{ . }}">(Talk Page)</a>&nbsp;
+        {{- end -}}
+        {{- with .Params.projectpage -}}
+            <a href="{{ . }}">(Project Page)</a>&nbsp;
+        {{- end -}}
+        {{ with .Page.Resources.Match "*.pdf" }}
+            {{- range . -}}
+            <a href="{{ .RelPermalink }}" class="inlinebtn">({{ .Name }})</a>&nbsp; 
+            {{- end -}}
+        {{- end -}}
+    </p>
+</div>
