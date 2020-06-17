@@ -19,25 +19,27 @@
         <i>{{ . }}</i>
     </div> 
     {{- end -}}   
+    {{ with .Params.desc}}
+    <div class="video__shortdesc">
+        <i>{{ . }}</i>
+    </div> 
+    {{- end -}}   
     <p class="video__headlinks">
         {{- with .Params.slideshare -}}
-            <a href="{{ . }}">(SlideShare)</a>&nbsp;
+            <a href="{{ . }}"  class="inlinebtn">SlideShare</a>&nbsp;
         {{- end -}}
         {{- with .Params.paperpage -}}
             <a href="{{ . }}">(Paper Page)</a>&nbsp;
         {{- end -}}
         {{- with .Params.youtube -}}
-            <a href="https://www.youtube.com/watch?v={{- . -}}">(YouTube)</a>&nbsp;
-        {{- end -}}
-        {{- with .RelPermalink -}}
-            <a href="{{ . }}">(Talk Page)</a>&nbsp;
+            <a href="https://www.youtube.com/watch?v={{- . -}}">YouTube</a>&nbsp;
         {{- end -}}
         {{- with .Params.projectpage -}}
             <a href="{{ . }}">(Project Page)</a>&nbsp;
         {{- end -}}
         {{ with .Page.Resources.Match "*.pdf" }}
             {{- range . -}}
-            <a href="{{ .RelPermalink }}" class="inlinebtn">({{ .Name }})</a>&nbsp; 
+            <a href="{{ .RelPermalink }}" class="inlinebtn">{{ .Name }}</a>&nbsp; 
             {{- end -}}
         {{- end -}}
     </p>

@@ -15,7 +15,8 @@ $midgray: {{- "#646569" -}};
 	font-weight: 700;
 	color: #fff;
 	white-space: pre-line;
-	background: darkred;
+    background: darkred;
+    white-space: nowrap;
 }
 
 .inlinebtn:hover {
