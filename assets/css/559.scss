@@ -6,8 +6,6 @@ $widgetBackground: {{-  .Site.Params.widgetBackground | default "#f7f7f7"}};
 $uwred: {{- "#c5050c" -}};
 $midgray: {{- "#646569" -}};
 
-@import "gallery";
-
 /** modified version of BTN for better inline */
 /* Button */
 .inlinebtn {
@@ -97,7 +95,7 @@ ol p {
 /* make the logo appear correctly */
 .logo__img {
 	margin-right: 20px;
-	width:3rem; 
+	width:3rem;
 }
 
 
@@ -168,23 +166,23 @@ $border-radius: 0.15rem;
 .book-expand {
     margin-top: $padding-16;
     margin-bottom: $padding-16;
-  
+
     border: $padding-1 solid $gray-200;
     border-radius: $border-radius;
-  
+
     overflow: hidden;
-  
+
     .book-expand-head {
       background: $gray-100;
       padding: $padding-8 $padding-16;
       cursor: pointer;
     }
-  
+
     .book-expand-content {
       display: none;
       padding: $padding-16;
     }
-  
+
     input[type="checkbox"]:checked + .book-expand-content {
       display: block;
     }
@@ -194,7 +192,7 @@ $border-radius: 0.15rem;
       color: $uwred;
       font-style: italic;
   }
-  
+
   /** from the 2008 class */
   .dimbox {
 	background-color:#ffd;
