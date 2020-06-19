@@ -30,6 +30,10 @@ Changes (not exhaustive):
 - shortcodes
     - teaser (put a page summary in place)
     - mini (like a tease, but puts the whole page content - has its own layout)
+- pagination of sections is improved
+    - pagination controls has first/last
+    - section pages can control paginate and top_pagination (this is per section)
+    - lists show subsections, not just pages (hacky right now)
 
 Known bugs / missing features:
 - sections are just stuck at the beginning of a page list (and not counted in pagination)
@@ -39,7 +43,7 @@ Known bugs / missing features:
 - the new mainroad includes better logo support - revisit how header.html works
 - mainroad doesn't seem to work if the root page is `index.md` - it has to be `_index.md`
     - workaround: use `_index.md` but make the `mainSections` in config.toml not have any posts
-- lunr search doesn't check page titles (which would be really useful)
+- lunr search doesn't check page titles (which would be really useful) - although the code seems to say that it does
 
 ## startup process
 
