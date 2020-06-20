@@ -21,7 +21,7 @@
                 <img src="{{ $imageurl }}" alt = "{{ $alttxt }}" title="{{$title}}"/>
             {{ end }}
         {{- else }}
-            {{ errorf "leftpic needs an rsrc or url at %s" .Position }}
+            {{ errorf "leftpic needs an rsrc or url (or nopic) at %s" .Position }}
         {{- end }}
     </div>
      <div class="leftpic__right" style="width:300px; flex-grow:1">
