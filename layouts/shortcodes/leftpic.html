@@ -4,7 +4,7 @@
     {{- $imgwidth := .Get "width" | default 200 }}
     {{- $gutter := .Get "gutter" | default 10 }}
     <div class="leftpic__left" style="width:{{$imgwidth}}px; padding-right:{{$gutter}}px">
-        {{- if (or (.Get "rsrc") (.Get "url")) }}
+        {{- if (or (.Get "rsrc") (.Get "url") (.Get "nopic" )) }}
             {{- if .Get "rsrc" }}
                 {{- $imgsrc := .Get "rsrc" }}
                 {{- $bigimage := .Page.Resources.GetMatch $imgsrc }}
@@ -14,7 +14,7 @@
                 {{- $alttxt := .Get "alt" | default "Left Picture" }}
                 {{- $title := .Get "title" | default $image.Title }}
                 <img src="{{ $imageurl }}" alt = "{{ $alttxt }}" title="{{$title}}"/>
-            {{ else }}
+            {{ else if .Get "url" }}
                 {{- $imageurl := .Get "url" }}
                 {{- $alttxt := .Get "alt" | default "Left Picture" }}
                 {{- $title := .Get "title" | default "Left Picture" }}
