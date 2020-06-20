@@ -1,0 +1,30 @@
+{{- $topmargin := .Get "topmargin" | default "1rem" }}
+{{- $bottommargin := .Get "bottommargin" | default "1rem" }}
+<div style="display: flex; flex-direction: row; flex-wrap:wrap; margin-top:{{$topmargin}}; margin-bottom:{{$bottommargin}}">
+    {{- $imgwidth := .Get "width" | default 200 }}
+    {{- $gutter := .Get "gutter" | default 10 }}
+    <div class="leftpic__left" style="width:{{$imgwidth}}px; padding-right:{{$gutter}}px">
+        {{- if (or (.Get "rsrc") (.Get "url")) }}
+            {{- if .Get "rsrc" }}
+                {{- $imgsrc := .Get "rsrc" }}
+                {{- $bigimage := .Page.Resources.GetMatch $imgsrc }}
+                {{- $size := $imgwidth | printf "%dx" }}
+                {{- $image := $bigimage.Resize $size }}
+                {{- $imageurl := $image.RelPermalink}}
+                {{- $alttxt := .Get "alt" | default "Left Picture" }}
+                {{- $title := .Get "title" | default $image.Title }}
+                <img src="{{ $imageurl }}" alt = "{{ $alttxt }}" title="{{$title}}"/>
+            {{ else }}
+                {{- $imageurl := .Get "url" }}
+                {{- $alttxt := .Get "alt" | default "Left Picture" }}
+                {{- $title := .Get "title" | default "Left Picture" }}
+                <img src="{{ $imageurl }}" alt = "{{ $alttxt }}" title="{{$title}}"/>
+            {{ end }}
+        {{- else }}
+            {{ errorf "leftpic needs an rsrc or url at %s" .Position }}
+        {{- end }}
+    </div>
+     <div class="leftpic__right" style="width:300px; flex-grow:1">
+{{ .Inner | markdownify }}
+    </div>
+</div>
