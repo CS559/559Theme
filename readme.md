@@ -30,6 +30,17 @@ Changes (not exhaustive):
 - shortcodes
     - teaser (put a page summary in place)
     - mini (like a tease, but puts the whole page content - has its own layout)
+    - allpages (makes a list of all pages)
+    - anchorlink
+    - dimbox (makes a dimbox div)
+    - expand (puts text into an expander)
+    - htmllink (shows the HTML of a reference - gives the whole link)
+    - leftpic (puts a picture to the left of text)
+    - link (makes a relref link - and gets the page title)
+    - pages (like link, but goes into pages)
+    - static (generates a link to a static object)
+    - teasehtml
+    - url (makes a link to a URL with the URL as the text)
 - pagination of sections is improved
     - pagination controls has first/last
     - section pages can control paginate and top_pagination (this is per section)
