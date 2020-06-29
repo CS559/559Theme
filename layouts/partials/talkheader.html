@@ -42,5 +42,11 @@
             <a href="{{ .RelPermalink }}" class="inlinebtn">{{ .Name }}</a>&nbsp; 
             {{- end -}}
         {{- end -}}
+        {{ with .Page.Params.extpdfs }}
+            {{- range . -}}
+            {{ $name := split . "/" | last 1 }}
+            <a href="{{ . }}" class="inlinebtn">{{ index $name 0 }}</a>&nbsp; 
+            {{- end -}}
+        {{- end -}}
     </p>
 </div>
