@@ -3,13 +3,21 @@
 <div style="display: flex; flex-direction: row; flex-wrap:wrap; margin-top:{{$topmargin}}; margin-bottom:{{$bottommargin}}">
     {{- $imgwidth := .Get "width" | default 200 }}
     {{- $gutter := .Get "gutter" | default 10 }}
+    {{- $s := .Scratch }}
+    {{- $p := .Page }}
+    {{- $r := (.Get "rsrc") }}
+    {{- $a := (.Get "asset") }}
     <div class="leftpic__left" style="width:{{$imgwidth}}px; padding-right:{{$gutter}}px">
-        {{- if (or (.Get "rsrc") (.Get "url") (.Get "nopic" )) }}
-            {{- if .Get "rsrc" }}
-                {{- $imgsrc := .Get "rsrc" }}
-                {{- $bigimage := .Page.Resources.GetMatch $imgsrc }}
+        {{- if (or $r $a (.Get "url") (.Get "nopic" ) ) }}
+            {{- if (or $r (.Get "asset")) }}
+                {{ with $r }}
+                    {{- $s.Set "bigimage" ($p.Resources.GetMatch $r) }}
+                {{ end }}
+                {{ with $a }}
+                    {{- $s.Set "bigimage" (resources.Get $a) }}
+                {{ end }}
                 {{- $size := $imgwidth | printf "%dx" }}
-                {{- $image := $bigimage.Resize $size }}
+                {{- $image := ($s.Get "bigimage").Resize $size }}
                 {{- $imageurl := $image.RelPermalink}}
                 {{- $alttxt := .Get "alt" | default "Left Picture" }}
                 {{- $title := .Get "title" | default $image.Title }}
