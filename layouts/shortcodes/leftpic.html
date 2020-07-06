@@ -17,11 +17,12 @@
                     {{- $s.Set "bigimage" (resources.Get $a) }}
                 {{ end }}
                 {{- $size := $imgwidth | printf "%dx" }}
-                {{- $image := ($s.Get "bigimage").Resize $size }}
+                {{- $bigimage := $s.Get "bigimage"}}
+                {{- $image := $bigimage.Resize $size }}
                 {{- $imageurl := $image.RelPermalink}}
                 {{- $alttxt := .Get "alt" | default "Left Picture" }}
                 {{- $title := .Get "title" | default $image.Title }}
-                <img src="{{ $imageurl }}" alt = "{{ $alttxt }}" title="{{$title}}"/>
+                <a href="{{ $bigimage.RelPermalink }}"><img src="{{ $imageurl }}" alt = "{{ $alttxt }}" title="{{$title}}"/></a>
             {{ else if .Get "url" }}
                 {{- $imageurl := .Get "url" }}
                 {{- $alttxt := .Get "alt" | default "Left Picture" }}
