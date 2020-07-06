@@ -1,15 +1,9 @@
-{{/* this is inspired by the hugo-learn-theme, but that uses jquery */}}
-{{/* https://github.com/matcornic/hugo-theme-learn/blob/master/layouts/shortcodes/expand.html */}}
-{{/* this is inspired by the hugo-book theme, but that uses crazy sass */}}
-<div class="book-expand">
-  <label>
-    <div class="book-expand-head flex justify-between">
-      <span class="expand__button">{{ default "Expand" (.Get 0) }}</span>
-      <span>{{ default "↕" (.Get 1) }}</span>
-    </div>
-    <input type="checkbox" style="display: none" />
-    <div class="book-expand-content markdown-inner">
+{{/* Inspired by the "details" shortcode from the hugo book theme */}}
+<details class="myexpand" {{ if or (.Get "open") (in .Params "open") }}open{{ end }}>
+    <summary class="myexpand-head">{{ cond .IsNamedParams (.Get "title") (.Get 0) }}</summary>
+    <div class="markdown-inner myexpand-content">
       {{ .Inner | markdownify }}
     </div>
-  </label>
-</div>
+  </details>
+  
+  
