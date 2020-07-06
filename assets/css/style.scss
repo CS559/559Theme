@@ -1,6 +1,6 @@
 /* I have utterly failed to get Hugo's SASS to work correctly with the use - even if I did
  * it wouldn't pre-process things */
-/* Gleicher's hacked version of style.css */
+/* Gleicher's hacked version of style.css from Mainroad */
 /* prefer to use Hugo variable, not SASS so they can be controlled from config */
 /* but stick them in SASS variables */
 $highlightColor: {{- .Site.Params.highlightColor | default "#e22d30" -}};
@@ -8,6 +8,13 @@ $dimColor: {{- .Site.Params.dimColor | default "gray" }};
 $widgetBackground: {{-  .Site.Params.widgetBackground | default "#f7f7f7"}};
 $uwred: {{- "#c5050c" -}};
 $midgray: {{- "#646569" -}};
+
+/* Mainroad had these as fixed: 65.83%, 31.66% (2.5% unnused) */
+/* parameterize them */
+$sidebar-size: 25%;
+$sidebar-gutter-size: 2.5%;     /** seems to be right margin */
+$content-size: 100% - $sidebar-size - $sidebar-gutter-size;
+
 
 *,
 *::before,
@@ -86,16 +93,16 @@ body {
 }
 
 .primary {
-	-webkit-flex: 1 0 65.83%;
-	flex: 1 0 65.83%;
+	-webkit-flex: 1 0 $content-size;
+	flex: 1 0 $content-size;
 	-webkit-order: 1;
 	order: 1;
 	min-width: 0;
 }
 
 .sidebar {
-	-webkit-flex: 1 0 31.66%;
-	flex: 1 0 31.66%;
+	-webkit-flex: 1 0 $sidebar-size;
+	flex: 1 0 $sidebar-size;
 	-webkit-order: 2;
 	order: 2;
 	min-width: 0;
@@ -407,7 +414,7 @@ select {
 	font-weight: 700;
 	line-height: 1;
 	color: $uwred; 
-	text-transform: uppercase; /* mg - only for title */
+	// text-transform: uppercase; /* mg - only for title */
 }
 
 .logo__tagline {
