@@ -1,7 +1,7 @@
 <header class="header">
 	<div class="container">
 		<div class="logo">
-			{{- $logofile := (.Site.Params.logo | default "svg/crest.svg") -}}
+			{{- $logofile := (.Site.Params.logo | default "/svg/crest.svg") -}}
 			{{- with $logofile -}}
 			{{- $logo := resources.Get . -}}
 			<a class="logo__link" href="{{ "" | relLangURL }}" rel="home">
