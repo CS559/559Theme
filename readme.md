@@ -45,6 +45,7 @@ Changes (not exhaustive):
     - pagination controls has first/last
     - section pages can control paginate and top_pagination (this is per section)
     - lists show subsections, not just pages (hacky right now)
+- switch the "expand" shortcode to use HTML details (see book)
 
 Known bugs / missing features:
 - sections are just stuck at the beginning of a page list (and not counted in pagination)
@@ -55,6 +56,7 @@ Known bugs / missing features:
 - mainroad doesn't seem to work if the root page is `index.md` - it has to be `_index.md`
     - workaround: use `_index.md` but make the `mainSections` in config.toml not have any posts
 - lunr search doesn't check page titles (which would be really useful) - although the code seems to say that it does
+- this is still heavily dependent on mainroad - it would be nice to remove that dependence
 
 ## startup process
 
@@ -65,9 +67,12 @@ Known bugs / missing features:
 - git submodule init
 - git submodule update
 - create a config.toml
-- switch the "expand" shortcode to use HTML details (see book)
-
 - create a content/widgetlinks.md  - width headless:true
+
+These GIT incantations help keep the subrepos on track if you care about that:
+- git submodule foreach --recursive git checkout master
+- 
+
 ### things for the config.toml file
 
 Use both themes: look in 559Theme first
