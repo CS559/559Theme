@@ -5,6 +5,9 @@
 
     It is a partial because it appears in both the summary, as well as
     on the "single page" view of a video.
+
+    For things like extpdf - it can either be a complete URL, or a URL inside
+    of site.assetStore
     */}}
 <div class="video__head">
     {{ with partial "post_meta.html" . -}}
@@ -19,18 +22,24 @@
         <i>{{ . }}</i>
     </div> 
     {{- end -}}   
+    {{ with .Params.desc}}
+    <div class="video__shortdesc">
+        <i>{{ . }}</i>
+    </div> 
+    {{- end -}}
+    {{- $site := .Site -}}  
     <p class="video__headlinks">
-        {{- with .RelPermalink -}}
-            <a href="{{ . }}">(Video Page)</a>&nbsp;
+        {{- with .Params.slideshare -}}
+            <a href="{{ . }}"  class="inlinebtn">SlideShare</a>&nbsp;
         {{- end -}}
-        {{- with .Params.projectpage -}}
-            <a href="{{ . }}">(Project Page)</a>&nbsp;
+        {{- with .Params.youtube -}}
+            <a href="https://www.youtube.com/watch?v={{- . -}}">YouTube</a>&nbsp;
         {{- end -}}
         {{- with .Params.paperpage -}}
             <a href="{{ . }}">(Paper Page)</a>&nbsp;
         {{- end -}}
-        {{- with .Params.youtube -}}
-            <a href="https://www.youtube.com/watch?v={{- . -}}">(YouTube)</a>&nbsp;
+        {{- with .Params.projectpage -}}
+            <a href="{{ . }}">(Project Page)</a>&nbsp;
         {{- end -}}
         {{ with .Page.Resources.Match "*.avi" }}
             {{- range . -}}
@@ -40,6 +49,18 @@
         {{ with .Page.Resources.Match "*.mp4" }}
             {{- range . -}}
             <a href="{{ .RelPermalink }}">(mp4 file)</a>&nbsp; 
+            {{- end -}}
+        {{- end -}}
+        {{ with .Page.Resources.Match "*.pdf" }}
+            {{- range . -}}
+            <a href="{{ .RelPermalink }}" class="inlinebtn">{{ .Name }}</a>&nbsp; 
+            {{- end -}}
+        {{- end -}}
+        {{ with .Page.Params.extpdfs }}
+            {{- range . -}}
+            {{ $name := split . "/" | last 1 }}
+            {{ $url := cond (in . "http") . (printf "%s%s" $site.Params.assetStore . )   }}
+            <a href="{{ $url }}" class="inlinebtn">{{ index $name 0 }}</a>&nbsp; 
             {{- end -}}
         {{- end -}}
     </p>
