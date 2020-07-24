@@ -1,4 +1,9 @@
-{{/* Header information for a video 
+{{/* Header information for a video or talk
+
+    This used to be two separate things, but it is unified - so a talk could have video, 
+    or a video could have PDFs. 
+
+    This "header" does the heavy lifting of the summary and the single page.
 
     Note that this does not include the title 
     (since that might be drawn differently depending on context)
@@ -33,22 +38,22 @@
             <a href="{{ . }}"  class="inlinebtn">SlideShare</a>&nbsp;
         {{- end -}}
         {{- with .Params.youtube -}}
-            <a href="https://www.youtube.com/watch?v={{- . -}}">YouTube</a>&nbsp;
+            <a href="https://www.youtube.com/watch?v={{- . -}}" class="inlinebtn">YouTube</a>&nbsp;
         {{- end -}}
         {{- with .Params.paperpage -}}
-            <a href="{{ . }}">(Paper Page)</a>&nbsp;
+            <a href="{{ . }}"  class="inlinebtn">Paper Page</a>&nbsp;
         {{- end -}}
         {{- with .Params.projectpage -}}
-            <a href="{{ . }}">(Project Page)</a>&nbsp;
+            <a href="{{ . }}"  class="inlinebtn">Project Page</a>&nbsp;
         {{- end -}}
         {{ with .Page.Resources.Match "*.avi" }}
             {{- range . -}}
-            <a href="{{ .RelPermalink }}">(old AVI)</a>&nbsp; 
+            <a href="{{ .RelPermalink }}" class="inlinebtn">avi file</a>&nbsp; 
             {{- end -}}
         {{- end -}}
         {{ with .Page.Resources.Match "*.mp4" }}
             {{- range . -}}
-            <a href="{{ .RelPermalink }}">(mp4 file)</a>&nbsp; 
+            <a href="{{ .RelPermalink }}"  class="inlinebtn">mp4 file</a>&nbsp; 
             {{- end -}}
         {{- end -}}
         {{ with .Page.Resources.Match "*.pdf" }}
