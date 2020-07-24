@@ -1,6 +1,6 @@
 # CS559 Theme
 
-A theme created by Michael Gleicher to make a class web page.
+A theme created by Michael Gleicher to make a class web page. Over time, it evolved to also do my home page, so there is a lot of stuff specific to that.
 
 This builds on the "MainRoad" theme - it needs to be "mixed in" to that theme.in the config.toml file, have the line
 
@@ -11,7 +11,7 @@ theme = ["559Theme","mainroad"]
 and make sure that both mainroad and 559Theme are in the themes directory
 
 - New variables for tuning:
-    - noheader - set to true on a page to skip the header (default/baseof.html)
+    - noheader - set to true on a page to skip the header (default/baseof.html) - this was meant to allow the home page to look different
     - myreadmore - true (by default) for a less obnoxious read me in a summary (and a link if the summary is the whole page)
 
 Changes (not exhaustive):
@@ -20,34 +20,46 @@ Changes (not exhaustive):
 - A taglist for post_meta
 - Put the logo in the header (assets/svg, partials/header)
 - New widgets
-    - lunr
+    - lunr (search box - sends things to the lunr page where the work happens)
     - toc (puts a toc in the sidebar)
-    - links (puts a link list page - must be content/widgetlinks)
+    - links (puts a link list page - must be content/widgetlinks - be sure to create **widgetlinks**)
+    - allpages (makes a list of all pages in a site - not sure how to scope it correctly, probably not that valuable)
+    - archive (puts a message that this is an archived class - be sure to set Site.Params.Archive and Site.Params.Archivenote)
+    - recents (useful thing from other blog-like themes)
+    - toc (puts the toc in a widget - which can be a useful place for it)
 - change the footer credits (i18n/en)
 - SASS friendly CSS loading (baseof)
 - multiple built in CSS files (baseof)
 - less obnoxious read more (summary.html) (set myreadmore to true)
-- shortcodes
-    - teaser (put a page summary in place)
-    - mini (like a tease, but puts the whole page content - has its own layout)
+- shortcodes (*note that mainroad doesn't provide any!*)
     - allpages (makes a list of all pages)
     - anchorlink
+    - assetlink
     - dimbox (makes a dimbox div)
     - expand (puts text into an expander)
     - htmllink (shows the HTML of a reference - gives the whole link)
     - leftpic (puts a picture to the left of text)
     - link (makes a relref link - and gets the page title)
+    - linkit
+    - mailto
+    - mini (like a tease, but puts the whole page content - has its own layout)
     - pages (like link, but goes into pages)
     - static (generates a link to a static object)
     - teasehtml
+    - teaser (put a page summary in place)
     - url (makes a link to a URL with the URL as the text)
 - pagination of sections is improved
     - pagination controls has first/last
     - section pages can control paginate and top_pagination (this is per section)
     - lists show subsections, not just pages (hacky right now)
 - switch the "expand" shortcode to use HTML details (see book)
+- footer uses lastmod (good with git - *be sure to turn on git*)
+- header hard codes wisc styling and logo
+- sections for talks and videos (very specific to my home page - maybe should move elsewhere)
 
 Known bugs / missing features:
+- it might be better to make this separate / different from my home page, since they have different uses/needs
+- it would be nice to be able to swap out mainroad (for, say, a UW Theme based design)
 - sections are just stuck at the beginning of a page list (and not counted in pagination)
     - but note that sections ARE INCLUDED in a pagelist (different than default mainroad)
 - make an integrated css (using sass)
@@ -57,6 +69,7 @@ Known bugs / missing features:
     - workaround: use `_index.md` but make the `mainSections` in config.toml not have any posts
 - lunr search doesn't check page titles (which would be really useful) - although the code seems to say that it does
 - this is still heavily dependent on mainroad - it would be nice to remove that dependence
+- paginator could use better icons
 
 ## startup process
 
@@ -91,6 +104,14 @@ This is important so that we render HTML in the markdown:
 [markup.goldmark.renderer]
 unsafe= true
 ~~~
+-
+
+## for the talks and videos
+
+In general, assets get linked automatically if they are page resources.
+
+However: you might want to put assets in an external directory. Use the `extpdfs` (or similar) page properties to give the link.
+- the the link doesn't have "http" in it, it is assumed that it is in the assetStore link (directory) from Site.Params
 
 ## Acknowledgement
 
