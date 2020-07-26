@@ -22,7 +22,7 @@
 		 also - use a default rather than an if (which mainroad did) 
 		*/}}
 	{{- $paginator := .Paginate .Pages (.Params.paginate | default 12 )}}
-	{{- if .Params.top_pagination }}
+	{{- if (.Params.top_pagination | default .Site.Params.top_pagination) }}
 		{{ partial "pagination.html" . }}
 	{{- end }}
 	{{- range .Paginator.Pages }}
