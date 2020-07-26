@@ -51,6 +51,7 @@ Changes (not exhaustive):
 - pagination of sections is improved
     - pagination controls has first/last
     - section pages can control paginate and top_pagination (this is per section)
+        - but there is a site default (for top_pagination)
     - lists show subsections, not just pages (hacky right now)
 - switch the "expand" shortcode to use HTML details (see book)
 - footer uses lastmod (good with git - *be sure to turn on git*)
@@ -60,8 +61,8 @@ Changes (not exhaustive):
 Known bugs / missing features:
 - it might be better to make this separate / different from my home page, since they have different uses/needs
 - it would be nice to be able to swap out mainroad (for, say, a UW Theme based design)
-- sections are just stuck at the beginning of a page list (and not counted in pagination)
-    - but note that sections ARE INCLUDED in a pagelist (different than default mainroad)
+- pagination is set per page, but top_paginate is global
+- I don't know why the section thing works now (the way mainroad does it does not seem different)
 - make an integrated css (using sass)
 - mathjax should include the cool hack that allows us to quote math (see the workbook theme)
 - the new mainroad includes better logo support - revisit how header.html works
