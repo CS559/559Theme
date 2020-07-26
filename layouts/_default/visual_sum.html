@@ -1,4 +1,8 @@
 {{/*
+    Warning: there are two types of summaries visual not-visual
+	this is the not-visual
+	The correct one is chosen by the list template (see list.html)
+
     Site Params:
     videoThumbSize ("180x120")
 
@@ -47,7 +51,7 @@
         </header>
         <div class="content list__excerpt post__content clearfix">
             {{/* This normally would show an excerpt, but I am pulling that - use shortdesc instead */}}
-            <span class="summary__readmore"><a href="{{ .RelPermalink }}">Talk Page</a></span>
+            <span class="summary__readmore"><a href="{{ .RelPermalink }}">Read formatted page...</a></span>
         </div>
     </div><!-- video__summarybody -->
 </div>

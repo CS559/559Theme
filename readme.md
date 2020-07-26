@@ -56,7 +56,15 @@ Changes (not exhaustive):
 - switch the "expand" shortcode to use HTML details (see book)
 - footer uses lastmod (good with git - *be sure to turn on git*)
 - header hard codes wisc styling and logo
-- sections for talks and videos (very specific to my home page - maybe should move elsewhere)
+- sections for talks and videos (and other collection of objects)
+    - some attempts for unification
+    - put "visual_summary" as a page parameter (to true) to get it
+
+New Section Variables
+
+- visual_summary - uses a format for talks/videos where everything has a place for a thumbnail and links to the various assets are shown
+
+New Page Variables
 
 Known bugs / missing features:
 - it might be better to make this separate / different from my home page, since they have different uses/needs

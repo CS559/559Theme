@@ -7,6 +7,7 @@
     */}}
 {{ define "main" }}
 <main class="main list" role="main">
+	{{- $section := . }}
 	{{- with .Title }}
 	<header class="main__header">
 		<h1 class="main__title">{{ . }}</h1>
@@ -26,7 +27,11 @@
 		{{ partial "pagination.html" . }}
 	{{- end }}
 	{{- range .Paginator.Pages }}
-		{{- .Render "summary" }}
+		{{- if $section.Params.visual_summary -}}
+			{{- .Render "visual_sum" }}
+		{{- else }}
+			{{- .Render "summary" }}
+		{{- end }}
 	{{- end }}
 	{{/* put pagination inside of block */}}
 	{{ partial "pagination.html" . }}
