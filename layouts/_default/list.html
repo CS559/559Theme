@@ -1,6 +1,6 @@
 {{/*
-    hacked by gleicher to include summaries of sections  
-	- I don't remember why I did this (!) - I think it has to do with deeper trees
+	- hacked by gleicher to include summaries of sections  
+		- as part of how this works, a default pagination of 12 is given
 	- also hacked to be parameterized...
 		top_pagination - to put pagination controls on the top 
 		paginate - allow section pages to set their own pagination 
@@ -12,18 +12,16 @@
 		<h1 class="main__title">{{ . }}</h1>
 	</header>
 	{{- end }}
-	{{/* fixme - we do sections before the pages, it would be nice to better integrate them */}}
-	{{- range .Sections }}
-		{{- .Render "summary" }}
-	{{- end }}
 	{{- with .Content }}
 	<div class="content main__content clearfix">
 		{{ . }}
 	</div>
 	{{- end }}
-	{{- if .Params.paginate }}
-		{{- $ignore := .Paginator .Params.paginate }}
-	{{- end }}
+	{{/* explicitly create the paginator - give it the page list
+		 for some reason, this includes the Sections (whereas, the default does not
+		 also - use a default rather than an if (which mainroad did) 
+		*/}}
+	{{- $paginator := .Paginate .Pages (.Params.paginate | default 12 )}}
 	{{- if .Params.top_pagination }}
 		{{ partial "pagination.html" . }}
 	{{- end }}
