@@ -5,4 +5,4 @@
 {{- $pagename := .Get 0 -}}
 {{- $anchorname := .Get 1 -}}
 {{- $target := relref . $pagename -}}
-[{{- with .Site.GetPage $pagename -}}{{- .Title -}}{{end}}{{- with $anchorname -}}({{- $anchorname -}}){{- end -}}]({{ $target }}{{- with $anchorname -}}#{{- anchorize $anchorname -}}{{- end -}})
+[{{- with .Site.GetPage $pagename -}}{{- .Title -}}{{end}}{{- with $anchorname -}} &nbsp; ({{- $anchorname -}}){{- end -}}]({{ $target }}{{- with $anchorname -}}#{{- anchorize $anchorname -}}{{- end -}})
