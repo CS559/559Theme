@@ -48,6 +48,10 @@ Changes (not exhaustive):
     - teasehtml
     - teaser (put a page summary in place)
     - url (makes a link to a URL with the URL as the text)
+    - content (inserts the content of another page)
+    - includemd (includes a markdown file - which is not a page)
+    - inline (includes another page in place - uses a special style template)
+    - snippet.md (include a markdown snippet from assets/snippets.md) 
 - pagination of sections is improved
     - pagination controls has first/last
     - section pages can control paginate and top_pagination (this is per section)
