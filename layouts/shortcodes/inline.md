@@ -8,5 +8,5 @@
 {{ .Render "inline" }}
 </div>
 {{- else -}}
-** ERROR! **
+{{- errorf "Can't find page to put inline '%s'" (.Get 0) -}}
 {{- end -}}

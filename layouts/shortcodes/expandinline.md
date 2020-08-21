@@ -1,3 +1,4 @@
+
 {{/* include the CONTENT from another PAGE
    * (this requires things to be a findable page)
    *
@@ -15,7 +16,12 @@
    */}}
 {{ $file := .Get 0 }}
 {{ with .Site.GetPage $file }}
-{{ .Content }}
+<h2><a href="{{.Permalink}}">{{.Title}}</a></h2>
+{{.Summary}}
+<details class="myexpand">
+    <summary class="myexpand-head">Read more...</summary>
+    {{ .Content }}
+</details>
 {{- else -}}
 {{- errorf "Can't find page to put content from '%s'" (.Get 0) -}}
 {{end}}
