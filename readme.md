@@ -52,6 +52,7 @@ Changes (not exhaustive):
     - includemd (includes a markdown file - which is not a page)
     - inline (includes another page in place - uses a special style template)
     - snippet.md (include a markdown snippet from assets/snippets.md) 
+    - resource-image.md (put a page resource image into markdown)
 - pagination of sections is improved
     - pagination controls has first/last
     - section pages can control paginate and top_pagination (this is per section)
@@ -69,6 +70,8 @@ New Section Variables
 - visual_summary - uses a format for talks/videos where everything has a place for a thumbnail and links to the various assets are shown
 
 New Page Variables
+
+- resourcethumb - allows you to give a thumbnail that is a page resource/ this is resized (based on videosize)
 
 Known bugs / missing features:
 - it might be better to make this separate / different from my home page, since they have different uses/needs

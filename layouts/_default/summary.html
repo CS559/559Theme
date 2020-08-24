@@ -15,7 +15,18 @@
 			<img src="{{ .Params.thumbnail | relURL }}" alt="{{ .Title }}" />
 		</a>
 	</figure>
-	{{- end }}
+    {{- end }}
+    {{- if .Params.resourcethumb }}
+        {{- $page := . }}
+        {{- with .Page.Resources.GetMatch .Params.resourcethumb }}
+            {{ $thumb := .Fit ( $page.Site.Params.videoThumbSize | default "180x120" )  }}
+            <figure class="list__thumbnail">
+                <a href="{{ .Permalink }}">
+                    <img src="{{ $thumb.RelPermalink }}" alt="{{ .Title }}" />
+                </a>
+            </figure>
+        {{- end}}
+    {{- end }}
 	<header class="list__header">
 		<h3 class="list__title post__title ">
 			<a href="{{ .RelPermalink }}" rel="bookmark">

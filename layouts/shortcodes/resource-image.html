@@ -1,0 +1,13 @@
+{{- $page := . }}
+{{- $name := .Get "src" }}
+{{- if $name }}{{- else }}{{errorf "resource-image needs a src argument" }}{{- end}}
+{{- $size := .Get "size" | default "300x300" }}
+{{- $alt := .Get "alt" | default $name }}
+{{- $class := .Get "class" | default "" }}
+{{- with .Page.Resources.GetMatch $name }}
+    {{ $img := .Fit $size }}
+    <figure class="{{ $class }}">
+            <img src="{{ $img.RelPermalink }}" alt="{{ $alt }}" />
+    </figure>
+{{- end}}
+
