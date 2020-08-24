@@ -53,6 +53,8 @@ Changes (not exhaustive):
     - inline (includes another page in place - uses a special style template)
     - snippet.md (include a markdown snippet from assets/snippets.md) 
     - resource-image.md (put a page resource image into markdown)
+    - resource-link.md (makes a link to a page resource)
+    - figure (improved on the Hugo figure to allow for rsrc parameters)
 - pagination of sections is improved
     - pagination controls has first/last
     - section pages can control paginate and top_pagination (this is per section)
