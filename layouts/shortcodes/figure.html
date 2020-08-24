@@ -1,0 +1,57 @@
+{{/* modified version of Hugo's figure shortcode - I copied the text
+     from https://raw.githubusercontent.com/gohugoio/hugo/master/tpl/tplimpl/embedded/templates/shortcodes/figure.html
+     or https://github.com/gohugoio/hugo/blob/master/tpl/tplimpl/embedded/templates/shortcodes/figure.html
+     on 8/24/2020
+
+     if Hugo updates this, it will need to be updated
+
+     additions:
+     a new "rsrc" parameter that looks up the name as a page resource
+        see https://discourse.gohugo.io/t/figure-shortcode-should-use-page-resources/12989/2
+    but it will also search site resources
+
+    note: the hack to skip extensions was not implemented because site resource search
+    does not do matching
+
+    you can put wildcards in the name string for rsrc (if you know its a page resource)
+  */}}
+{{- $code := . }}
+<figure{{ with .Get "class" }} class="{{ . }}"{{ end }}>
+    {{- if .Get "link" -}}
+        <a href="{{ .Get "link" }}"{{ with .Get "target" }} target="{{ . }}"{{ end }}{{ with .Get "rel" }} rel="{{ . }}"{{ end }}>
+    {{- end }}
+    <img 
+        {{- with .Get "src" }} src="{{ . }}"
+        {{- else }} {{- with .Get "rsrc" }} 
+                        {{- with $code.Page.Resources.GetMatch .}} src="{{ .RelPermalink }}"
+                        {{- else }}
+                            {{- with resources.Get . }} src="{{ .RelPermalink }}"
+                            {{- else }} {{ errorf "Can't find resource for figure (%s)" . }}
+                            {{- end}}
+                        {{- end }}
+                    {{- else }}{{ errorf "Need a src or rsrc for figure" }}
+                    {{- end }}
+        {{- end }}
+         {{- if or (.Get "alt") (.Get "caption") }}
+         alt="{{ with .Get "alt" }}{{ . }}{{ else }}{{ .Get "caption" | markdownify| plainify }}{{ end }}"
+         {{- end -}}
+         {{- with .Get "width" }} width="{{ . }}"{{ end -}}
+         {{- with .Get "height" }} height="{{ . }}"{{ end -}}
+    /> <!-- Closing img tag -->
+    {{- if .Get "link" }}</a>{{ end -}}
+    {{- if or (or (.Get "title") (.Get "caption")) (.Get "attr") -}}
+        <figcaption>
+            {{ with (.Get "title") -}}
+                <h4>{{ . }}</h4>
+            {{- end -}}
+            {{- if or (.Get "caption") (.Get "attr") -}}<p>
+                {{- .Get "caption" | markdownify -}}
+                {{- with .Get "attrlink" }}
+                    <a href="{{ . }}">
+                {{- end -}}
+                {{- .Get "attr" | markdownify -}}
+                {{- if .Get "attrlink" }}</a>{{ end }}</p>
+            {{- end }}
+        </figcaption>
+    {{- end }}
+</figure>
