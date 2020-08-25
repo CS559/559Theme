@@ -27,6 +27,7 @@ Changes (not exhaustive):
     - archive (puts a message that this is an archived class - be sure to set Site.Params.Archive and Site.Params.Archivenote)
     - recents (useful thing from other blog-like themes)
     - toc (puts the toc in a widget - which can be a useful place for it)
+    - important - makes a list of important pages (uses a site parameter "ImportantPages")
 - change the footer credits (i18n/en)
 - SASS friendly CSS loading (baseof)
 - multiple built in CSS files (baseof)

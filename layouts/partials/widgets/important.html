@@ -1,0 +1,19 @@
+<div class="widget-links widget">
+    <h4 class="widget__title">Important Pages/Posts</h4>
+    <div class="widget__content widget__list">
+        <ul>
+        {{ $ctx := . }}
+        {{ $site := .Site }}
+        {{ range $site.Params.ImportantPages }}
+            {{- $page := $site.GetPage . }}
+            {{- $str := . }}
+            {{- with $page }}
+                <li><a href="{{.RelPermalink}}">{{ .Title }}</li>
+            {{- else }}
+                    {{errorf "Bad page in ImportantPages (%s)" $str}}
+            {{- end}}
+        {{ end }}
+        </ul>
+    </div>
+  </div>
+  
