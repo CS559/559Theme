@@ -3,7 +3,10 @@
 		- as part of how this works, a default pagination of 12 is given
 	- also hacked to be parameterized...
 		top_pagination - to put pagination controls on the top 
-		paginate - allow section pages to set their own pagination 
+        paginate - allow section pages to set their own pagination 
+        
+    we add the TOC in case you want a toc for the list (which is weird, but useful for course webs) - but it doesn't actually work correctly
+    (since it only works on the Content)
     */}}
 {{ define "main" }}
 <main class="main list" role="main">
@@ -13,6 +16,7 @@
 		<h1 class="main__title">{{ . }}</h1>
 	</header>
 	{{- end }}
+    {{- partial "post_toc.html" . -}}
 	{{- with .Content }}
 	<div class="content main__content clearfix">
 		{{ . }}
