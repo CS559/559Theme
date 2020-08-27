@@ -56,6 +56,7 @@ Changes (not exhaustive):
     - resource-image.md (put a page resource image into markdown)
     - resource-link.md (makes a link to a page resource)
     - figure (improved on the Hugo figure to allow for rsrc parameters)
+    - listtoc (makes a table of contents for a list)
 - pagination of sections is improved
     - pagination controls has first/last
     - section pages can control paginate and top_pagination (this is per section)

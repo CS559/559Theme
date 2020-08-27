@@ -1,0 +1,15 @@
+{{/* Make a table of contents for a list page - uses the titles of the pages
+    note: this requires that the summary sets the IDs of the headings */}}
+<div class="post__toc toc">
+	<div class="toc__title">{{ T "toc_title" }}</div>
+	<div class="toc__menu">
+		<ul>
+            {{- if .Get 0 }}
+            <li><a href="#{{anchorize (.Get 0) }}">{{ .Get 0 }} </a></li>
+            {{- end}}
+            {{- range .Page.Pages }}
+            <li><a href="#{{ anchorize .Title}}">{{.Title}}</a></li>
+            {{- end }}
+        </ul>
+	</div>
+</div>

@@ -40,7 +40,7 @@
     <div class="video__summarybody" style="width:300px; flex-grow:1">
         <header class="list__header">
             <h3 class="list__title post__title ">
-                <a href="{{ .RelPermalink }}" rel="bookmark">
+                <a href="{{ .RelPermalink }}" rel="bookmark" id="{{ anchorize .Title }}">
                 {{ .Title }}
                 </a>
             </h3>
