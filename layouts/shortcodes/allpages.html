@@ -1,0 +1,8 @@
+<ul>
+{{ range .Site.Pages.ByTitle }}
+{{- if .Title }}
+<li> <a href="{{ .RelPermalink }}">{{ .Title }} </a> 
+{{- if .Parent.Title }} in <a href="{{ .Parent.RelPermalink }}">{{ .Parent.Title}}</a>{{- end }}</li>
+{{- end }}
+{{ end }}
+</ul>
