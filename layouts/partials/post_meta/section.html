@@ -1,2 +1,4 @@
-{{ $s := .Parent }}
-in <a class="meta__link" href="{{ $s.RelPermalink }}" rel="category">{{ $s.Title }}</a>
+{{- if .Parent.Name }}
+{{- $s := .Parent }}
+in <a class="meta__link" href="{{ $s.RelPermalink }}" rel="category">{{ $s.Title }}</a> 
+{{- end }}
