@@ -2,7 +2,8 @@
 {{ range .Site.Pages.ByTitle }}
 {{- if .Title }}
 <li> <a href="{{ .RelPermalink }}">{{ .Title }} </a> 
-{{- if .Parent.Title }} in <a href="{{ .Parent.RelPermalink }}">{{ .Parent.Title}}</a>{{- end }}</li>
-{{- end }}
+{{/* note stacked if because and doesn't short circuit */}}
+{{- if .Parent}}{{- if .Parent.Title }} in <a href="{{ .Parent.RelPermalink }}">{{ .Parent.Title}}</a>{{- end }}</li>
+{{- end }}{{- end}}
 {{ end }}
 </ul>
