@@ -117,13 +117,13 @@ onWindowOnload(function() {
         let content = page.content;
         let re = RegExp(searchString,"i");
         let index = content.search(re);
-        let context = "(inexact match)";
+        let context = "&nbsp;(inexact match)";
         if (index>=0) {
           let preindex = index>contextSize ? index-contextSize : 0;
           let endindex = index + searchString.length;
           let post = endindex + contextSize;
 
-          context = "&quot;" + content.slice(preindex,index);
+          context = "&nbsp;&quot;" + content.slice(preindex,index);
           context += '<span class="search__string">' + content.slice(index,endindex) + "</span>";
           context += content.slice(endindex,post) +"&quot;";
         } // index >=0
