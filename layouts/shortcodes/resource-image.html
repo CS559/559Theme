@@ -7,7 +7,9 @@
 {{- with .Page.Resources.GetMatch $name }}
     {{ $img := .Fit $size }}
     <figure class="{{ $class }}">
+        <a href="{{ .RelPermalink }}">
             <img src="{{ $img.RelPermalink }}" alt="{{ $alt }}" />
+        </a>
     </figure>
 {{- end}}
 
