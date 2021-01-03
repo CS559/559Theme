@@ -1,0 +1,15 @@
+{{/* for reasons I cannot figure out, this looks better than the mainroad
+     default */}}
+<div class="logo">
+    {{- $logofile := (.Site.Params.logo.image | default "/svg/crest.svg") -}}
+    {{- with $logofile -}}
+    {{- $logo := resources.Get . -}}
+    <a class="logo__link" href="{{ "" | relLangURL }}" rel="home">
+        <img class="logo__img" src="{{- $logo.RelPermalink -}}">
+    </a>
+    {{- end -}}
+    <a class="logo__link" href="{{ "" | relLangURL }}" title="{{ .Site.Title }}" rel="home">
+        <div class="logo__title">{{ .Site.Title }}</div>
+        {{ with .Site.Params.subtitle }}<div class="logo__tagline">{{ . }}</div>{{ end }}
+    </a>
+</div>

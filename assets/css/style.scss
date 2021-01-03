@@ -35,6 +35,7 @@ $content-size: 100% - $sidebar-size - $sidebar-gutter-size;
 {{- $fontFamilyPrimary := .Site.Params.style.vars.fontFamilyPrimary | default $fontSans -}}
 {{- $fontFamilySecondary := .Site.Params.style.vars.fontFamilySecondary | default $fontMono -}}
 
+// these rules don't seem to like following Hugo stuff
 *,
 *::before,
 *::after {
@@ -439,7 +440,7 @@ select {
 }
 
 .logo__text {
-	text-transform: uppercase;
+	// text-transform: uppercase;
 }
 
 .logo--mixed .logo__item {
