@@ -1,13 +1,26 @@
-/* I have utterly failed to get Hugo's SASS to work correctly with the use - even if I did
- * it wouldn't pre-process things */
-/* Gleicher's hacked version of style.css from Mainroad */
-/* prefer to use Hugo variable, not SASS so they can be controlled from config */
-/* but stick them in SASS variables */
-$highlightColor: {{- .Site.Params.highlightColor | default "#e22d30" -}};
+// sadly this has diverged enough from mainroad that it is hard to go back...
+//
+// mainroad prefers to use Hugo variables - I tend to prefer SASS variables, but mainly
+// since at one point I couldn't make Hugo vars work well
+// (and mainroad doesn't use SASS!)
+//
+// switch to Hugo variables in order to be more consistent with mainroad
+// it makes doing the compare easier
+//
+
+// use SASS variables for constants
+$uwred: "#c5050c";
+$mainroadred: "#e22d30";
+$midgray: "#646569";
+
+// $highlightColor: {{- .Site.Params.highlightColor | default "#e22d30" -}};
+{{- $highlightColor := .Site.Params.style.vars.highlightColor | default (.Site.Params.highlightColor | default "#e22d30") -}}
+
+// still using SASS for my own params
+$linkColor: {{- .Site.Params.linkColor | default "#c5050c" }};
+$widgetLinkColor: {{- .Site.Params.widgetLinkColor | default "black" }};
 $dimColor: {{- .Site.Params.dimColor | default "gray" }};
 $widgetBackground: {{-  .Site.Params.widgetBackground | default "#f7f7f7"}};
-$uwred: {{- "#c5050c" -}};
-$midgray: {{- "#646569" -}};
 
 /* Mainroad had these as fixed: 65.83%, 31.66% (2.5% unnused) */
 /* parameterize them */
@@ -15,6 +28,12 @@ $sidebar-size: 25%;
 $sidebar-gutter-size: 2.5%;     /** seems to be right margin */
 $content-size: 100% - $sidebar-size - $sidebar-gutter-size;
 
+
+// new in mainroad: parameterize fonts
+{{- $fontSans := `"Open Sans", Helvetica, Arial, sans-serif` -}}
+{{- $fontMono := `SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` -}}
+{{- $fontFamilyPrimary := .Site.Params.style.vars.fontFamilyPrimary | default $fontSans -}}
+{{- $fontFamilySecondary := .Site.Params.style.vars.fontFamilySecondary | default $fontMono -}}
 
 *,
 *::before,
@@ -61,7 +80,7 @@ html {
 
 body {
 	margin: 0;
-	font-family: "Open Sans", Helvetica, Arial, sans-serif;
+	font-family: {{ $fontFamilyPrimary }};
 	font-size: 14px;
 	font-size: .875rem;
 	line-height: 1.6;
@@ -92,6 +111,7 @@ body {
 	display: flex;
 }
 
+// MG - parameterize column widths
 .primary {
 	-webkit-flex: 1 0 $content-size;
 	flex: 1 0 $content-size;
@@ -100,6 +120,7 @@ body {
 	min-width: 0;
 }
 
+// MG - parameterize column widths
 .sidebar {
 	-webkit-flex: 1 0 $sidebar-size;
 	flex: 1 0 $sidebar-size;
@@ -152,7 +173,7 @@ textarea {
 
 .btn:hover {
 	color: #fff;
-	background:  $highlightColor ;
+	background: {{ $highlightColor }};
 }
 
 /* Animation */
@@ -205,13 +226,14 @@ h6 {
 	font-size: 1rem;
 }
 
+/** this historically was black - but I thought it might be nice to be more consistent */
 a {
-	color: #000;
+	color: $linkColor;
 	text-decoration: none;
 }
 
 a:hover {
-	color:  $highlightColor ;
+	color: {{ $highlightColor }};
 }
 
 hr {
@@ -272,7 +294,7 @@ pre,
 code,
 kbd,
 samp {
-	font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+	font-family: {{ $fontFamilySecondary }};
 	font-size: inherit;
 }
 
@@ -317,7 +339,7 @@ blockquote {
 	margin: 0 0 20px;
 	margin: 0 0 1.25rem;
 	line-height: 1.6;
-	border-left: 5px solid $highlightColor;
+	border-left: 5px solid {{ $highlightColor }};
 }
 
 blockquote p:last-child {
@@ -405,7 +427,32 @@ select {
 
 .logo__link {
 	display: inline-block;
-	/* text-transform: uppercase; // mg - only for title */
+}
+
+.logo__item {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.logo__img {
+	max-height: 256px;
+}
+
+.logo__text {
+	text-transform: uppercase;
+}
+
+.logo--mixed .logo__item {
+	margin: .5rem auto;
+}
+
+.logo--mixed .logo__img {
+	max-width: 128px;
+	max-height: 128px;
+}
+
+.logo--mixed .logo__text {
+	padding: 0 1rem;
 }
 
 .logo__title {
@@ -414,7 +461,6 @@ select {
 	font-weight: 700;
 	line-height: 1;
 	color: $uwred; 
-	// text-transform: uppercase; /* mg - only for title */
 }
 
 .logo__tagline {
@@ -432,7 +478,7 @@ select {
 .divider {
 	height: 5px;
 	margin: 0;
-	background: $highlightColor;
+	background: {{ $highlightColor }};
 	border: 0;
 }
 
@@ -469,7 +515,7 @@ select {
 }
 
 :focus > .menu__btn-title {
-	box-shadow: inset 0 0 1px 3px $highlightColor;
+	box-shadow: inset 0 0 1px 3px {{ $highlightColor }};
 }
 
 button:not(:-moz-focusring):focus > .menu__btn-title {
@@ -482,7 +528,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .js .menu__btn--active {
-	color: $highlightColor;
+	color: {{ $highlightColor }};
 }
 
 .menu__list {
@@ -491,7 +537,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item:hover {
-	background: $highlightColor;
+	background: {{ $highlightColor }};
 }
 
 .menu__item:first-child {
@@ -499,7 +545,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item--active {
-	background: $highlightColor;
+	background: {{ $highlightColor }};
 }
 
 .menu__link {
@@ -540,7 +586,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 @media screen and (min-width: 767px) {
 	.menu {
-		border-bottom: 5px solid $highlightColor;
+		border-bottom: 5px solid {{ $highlightColor }};
 	}
 
 	.menu__btn {
@@ -593,8 +639,9 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	color: $dimColor;
 }
 
+/** this is intentionally not linkColor, since it is just when it is lit up */
 .meta a:hover {
-	color: $highlightColor;
+	color: {{ $highlightColor }};
 }
 
 .meta__item {
@@ -648,14 +695,17 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .content a,
-.warning a {
+.warning a,
+.authorbox__description a {
 	font-weight: 700;
-	color:  $highlightColor ;
+	color:  $linkColor ;
 }
 
+/** use highlight color so there is some "lighting up" */
 .content a:hover,
-.warning a:hover {
-	color: $highlightColor ;
+.warning a:hover,
+.authorbox__description a:hover {
+	color: {{ $highlightColor }};
 	text-decoration: underline;
 }
 
@@ -736,8 +786,9 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	background: #2a2a2a;
 }
 
+/** highlight color is often too bright - make it the link color */
 .tags__item:hover {
-	background: $highlightColor ;
+	background: $linkColor ;
 }
 
 .tags__link,
@@ -752,7 +803,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	height: 32px;
 	padding: 8px;
 	margin-right: 6px;
-	background: $highlightColor ;
+	background: $linkColor ;
 	fill: #fff;
 }
 
@@ -807,10 +858,11 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	margin: 0;
 }
 
+/** make these look like normal links */
 .toc__menu a {
 	display: block;
 	padding: 5px 10px;
-	color: $highlightColor ;
+	color: $linkColor ;
 	border-bottom: 1px solid #ebebeb;
 }
 
@@ -858,6 +910,11 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	margin-bottom: .625rem;
 }
 
+.list__title {
+	font-size: 20px;
+	font-size: 1.25rem;
+}
+
 .list__meta {
 	margin-top: 5px;
 }
@@ -893,11 +950,12 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .pagination__item:hover,
 .pagination__item--current {
 	color: #fff;
-	background: $highlightColor ;
+	background: {{ $highlightColor }};
 }
 
-/* Post Navigation */
-.post-nav {
+// at some point, this changed from "post-nav" to "pager"
+/* Pager (prev/next links) navigation */
+.pager {
 	-webkit-justify-content: space-between;
 	justify-content: space-between;
 	padding-top: 25px;
@@ -906,7 +964,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	border-bottom: 1px solid #ebebeb;
 }
 
-.post-nav__caption {
+.pager__subtitle {
 	display: block;
 	margin-bottom: 5px;
 	font-weight: 700;
@@ -914,25 +972,25 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	text-transform: uppercase;
 }
 
-.post-nav__post-title {
+.pager__title {
 	margin-bottom: 0;
 	overflow: hidden;
 	font-size: 13px;
 	font-size: .8125rem;
 }
 
-.post-nav__item {
+.pager__item {
 	-webkit-flex: 1 1 50%;
 	flex: 1 1 50%;
 	max-width: 48%;
 }
 
-.post-nav__item--next {
+.pager__item--next {
 	margin-left: auto;
 	text-align: right;
 }
 
-.post-nav__link {
+.pager__link {
 	display: block;
 }
 
@@ -1015,7 +1073,7 @@ input[type=reset] {
 
 input[type=submit]:hover,
 input[type=reset]:hover {
-	background: $highlightColor ;
+	background: {{ $highlightColor }};
 }
 
 textarea {
@@ -1044,7 +1102,7 @@ textarea {
 	font-size: 16px;
 	font-size: 1rem;
 	text-transform: uppercase;
-	border-bottom: 3px solid $highlightColor ;
+	border-bottom: 3px solid {{ $highlightColor }};
 }
 
 .widget__item {
@@ -1055,6 +1113,11 @@ textarea {
 
 .widget__item:first-child {
 	padding-top: 0;
+}
+
+/** because the widgets are a different background, we might want a different color for them */
+.widget a {
+    color: $widgetLinkColor;
 }
 
 /* Search widget */
@@ -1123,7 +1186,7 @@ textarea {
 
 .widget-languages__link:hover .widget-languages__link-btn {
 	color: #fff;
-	background: $highlightColor ;
+	background: {{ $highlightColor }};
 }
 
 .widget-languages__link-btn {
@@ -1212,6 +1275,10 @@ textarea {
 		text-align: center;
 	}
 
+	.logo__link {
+		margin: 0 auto;
+	}
+
 	.logo__title {
 		font-size: 24px;
 		font-size: 1.5rem;
@@ -1245,16 +1312,16 @@ textarea {
 		margin: 0 0 20px;
 	}
 
-	.post-nav {
+	.pager {
 		display: block;
 	}
 
-	.post-nav__item {
+	.pager__item {
 		min-width: 100%;
 		text-align: center;
 	}
 
-	.post-nav__item--prev {
+	.pager__item--prev {
 		padding-bottom: 25px;
 	}
 

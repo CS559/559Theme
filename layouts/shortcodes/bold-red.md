@@ -1,0 +1,1 @@
+<span class="boldred">{{ .Inner }}</span>

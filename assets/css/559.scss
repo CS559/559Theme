@@ -240,4 +240,9 @@ table {
 	text-align: right;
 }
 
+/** make for nicer "emphatic" emphasis (bold-red) **/
+.boldred {
+    color: $highlightColor;
+    font-weight: bold;
+}
 
