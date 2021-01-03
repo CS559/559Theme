@@ -1,13 +1,13 @@
-/* prefer to use Hugo variable, not SASS so they can be controlled from config */
-/* but stick them in SASS variables */
+/* CS559 Theme - 559.scss */
+// prefer to use Hugo variable, not SASS so they can be controlled from config 
+// but stick them in SASS variables 
 $highlightColor: {{- .Site.Params.highlightColor | default "#e22d30" -}};
 $dimColor: {{- .Site.Params.dimColor | default "gray" }};
 $widgetBackground: {{-  .Site.Params.widgetBackground | default "#f7f7f7"}};
 $uwred: {{- "#c5050c" -}};
 $midgray: {{- "#646569" -}};
 
-/** modified version of BTN for better inline */
-/* Button */
+// modified version of BTN for better inline .Button
 .inlinebtn {
 	padding: 1px 5px 2px;
 	font-weight: 700;
@@ -125,7 +125,7 @@ ol p {
 	background: #2a2a2a;
 }
 
-/* the sidebar TOC - might be a little different than the real toc */
+// the sidebar TOC - might be a little different than the real toc
 .toc__sidebar ul {
 	margin: 0;
 	list-style: none;
@@ -151,10 +151,10 @@ ol p {
 	padding: 1px 5px;
 }
 
-/* let it light up - rather than underline, since the spacing is tighter
-	.toc__sidebar a:hover { text-decoration: underline; } */
+// let it light up - rather than underline, since the spacing is tighter
+//	.toc__sidebar a:hover { text-decoration: underline; } 
 
-/* stuff for expand (adapted from book) */
+// stuff for expand (adapted from book) 
 $padding-1: 1px;
 $padding-4: 0.25rem;
 $padding-8: 0.5rem;
@@ -163,8 +163,8 @@ $gray-100: #f8f9fa;
 $gray-200: #e9ecef;
 $border-radius: 0.15rem;
 
-/* for the "expanders" - originally, this was a hack, now I use the HTML built in stuff since
-   its cleaner */
+// for the "expanders" - originally, this was a hack, now I use the HTML built in stuff since
+// its cleaner
 .myexpand {
     margin-top: $padding-16;
     margin-bottom: $padding-16;
@@ -183,9 +183,8 @@ $border-radius: 0.15rem;
       }
 }
 
-/** this is from the book theme
- ** it was the "old way" to do an expander
- **/
+// this is from the book theme
+// it was the "old way" to do an expander
 .book-expand {
     margin-top: $padding-16;
     margin-bottom: $padding-16;
@@ -240,7 +239,7 @@ table {
 	text-align: right;
 }
 
-/** make for nicer "emphatic" emphasis (bold-red) **/
+// make for nicer "emphatic" emphasis (bold-red)
 .boldred {
     color: $highlightColor;
     font-weight: bold;

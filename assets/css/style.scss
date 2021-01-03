@@ -1,3 +1,6 @@
+/* CS559 Theme SCSS style.scss - diverged from mainroad's style.css
+*/
+{{/* 
 // sadly this has diverged enough from mainroad that it is hard to go back...
 //
 // mainroad prefers to use Hugo variables - I tend to prefer SASS variables, but mainly
@@ -7,6 +10,7 @@
 // switch to Hugo variables in order to be more consistent with mainroad
 // it makes doing the compare easier
 //
+*/}}
 
 // use SASS variables for constants
 $uwred: "#c5050c";
@@ -22,10 +26,10 @@ $widgetLinkColor: {{- .Site.Params.widgetLinkColor | default "black" }};
 $dimColor: {{- .Site.Params.dimColor | default "gray" }};
 $widgetBackground: {{-  .Site.Params.widgetBackground | default "#f7f7f7"}};
 
-/* Mainroad had these as fixed: 65.83%, 31.66% (2.5% unnused) */
-/* parameterize them */
+// Mainroad had these as fixed: 65.83%, 31.66% (2.5% unnused)
+// parameterize them 
 $sidebar-size: 25%;
-$sidebar-gutter-size: 2.5%;     /** seems to be right margin */
+$sidebar-gutter-size: 2.5%;     // seems to be right margin
 $content-size: 100% - $sidebar-size - $sidebar-gutter-size;
 
 
@@ -227,7 +231,7 @@ h6 {
 	font-size: 1rem;
 }
 
-/** this historically was black - but I thought it might be nice to be more consistent */
+// this historically was black - but I thought it might be nice to be more consistent
 a {
 	color: $linkColor;
 	text-decoration: none;
@@ -468,7 +472,7 @@ select {
 	display: inline-block;
 	padding-top: 10px;
 	margin-top: 10px;
-	font-size: 16px;		/* change to REM */
+	font-size: 16px;		// change to REM
 	font-size: 1rem;
 	font-weight: 700;
 	line-height: 1;
@@ -640,7 +644,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	color: $dimColor;
 }
 
-/** this is intentionally not linkColor, since it is just when it is lit up */
+// this is intentionally not linkColor, since it is just when it is lit up
 .meta a:hover {
 	color: {{ $highlightColor }};
 }
@@ -702,7 +706,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	color:  $linkColor ;
 }
 
-/** use highlight color so there is some "lighting up" */
+// use highlight color so there is some "lighting up"
 .content a:hover,
 .warning a:hover,
 .authorbox__description a:hover {
@@ -787,7 +791,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	background: #2a2a2a;
 }
 
-/** highlight color is often too bright - make it the link color */
+// highlight color is often too bright - make it the link color
 .tags__item:hover {
 	background: $linkColor ;
 }
@@ -859,7 +863,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	margin: 0;
 }
 
-/** make these look like normal links */
+// make these look like normal links 
 .toc__menu a {
 	display: block;
 	padding: 5px 10px;
@@ -1116,7 +1120,7 @@ textarea {
 	padding-top: 0;
 }
 
-/** because the widgets are a different background, we might want a different color for them */
+// because the widgets are a different background, we might want a different color for them 
 .widget a {
     color: $widgetLinkColor;
 }
