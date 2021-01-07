@@ -28,6 +28,7 @@ Changes (not exhaustive):
     - recents (useful thing from other blog-like themes)
     - toc (puts the toc in a widget - which can be a useful place for it)
     - important - makes a list of important pages (uses a site parameter "ImportantPages")
+    - thisweek - puts a "this week" page in the sidebar
 - change the footer credits (i18n/en)
 - SASS friendly CSS loading (baseof)
 - multiple built in CSS files (baseof)
