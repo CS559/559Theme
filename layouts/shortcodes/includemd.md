@@ -1,5 +1,5 @@
 {{/* This includes a markdown file (without frontmatter) inline
-   * DO NOT USE THIS FOR PAGES (it's only for things withough frontmatter)
+   * DO NOT USE THIS FOR PAGES (it's only for things without frontmatter)
    */}}
 {{/* simple version (absolute path) 
     {{- .Get 0 | readFile -}} 
