@@ -72,15 +72,23 @@ Changes (not exhaustive):
 - the header (logo.html) is different than mainroad - to get the spacing right (vertical alignment)
 - some colors and stylings are changed in styles.css - done since styles.css got converted to scss
 
-New Section Variables
+### New Section Variables
 
 - visual_summary - uses a format for talks/videos where everything has a place for a thumbnail and links to the various assets are shown
 
-New Page Variables
+### New Page Variables
 
 - resourcethumb - allows you to give a thumbnail that is a page resource/ this is resized (based on videosize)
 
-Known bugs / missing features:
+## Using Links
+
+The **link** short code makes a link to a page - looking the page up and getting its title. The (optional) second parameter is the *anchor* on the page. If you want to give a page title (rather than looking it up), it is better to just use the regular markdown notation.
+
+Link uses `.Site.GetPage` to find the page - so the string parameter is the "page name" the file name *should* work. But, often it will say that things are ambiguous if the path isn't in the same directory. It never hurts to give a full path "/foo/bar" (with the leading slash). This confuses me all the time. I have no idea why sometimes it works, and other times it does not.
+
+One thing to beware of (it drives me nuts): if a tag or category has the same name as a page, there can be the potential for name ambiguities. Beware.
+
+## Known bugs / missing features:
 - it might be better to make this separate / different from my home page, since they have different uses/needs
 - it would be nice to be able to swap out mainroad (for, say, a UW Theme based design)
 - pagination is set per page, but top_paginate is global
