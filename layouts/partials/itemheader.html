@@ -1,4 +1,4 @@
-{{/* Header information for a video or talk
+{{/* Header information for a video or talk or staff page
 
     This used to be two separate things, but it is unified - so a talk could have video, 
     or a video could have PDFs. 
@@ -9,10 +9,12 @@
     (since that might be drawn differently depending on context)
 
     It is a partial because it appears in both the summary, as well as
-    on the "single page" view of a video.
+    on the "single page" view of a video (or talk or staff).
 
     For things like extpdf - it can either be a complete URL, or a URL inside
     of site.assetStore
+
+    To keep things uniform, 
     */}}
 <div class="video__head">
     {{ with partial "post_meta.html" . -}}
@@ -34,6 +36,20 @@
     {{- end -}}
     {{- $site := .Site -}}  
     <p class="video__headlinks">
+        {{/* things for staff pages */}}
+        {{- with .Params.job -}}
+        <div class="staff__line"><b> {{.}} </b></div>
+        {{- end -}}
+        {{- with .Params.web -}}
+        <div class="staff__line"><b>Web page:</b> <a href="{{.}}">{{.}}</a></div>
+        {{- end -}}
+        {{- with .Params.hours -}}
+        <div class="staff__line"><b>Office Hours:</b> <a href="{{.}}">{{.}}</a></div>
+        {{- end -}}
+        {{- with .Params.schedule -}}
+        <div class="staff_line"><b>Request an appointment:</b> <a href="{{.}}">Scheduling Form</a>> </div>
+        {{- end -}}
+        {{/* things for videos and talks*/}}
         {{- with .Params.slideshare -}}
             <a href="{{ . }}"  class="inlinebtn">SlideShare</a>&nbsp;
         {{- end -}}
