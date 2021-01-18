@@ -17,7 +17,7 @@
 {{- $target := relref . $pagename -}}
 {{/** too messy to deal with the different cases - so split**/}}
 {{- with $anchorname -}}{{/* if there is an anchor */}}
-[{{- $pagetitle -}} &nbsp; ({{- $anchorname -}})]({{- $target -}}#{{- anchorize $anchorname -}})
+[{{- $pagetitle -}}&nbsp;({{- $anchorname -}})]({{- $target -}}#{{- anchorize $anchorname -}})
 {{- else -}}{{/* there is no anchor */}}
 [{{- $pagetitle -}}]({{- $target -}})
 {{- end -}}
