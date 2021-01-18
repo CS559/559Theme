@@ -44,10 +44,10 @@
         <div class="staff__line"><b>Web page:</b> <a href="{{.}}">{{.}}</a></div>
         {{- end -}}
         {{- with .Params.hours -}}
-        <div class="staff__line"><b>Office Hours:</b> <a href="{{.}}">{{.}}</a></div>
+        <div class="staff__line"><b>Office Hours:</b> {{.}}</div>
         {{- end -}}
         {{- with .Params.schedule -}}
-        <div class="staff_line"><b>Request an appointment:</b> <a href="{{.}}">Scheduling Form</a>> </div>
+        <div class="staff_line"><b>Request an appointment:</b> <a href="{{.}}">Scheduling Form</a> </div>
         {{- end -}}
         {{/* things for videos and talks*/}}
         {{- with .Params.slideshare -}}

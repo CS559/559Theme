@@ -12,15 +12,14 @@
                 {{- end }}
                 {{- partial "itemheader.html" . -}}
             </header>
-            {{/* videos do not get "thumbnails" (we always use the images), or toc */}}
             <div class="content post__content clearfix">
-                {{ .Content }}
-                {{ if .Params.youtube }}
-                    <!-- Youtube styling taken from Hugo template-->
-                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-                        <iframe src="https://www.youtube.com/embed/{{- .Params.youtube -}}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
-                    </div>
+                {{ with .Page.Resources.ByType "image" }}
+                    {{ range first 1 . }}
+                        {{- $thumb := .Fit "400x300"  -}}
+                            <img src="{{ $thumb.RelPermalink }}" alt="{{ .Title }}" />
+                    {{ end }}
                 {{ end }}
+                {{ .Content }}
             </div>
             {{- if .Params.tags }}
             <footer class="post__footer">
