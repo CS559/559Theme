@@ -4,12 +4,6 @@
 
      this is less helpful when you want to change the text of the link,
      but that case is well handled with just using raw Hugo
-
-    new:
-[{{- $pagetitle -}} &nbsp ({{- $anchorname -}})]({{- $target-}}#{{- anchorize $anchorname -}})
-
-     old page title:
-     {{- with .Site.GetPage $pagename -}}{{- .Title -}}{{end}}{{- with $anchorname -}} &nbsp; ( {{- $anchorname -}}){{- end -}}
      */ -}}
 {{- $pagename := .Get 0 -}}
 {{- $pagetitle := (.Site.GetPage $pagename).Title -}}
