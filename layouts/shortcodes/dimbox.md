@@ -1,3 +1,3 @@
 <div class="dimbox">
 {{ .Inner }}
-</div>
+</div>{{ "<!-- end dimbox -->" | safeHTML }}
