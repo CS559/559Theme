@@ -1,13 +1,19 @@
 {{- $page := . }}
 {{- $name := .Get "src" }}
-{{- if $name }}{{- else }}{{errorf "resource-image needs a src argument" }}{{- end}}
+{{- $highlight := .Get "highlight" }}
+{{- if $name }}{{- else }}{{errorf "resource-svg needs a src argument" }}{{- end}}
 {{- $alt := .Get "alt" | default $name }}
 {{- $class := .Get "class" | default "" }}
 {{- with .Page.Resources.GetMatch $name }}
+    {{- if $highlight -}}
+        {{ highlight .Content "svg" "linenos=inline" }}    {{- else -}}
      <figure class="{{ $class }}">
         <a href="{{ .RelPermalink }}">
             <img src="{{ .RelPermalink }}" alt="{{ $alt }}" />
         </a>
     </figure>
+    {{- end -}}
+{{- else -}}
+    {{  errorf "resource-svg couldn't open '%s':" $name -}}
 {{- end}}
 
