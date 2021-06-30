@@ -6,9 +6,27 @@ $dimColor: {{- .Site.Params.dimColor | default "gray" }};
 $widgetBackground: {{-  .Site.Params.widgetBackground | default "#f7f7f7"}};
 $uwred: {{- "#c5050c" -}};
 $midgray: {{- "#646569" -}};
+$linkColor: {{- .Site.Params.linkColor | default "#c5050c" }};
+$widgetLinkColor: {{- .Site.Params.widgetLinkColor | default "#006cae"}};
+
+
+{{ if eq $.Site.Params.font "Libre Baskerville"}}
+{{- $fontBody := $.Site.Params.font -}}
+{{end}}
+
+{{- $fontSans:= "Open Sans"}}
+{{- $fontBody := "Georgia" -}}
+{{- $fontBody := .Site.Params.font -}}
+
+{{- $fontDisplay := "Bellota Text" -}}
+{{- $fontDisplay := "Poppins" -}}
+
+{{- $fontMono := `SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` -}}
+{{- $fontFamilyPrimary := .Site.Params.style.vars.fontFamilyPrimary | default $fontBody -}}
+{{- $fontFamilySecondary := .Site.Params.style.vars.fontFamilySecondary | default $fontDisplay -}}
 
 .logo__title {
-	font-size: 40px;
+	font-size: 32px;
 	font-size: 2rem;
 	font-weight: 700;
 	line-height: 1;
@@ -144,7 +162,8 @@ ol p {
 	-ms-user-select: none;
 	-o-user-select: none;
 	user-select: none;
-	background: #2a2a2a;
+	font-family: {{ $fontFamilySecondary }};
+	background: $uwred;
 }
 
 // the sidebar TOC - might be a little different than the real toc
@@ -171,6 +190,7 @@ ol p {
 .toc__sidebar a {
 	display: block;
 	padding: 1px 5px;
+	color: $linkColor;
 }
 
 // let it light up - rather than underline, since the spacing is tighter
@@ -239,11 +259,25 @@ $border-radius: 0.15rem;
 
   /** from the 2008 class */
   .dimbox {
-	//background-color:#fff2f2;
-	border-bottom:5px solid $uwred;
+	background-color: $widgetLinkColor ;
+	//border-bottom:5px solid $uwred;
 	margin-bottom:40pt;
-	//padding:32pt;
-}
+	padding:32pt;
+	color: white;
+	}
+	
+	.dimbox h2 {
+		color: white;
+	}
+
+	.dimbox a {
+		color: white;
+		text-decoration: underline;
+	}
+
+	.dimbox a:hover {
+		color: $highlightColor;
+	}
 
 table {
 	pre {
