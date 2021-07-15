@@ -16,18 +16,29 @@
 $uwred: "#c5050c";
 $mainroadred: "#e22d30";
 //$midgray: "#646569";
-$midgray: "#4a4a4a";
 
 // $highlightColor: {{- .Site.Params.highlightColor | default "#e22d30" -}};
 {{- $highlightColor := .Site.Params.style.vars.highlightColor | default (.Site.Params.highlightColor | default "#e22d30") -}}
 {{- $uwred := .Site.Params.style.vars.uwred | default (.Site.Params.uwred | default "#c5050c") -}}
-{{- $midgray := .Site.Params.style.vars.midgray | default (.Site.Params.midgray | default "#333") -}}
+
+{{ $midgray := "#ffffff" }}
+{{ if eq .Site.Params.themestyle "old" }}
+{{ $midgray = "#646569" }}
+{{else}}
+{{ $midgray =  "#4a4a4a" }}
+{{ end }}
 
 
 // still using SASS for my own params
 $linkColor: {{- .Site.Params.linkColor | default "#c5050c" }};
-$widgetLinkColor: {{- .Site.Params.widgetLinkColor | default "#006cae"}};
-$midgray: {{- .Site.Params.widgetLinkColor | default "#4a4a4a"}};
+
+{{ $widgetLinkColor := "#ffffff" }}
+{{ if eq .Site.Params.themestyle "old" }}
+{{ $widgetLinkColor = "black" }}
+{{else}}
+{{ $widgetLinkColor =  "#006cae" }}
+{{ end }}
+//$midgray: {{- .Site.Params.widgetLinkColor | default "#4a4a4a"}};
 $dimColor: {{- .Site.Params.dimColor | default "gray" }};
 $widgetBackground: {{-  .Site.Params.widgetBackground | default "#f7f7f7"}};
 
@@ -40,11 +51,23 @@ $content-size: 100% - $sidebar-size - $sidebar-gutter-size;
 
 // new in mainroad: parameterize fonts
 //{{- $fontSans := `"Open Sans", Helvetica, Arial, sans-serif` -}}
-{{- $bodyFontSize := .Site.Params.style.vars.bodyFontSize -}}
 
-{{- $fontMono := `SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` -}}
-{{- $fontFamilyPrimary := .Site.Params.style.vars.fontFamilyPrimary | default "Times New Roman" -}}
-{{- $fontFamilySecondary := .Site.Params.style.vars.fontFamilySecondary | default "Open Sans" -}}
+{{ $fontSans := "Open Sans"}}
+{{ if eq .Site.Params.themestyle "old" }}
+{{- $fontSans = `"Open Sans", Helvetica, Arial, sans-serif` -}}
+{{ else }}
+{{ $fontSans = .Site.Params.style.vars.fontSans | default "Open Sans" }}
+{{end }}
+
+{{ $fontMono := .Site.Params.style.vars.fontMono | default "Georgia" }}
+{{ if eq .Site.Params.themestyle "old" }}
+{{- $fontMono = `SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` -}}
+{{ end }}
+
+{{- $bodyFontSize := .Site.Params.style.vars.bodyFontSize -}}
+{{- $fontFamilyPrimary :=  $fontMono -}}
+{{- $fontFamilySecondary := $fontSans -}}
+
 
 
 // these rules don't seem to like following Hugo stuff
@@ -93,15 +116,37 @@ html {
 
 body {
 	margin: 0;
-	font-family: {{ $fontFamilyPrimary }};
-	font-size: {{ $bodyFontSize }} !important;
-	//font-size: .875rem;
-	line-height: 1.6;
+
+	{{ $hFont := $fontFamilyPrimary }}
+{{ if eq .Site.Params.themestyle "old" }}
+{{ $hFont = $fontFamilySecondary }}
+{{ end }}
+
+	font-family: {{ $hFont }};
+
+	{{ $fontSize := $bodyFontSize }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $fontSize = ".875rem" }}
+	{{end}}
+	font-size: {{ $fontSize }};
+
+
+	{{ $lineHeight := 1.48 }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $lineHeight = 1.6 }}
+	{{end}}
+	
+	line-height: {{ $lineHeight }};
 	word-wrap: break-word;
 	background: #f7f7f7;
 	-webkit-font-smoothing: antialiased;
 //	color: $midgray;
-	color: #4a4a4a;
+
+	{{ $bodyColor := $midgray }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $bodyColor = "black" }}
+	{{ end }}
+	color: {{ $bodyColor }};
 }
 
 .container {
@@ -143,16 +188,13 @@ body {
 	-webkit-order: 2;
 	order: 2;
 	min-width: 0;
-//	margin: 0 0 0 2.5%;
-	margin-right: 7%;
-//	margin: 0 50 0 2.5%;
+	margin: 0 0 0 2.5%;
 }
 
 .sidebar--left {
 	-webkit-order: 0;
 	order: 0;
 	margin: 0 2.5% 0 0;
-	margin: 2% 5% 0 0;
 }
 
 .clearfix {
@@ -213,11 +255,21 @@ h6 {
 	font-weight: 700;
 	line-height: 1.3;
 	//color: #000;
-	color: {{ $uwred}};
-	//font-family: {{ $fontFamilySecondary }}
-	font-family: {{ $fontFamilySecondary }}, italic;
-	text-transform: uppercase;
-	font-variant: small-caps;
+
+	{{ $hColor := $uwred }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $hColor = "black" }}
+	{{end}}
+	color: {{ $hColor }};
+
+	font-family: {{ $fontFamilySecondary }};
+
+	{{ $hVariant := "small-caps" }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $hVariant = "normal" }}
+	{{ end }}
+
+	font-variant: {{ $hVariant }};
 	//font-family: 'Luckiest Guy', cursive;
 }
 
@@ -234,7 +286,6 @@ h2 {
 h3 {
 	font-size: 15px;
 	font-size: 1.25rem;
-	text-transform: uppercase;
 }
 
 h4 {
@@ -258,22 +309,9 @@ a {
 	//color: $widgetLinkColor;
 	text-decoration: none;
 }
-/*
-a.logo__link {
-	color: inherit;
-}*/
 
-.logo__title {
-	text-transform: uppercase;
-	color: $uwred;
-}
 
-.logo__tagline {
-	color: $midgray;
-	font-weight: 400;
-	font-family: {{ $fontFamilySecondary}};
-	font-size: 10;
-}
+
 
 
 a:hover {
@@ -463,12 +501,22 @@ select {
 /* Header */
 .header {
 	background: #fff;
-	padding-bottom: 50px;
+
+	{{ $paddingBottom := "50px" }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $paddingBottom = "0px" }}
+	{{ end }}
+	padding-bottom: {{ $paddingBottom }};
 	//padding-top: 30px;
 }
 
 .logo {
-	padding: 50px;
+	{{ $logoPadding := "50px" }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $logoPadding = "25px" }}
+	{{ end }}
+	padding: {{ $logoPadding }};
+
 }
 
 .logo__link {
@@ -500,10 +548,16 @@ select {
 }
 
 .logo__title {
-	text-transform: uppercase;
+
+	{{ $logoTransform := "uppercase" }}
+	{{ if eq .Site.Params.themestyle "old"}}
+	{{ $logoTransform = "normal" }}
+	{{ end }}
+	text-transform: {{ $logoTransform }};
+	color: $uwred;
+
 	font-size: 32;
 	font-size: 2rem;
-	color: $uwred;
 //	font-weight: bold;
 	line-height: 1;
 	padding-bottom: 0px;
@@ -511,10 +565,41 @@ select {
 	font-family: {{ $fontFamilySecondary}}
 }
 
+.logo__tagline {
+	{{ $taglineColor := $midgray }}
+	{{ if eq .Site.Params.themestyle "old"}}
+	{{ $taglineColor = $uwred }}
+	{{ end }}
+	color:  {{ $taglineColor }};
+
+	{{ $taglineWeight := 400 }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $taglineWeight = 700 }}
+	{{ end }}
+	font-weight: {{ $taglineWeight }};
+
+	font-family: {{ $fontFamilySecondary}};
+	font-size: 10;
+	{{ $topPadTagline := 0 }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $topPadTagline = "10px" }}
+	{{ end }}
+
+	padding-top: {{ $topPadTagline }};
+
+
+	{{ $topBorder := "0px"}}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $topBorder = "1px solid #ebebeb"}}
+	{{ end }}
+
+	border-top: {{ $topBorder }}
+}
+
 .logo__tagline a{
-	color: $midgray;
+	color:  {{ $midgray }};
 	display: inline-block;
-	padding-top: 0px;
+	//padding-top: 0px;
 	margin-top: 10px;
 	font-size: 16px;		// change to REM
 	font-size: 1rem;
@@ -576,56 +661,81 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	outline: 0;
 }
 
-.js .menu__btn--active {
-	//color: {{ $highlightColor }};
-	color: white;
-}
+
 
 .menu__list {
 	list-style: none;
-	background: {{ $uwred }};
+
+	{{ $menuListColor := $uwred }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $menuListColor = "#2a2a2a" }}
+	{{ end }}
+
+	background: {{ $menuListColor }};
+
 	//background: {{ $midgray }};
-	font-size: 15px;
-	padding-left: 80px;
+
+	{{ $menuFontSize := "15px" }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $menuListColor = ".875rem" }}
+	{{ end }}	
+	font-size: {{ $menuFontSize }};
+
+	{{ $paddingLeft := "80px"}}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $paddingLeft = 0 }}
+	{{ end }}
+	padding-left: {{ $paddingLeft }};
 	font-family: {{ $fontFamilySecondary }};
 	//padding-top: 10px;
 	//padding-bottom: 10px;
 
 }
 
-.menu__item {
-	padding: 5px 0px;
-}
-
 .menu__item:hover {
-	background: white;
-	color: $uwred;
+	{{ $hoverMenuItem := "white" }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $hoverMenuItem = $highlightColor }}
+	{{ end }}
+	background: {{ $hoverMenuItem }};
+
+	{{ $hoverTextColor := $uwred }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $hoverTextColor = "white" }}
+	{{ end }}
+	color: {{ $hoverTextColor }};
 }
 
-/*.menu__item:first-child {
+.menu__item:first-child {
 	border: 0;
-}*/
+}
 
-.active, .menu__item:hover {
-	background-color: white;
-	color: $uwred;
-  }
+.menu__item--active {
+	{{ $activeBackground :=  "#c5050c"}}
+	{{ if eq .Site.Params.themestyle "old"}}
+	{{ $activeBackground = "#e22d30"}}
+	{{ end }}
+	background-color: {{ $activeBackground }};
+	//background-color: {{ $hoverMenuItem }};
 
-/*.menu__item:active {
-	background: black;
-	color: $uwred;
-	//text-decoration-thickness: 10px;
-	//text-decoration-line: underline;
+	{{ $textDecor := "underline"}}
+	{{ if eq .Site.Params.themestyle "old"}}
+	{{ $textDecor = "none"}}
+	{{ end }}
+	text-decoration: {{ $textDecor }};
 
-}*/
+	color: {{ $hoverTextColor }} !important;
+}
 
-.menu__link--active {
-	color: $uwred;
+.js .menu__btn--active {
+	background-color: {{ $hoverMenuItem }};
+	color: {{ $hoverTextColor }};
 }
 
 .menu__link {
 	display: block;
-	padding: 25px 25px;
+
+	padding: 10px 25px;
 	padding: .625rem .9375rem;
 	font-weight: 700;
 	color: #fff;
@@ -633,7 +743,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__link:hover {
-	//color: $uwred;
+	color: {{ $hoverTextColor }};
 }
 
 .js .menu__list {
@@ -661,6 +771,11 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 @media screen and (min-width: 767px) {
 	.menu {
+		{{ $borderBottom := "0px" }}
+		{{ if eq .Site.Params.themestyle "old" }}
+		{{ $borderBottom = "5px solid #e22d30"}}
+		{{ end }}
+		border-bottom: {{ $borderBottom }};
 		//border-bottom: 5px solid {{ $highlightColor }};
 	//	border-bottom: 5px solid {{ $midgray }};
 
@@ -686,8 +801,17 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .main {
-	margin-left: 70px;
-	margin-right: 10%;
+	{{ $marginLeftMain := "70px"}}
+	{{ if eq .Site.Params.themestyle "old"}}
+	{{ $marginLeftMain = "0px"}}
+	{{ end }}
+	margin-left: {{ $marginLeftMain }};
+
+	{{ $marginRightMain := "10%"}}
+	{{ if eq .Site.Params.themestyle "old"}}
+	{{ $marginRightMain = "0px"}}
+	{{ end }}
+	margin-right: {{ $marginRightMain }};
 }
 /* Posts/Pages */
 .post__header,
@@ -780,7 +904,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .authorbox__description a {
 	font-weight: 700;
 	//color:  $linkColor ;
-	color: $widgetLinkColor;
+	color:  {{ $widgetLinkColor }};
 }
 
 // use highlight color so there is some "lighting up"
@@ -945,7 +1069,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .toc__menu a {
 	display: block;
 	padding: 5px 10px;
-	color: $widgetLinkColor ;
+	color: {{ $widgetLinkColor }};
 	border-bottom: 1px solid #ebebeb;
 }
 
@@ -1181,15 +1305,47 @@ textarea {
 	margin-bottom: 0;
 }
 
+.widget-archive.widget {
+
+	{{ $archiveBackground := "#ffdede" }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $archiveBackground = "#cbb" }}
+	{{ end }}
+	background: {{ $archiveBackground }};
+
+	{{ $archiveColor := $midgray }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $archiveColor = "black" }}
+	{{ end }}
+	color: {{ $archiveColor }};
+
+	{{ $archiveBorder := "5px solid #c5050c"}}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $archiveBorder = "0px"}}
+	{{ end }}
+	border-bottom: {{ $archiveBorder }};
+}
+
+.widget-archive.widget h3 {
+	color: {{ $archiveColor }};
+}
+
 .widget__title {
 	position: relative;
-	color: black;
-	font-weight: 400;
+	color: {{ $midgray }};
+
+	{{ $widgetTitleWeight := 400 }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $widgetTitleWeight = 700 }}
+	{{ end }}
+	font-weight: {{ $widgetTitleWeight }};
 	padding-bottom: 5px;
-	font-size: 16px;
+	//font-size: 16px;
 	font-size: 1rem;
 	text-transform: uppercase;
 	border-bottom: 3px solid {{ $highlightColor }};
+
+	color: {{ $archiveColor }}
 }
 
 .widget__item {
@@ -1204,18 +1360,10 @@ textarea {
 
 // because the widgets are a different background, we might want a different color for them 
 .widget a {
-    color: $widgetLinkColor;
+    color: {{ $widgetLinkColor }};
 }
 
-.widget-archive.widget {
-	background: #c5050c;
-	color: #f5f5f5;
-	border-bottom: 5px solid {{ $midgray }};
-}
 
-.widget-archive.widget h3 {
-	color: #f5f5f5;
-}
 
 /* Search widget */
 .widget-search__form {

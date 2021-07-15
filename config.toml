@@ -1,0 +1,4 @@
+[Params.style.vars]
+fontMono = "'Georgia', 'Georgia', 'Times New Roman'"
+bodyFontSize = "1.1rem"
+fontSans = "'Poppins', 'Open Sans', 'Helvetica', 'Arial', 'sans-serif'"

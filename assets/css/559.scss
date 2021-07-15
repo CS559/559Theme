@@ -6,6 +6,8 @@ $dimColor: {{- .Site.Params.dimColor | default "gray" }};
 $widgetBackground: {{-  .Site.Params.widgetBackground | default "#f7f7f7"}};
 $uwred: {{- "#c5050c" -}};
 $midgray: {{- "#646569" -}};
+$darkgray: {{- "#4a4a4a" -}};
+
 $linkColor: {{- .Site.Params.linkColor | default "#c5050c" }};
 $widgetLinkColor: {{- .Site.Params.widgetLinkColor | default "#006cae"}};
 
@@ -21,17 +23,23 @@ $widgetLinkColor: {{- .Site.Params.widgetLinkColor | default "#006cae"}};
 {{- $fontDisplay := "Bellota Text" -}}
 {{- $fontDisplay := "Poppins" -}}
 
-{{- $fontMono := `SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` -}}
-{{- $fontFamilyPrimary := .Site.Params.style.vars.fontFamilyPrimary | default $fontBody -}}
-{{- $fontFamilySecondary := .Site.Params.style.vars.fontFamilySecondary | default $fontDisplay -}}
+{{ $fontSans := "Open Sans"}}
+{{ if eq .Site.Params.themestyle "old" }}
+{{- $fontSans = `"Open Sans", Helvetica, Arial, sans-serif` -}}
+{{ else }}
+{{ $fontSans = .Site.Params.style.vars.fontSans | default "Open Sans" }}
+{{end }}
 
-.logo__title {
-	font-size: 32px;
-	font-size: 2rem;
-	font-weight: 700;
-	line-height: 1;
-	text-transform: uppercase;
-}
+{{ $fontMono := .Site.Params.style.vars.fontMono | default "Georgia" }}
+{{ if eq .Site.Params.themestyle "old" }}
+{{- $fontMono = `SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` -}}
+{{ end }}
+
+{{- $bodyFontSize := .Site.Params.style.vars.bodyFontSize -}}
+{{- $fontFamilyPrimary :=  $fontMono -}}
+{{- $fontFamilySecondary := $fontSans -}}
+
+
 
 // modified version of BTN for better inline .Button
 .inlinebtn {
@@ -77,10 +85,17 @@ ol p {
 /* Make the widgets have their own space */
 .widget {
 	background-color: $widgetBackground;
-	padding: 20px 30px;
-	border-bottom-style: solid;
-	border-bottom-color: $uwred;
-	border-bottom-width: 5px;
+	{{ $widgetPadding := "20px 30px"}}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $widgetPadding = "5px"}}
+	{{ end }}
+	padding: {{ $widgetPadding }};
+
+	{{ $borderWidget := " 5px solid #c5050c"}}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $borderWidget = "0px"}}
+	{{ end }}
+	border-bottom: {{ $borderWidget }};
 }
 
 /* the padding arond the widgets looks terrible for search */
@@ -112,24 +127,48 @@ ol p {
 .widget__title {
 	padding-bottom: 0px;
 	margin: 0 0 .5rem;
-	font-size: 14px;
-	text-decoration: none;
-	border-bottom: none;
+
+
+	{{ $widgetTitleBorder := "none" }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $widgetTitleBorder = "3px solid #e22d30"}}
+	{{ end }}
+	border-bottom: {{ $widgetTitleBorder }};
 }
 
 /* links come from MD - no easy way to style individually */
 .widget__list li {
 	display: block;
-	padding: 3px 0;
+
+	{{ $widgetListPadding := "3px 0"}}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $widgetListPadding = "5px 0"}}
+	{{ end }}
+	padding: {{ $widgetListPadding}};
 	font-weight: 300;
-	border-bottom: 1px dotted #ebebeb;
-	font-size: 14px;
-	font-family: "Poppins";
+
+	{{ $widgetListBorder := "0px"}}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $widgetListBorder = "1px dotted #ebebeb"}}
+	{{ end }}
+	border-bottom: {{ $widgetListBorder }};
+
+	{{ $widgetListFontSize := "14px"}}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $widgetListFontSize = "inherit" }}
+	{{ end }}
+	font-size: {{$widgetListFontSize}};
+
+	font-family: {{ $fontFamilySecondary }};
 }
 
 .widget__list li :hover {
 	//color: #77b6d4;
-	text-decoration: underline;
+	{{ $widgetListTextDecor := "underline"}}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $widgetListTextDecor = "normal" }}
+	{{ end }}
+	text-decoration: {{ $widgetListTextDecor }};
 }
 
 /* make the logo appear correctly */
@@ -163,7 +202,12 @@ ol p {
 	-o-user-select: none;
 	user-select: none;
 	font-family: {{ $fontFamilySecondary }};
-	background: $uwred;
+	
+	{{ $tocBackground := "#c5050c" }}
+	{{ if eq .Site.Params.themestyle "old" }}
+	{{ $tocBackground = "#2a2a2a" }}
+	{{ end }}
+	background: {{ $tocBackground }};
 }
 
 // the sidebar TOC - might be a little different than the real toc
@@ -259,19 +303,44 @@ $border-radius: 0.15rem;
 
   /** from the 2008 class */
   .dimbox {
-	background-color: $widgetLinkColor ;
-	//border-bottom:5px solid $uwred;
-	margin-bottom:40pt;
-	padding:32pt;
-	color: white;
+	  {{ $dimboxBackground := "#dee7ff" }}
+	  {{ if eq .Site.Params.themestyle "old"}}
+	  {{ $dimboxBackground = "#ffd"}}
+	  {{ end }}
+	background: {{ $dimboxBackground }};
+
+	{{ $dimBorder := "0px"}}
+	{{ if eq .Site.Params.themestyle "old"}}
+	{{ $dimBorder = "1px solid #bbd" }}
+	{{ end }}
+
+	border: {{ $dimBorder }};
+
+	{{ $dimMargin := "0pt 0pt 40pt"}}
+	{{ if eq .Site.Params.themestyle "old"}}
+	{{ $dimMargin = "10pt"}}
+	{{ end }}
+	margin: {{ $dimMargin }};
+
+	{{ $dimPadding := "32pt"}}
+	{{ if eq .Site.Params.themestyle "old"}}
+	{{ $dimPadding = "6pt"}}
+	{{ end }}
+	padding: {{ $dimPadding}};
+
+	{{ $dimColor := "#4a4a4a" }}
+	{{ if eq .Site.Params.themestyle "old"}}
+	{{ $dimColor = "black" }}
+	{{ end }}
+	color: {{ $dimColor }};
 	}
 	
 	.dimbox h2 {
-		color: white;
+		color: {{ $dimColor}};
 	}
 
 	.dimbox a {
-		color: white;
+		color: $uwred;
 		text-decoration: underline;
 	}
 
