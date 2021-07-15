@@ -1,4 +1,4 @@
-{{- /* Mike's first attempt to make a Hugo Template
+{{- /*Mike's first attempt to make a Hugo Template
      * the first param is the page
      * the second param (optional) is the anchor
 
@@ -9,9 +9,9 @@
 {{- $pagetitle := (.Site.GetPage $pagename).Title -}}
 {{- $anchorname := .Get 1 -}}
 {{- $target := relref . $pagename -}}
-{{/** too messy to deal with the different cases - so split**/}}
-{{- with $anchorname -}}{{/* if there is an anchor */}}
+{{/**too messy to deal with the different cases - so split**/}}
+{{- with $anchorname -}}{{/*if there is an anchor*/}}
 [{{- $pagetitle -}}&nbsp;({{- $anchorname -}})]({{- $target -}}#{{- anchorize $anchorname -}})
-{{- else -}}{{/* there is no anchor */}}
+{{- else -}}{{- /*there is no anchor*/ -}}
 [{{- $pagetitle -}}]({{- $target -}})
 {{- end -}}
