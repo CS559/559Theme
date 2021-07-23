@@ -88,9 +88,12 @@ Link uses `.Site.GetPage` to find the page - so the string parameter is the "pag
 
 One thing to beware of (it drives me nuts): if a tag or category has the same name as a page, there can be the potential for name ambiguities. Beware.
 
+## New UW Theme Based Design
+- change between old and new by using themestyle = "new" or "old" in config.toml
+- update miscellaneous parameters to the website such as color, headers, backgrounds, using config.toml in the 559Theme directory
+
 ## Known bugs / missing features:
 - it might be better to make this separate / different from my home page, since they have different uses/needs
-- it would be nice to be able to swap out mainroad (for, say, a UW Theme based design)
 - pagination is set per page, but top_paginate is global
 - I don't know why the section thing works now (the way mainroad does it does not seem different)
 - make an integrated css (using sass)
