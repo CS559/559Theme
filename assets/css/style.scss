@@ -21,23 +21,15 @@ $mainroadred: "#e22d30";
 {{- $highlightColor := .Site.Params.style.vars.highlightColor | default (.Site.Params.highlightColor | default "#e22d30") -}}
 {{- $uwred := .Site.Params.style.vars.uwred | default (.Site.Params.uwred | default "#c5050c") -}}
 
-{{ $midgray := "#ffffff" }}
-{{ if eq .Site.Params.themestyle "old" }}
-{{ $midgray = "#646569" }}
-{{else}}
-{{ $midgray =  "#4a4a4a" }}
-{{ end }}
+
+{{ $midgray := (cond (eq .Site.Params.themestyle "old") "#646569" "#4a4a4a") }}
 
 
 // still using SASS for my own params
 $linkColor: {{- .Site.Params.linkColor | default "#c5050c" }};
 
-{{ $widgetLinkColor := "#ffffff" }}
-{{ if eq .Site.Params.themestyle "old" }}
-{{ $widgetLinkColor = "black" }}
-{{else}}
-{{ $widgetLinkColor =  "#006cae" }}
-{{ end }}
+{{ $widgetLinkColor := (cond (eq .Site.Params.themestyle "old") "#black" "#006cae") }}
+
 //$midgray: {{- .Site.Params.widgetLinkColor | default "#4a4a4a"}};
 $dimColor: {{- .Site.Params.dimColor | default "gray" }};
 $widgetBackground: {{-  .Site.Params.widgetBackground | default "#f7f7f7"}};
@@ -117,24 +109,18 @@ html {
 body {
 	margin: 0;
 
-	{{ $hFont := $fontFamilyPrimary }}
-{{ if eq .Site.Params.themestyle "old" }}
-{{ $hFont = $fontFamilySecondary }}
-{{ end }}
-
+{{ $hFont := (cond (eq .Site.Params.themestyle "old") $fontFamilySecondary $fontFamilyPrimary) }}
 	font-family: {{ $hFont }};
 
-	{{ $fontSize := $bodyFontSize }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $fontSize = ".875rem" }}
-	{{end}}
+
+
+	{{ $fontSize := (cond (eq .Site.Params.themestyle "old") ".875rem" $bodyFontSize) }}
 	font-size: {{ $fontSize }};
 
 
-	{{ $lineHeight := 1.48 }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $lineHeight = 1.6 }}
-	{{end}}
+
+	{{ $lineHeight := (cond (eq .Site.Params.themestyle "old") 1.6 1.48) }}
+
 	
 	line-height: {{ $lineHeight }};
 	word-wrap: break-word;
@@ -142,10 +128,9 @@ body {
 	-webkit-font-smoothing: antialiased;
 //	color: $midgray;
 
-	{{ $bodyColor := $midgray }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $bodyColor = "black" }}
-	{{ end }}
+
+	{{ $bodyColor := (cond (eq .Site.Params.themestyle "old") "black" $midgray) }}
+
 	color: {{ $bodyColor }};
 }
 
@@ -256,18 +241,16 @@ h6 {
 	line-height: 1.3;
 	//color: #000;
 
-	{{ $hColor := $uwred }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $hColor = "black" }}
-	{{end}}
+	{{ $hColor := (cond (eq .Site.Params.themestyle "old") "black" (.Site.Params.style.vars.headerColor | default $uwred))  }}
+
+
 	color: {{ $hColor }};
 
 	font-family: {{ $fontFamilySecondary }};
 
-	{{ $hVariant := "small-caps" }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $hVariant = "normal" }}
-	{{ end }}
+	{{ $hVariant := (cond (eq .Site.Params.themestyle "old") "normal" "small-caps") }}
+
+
 
 	font-variant: {{ $hVariant }};
 	//font-family: 'Luckiest Guy', cursive;
@@ -502,19 +485,16 @@ select {
 .header {
 	background: #fff;
 
-	{{ $paddingBottom := "50px" }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $paddingBottom = "0px" }}
-	{{ end }}
+	{{ $paddingBottom := (cond (eq .Site.Params.themestyle "old") "0px" "50px") }}
+
 	padding-bottom: {{ $paddingBottom }};
 	//padding-top: 30px;
 }
 
 .logo {
-	{{ $logoPadding := "50px" }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $logoPadding = "25px" }}
-	{{ end }}
+
+	{{ $logoPadding := (cond (eq .Site.Params.themestyle "old") "25px" "50px") }}
+
 	padding: {{ $logoPadding }};
 
 }
@@ -549,11 +529,10 @@ select {
 
 .logo__title {
 
-	{{ $logoTransform := "uppercase" }}
-	{{ if eq .Site.Params.themestyle "old"}}
-	{{ $logoTransform = "normal" }}
-	{{ end }}
+	{{ $logoTransform := (cond (eq .Site.Params.themestyle "old") "normal" "uppercase") }}
+
 	text-transform: {{ $logoTransform }};
+	
 	color: $uwred;
 
 	font-size: 32;
@@ -566,32 +545,26 @@ select {
 }
 
 .logo__tagline {
-	{{ $taglineColor := $midgray }}
-	{{ if eq .Site.Params.themestyle "old"}}
-	{{ $taglineColor = $uwred }}
-	{{ end }}
+
+	{{ $taglineColor := (cond (eq .Site.Params.themestyle "old") $uwred $midgray) }}
+
 	color:  {{ $taglineColor }};
 
-	{{ $taglineWeight := 400 }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $taglineWeight = 700 }}
-	{{ end }}
+	{{ $taglineWeight := (cond (eq .Site.Params.themestyle "old") 700 400) }}
+
 	font-weight: {{ $taglineWeight }};
 
 	font-family: {{ $fontFamilySecondary}};
 	font-size: 10;
-	{{ $topPadTagline := 0 }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $topPadTagline = "10px" }}
-	{{ end }}
+
+	{{ $topPadTagline := (cond (eq .Site.Params.themestyle "old") "10px" 0) }}
+
 
 	padding-top: {{ $topPadTagline }};
 
 
-	{{ $topBorder := "0px"}}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $topBorder = "1px solid #ebebeb"}}
-	{{ end }}
+	{{ $topBorder := (cond (eq .Site.Params.themestyle "old") "1px solid #ebebeb" "0px") }}
+
 
 	border-top: {{ $topBorder }}
 }
@@ -666,25 +639,19 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .menu__list {
 	list-style: none;
 
-	{{ $menuListColor := $uwred }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $menuListColor = "#2a2a2a" }}
-	{{ end }}
+
+	{{ $menuListColor := (cond (eq .Site.Params.themestyle "old") "#2a2a2a" $uwred) }}
 
 	background: {{ $menuListColor }};
 
 	//background: {{ $midgray }};
 
-	{{ $menuFontSize := "15px" }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $menuListColor = ".875rem" }}
-	{{ end }}	
+	{{ $menuFontSize := (cond (eq .Site.Params.themestyle "old") ".875rem" "15px") }}
+
 	font-size: {{ $menuFontSize }};
 
-	{{ $paddingLeft := "80px"}}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $paddingLeft = 0 }}
-	{{ end }}
+	{{ $paddingLeft := (cond (eq .Site.Params.themestyle "old") 0 "80px") }}
+
 	padding-left: {{ $paddingLeft }};
 	font-family: {{ $fontFamilySecondary }};
 	//padding-top: 10px;
@@ -693,16 +660,13 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item:hover {
-	{{ $hoverMenuItem := "white" }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $hoverMenuItem = $highlightColor }}
-	{{ end }}
+
+	{{ $hoverMenuItem := (cond (eq .Site.Params.themestyle "old") $highlightColor "white") }}
+
 	background: {{ $hoverMenuItem }};
 
-	{{ $hoverTextColor := $uwred }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $hoverTextColor = "white" }}
-	{{ end }}
+	{{ $hoverTextColor := (cond (eq .Site.Params.themestyle "old") "white" $uwred) }}
+
 	color: {{ $hoverTextColor }};
 }
 
@@ -711,17 +675,12 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item--active {
-	{{ $activeBackground :=  "#c5050c"}}
-	{{ if eq .Site.Params.themestyle "old"}}
-	{{ $activeBackground = "#e22d30"}}
-	{{ end }}
+	{{ $activeBackground := (cond (eq .Site.Params.themestyle "old") "#e22d30" "#c5050c") }}
 	background-color: {{ $activeBackground }};
 	//background-color: {{ $hoverMenuItem }};
 
-	{{ $textDecor := "underline"}}
-	{{ if eq .Site.Params.themestyle "old"}}
-	{{ $textDecor = "none"}}
-	{{ end }}
+	{{ $textDecor := (cond (eq .Site.Params.themestyle "old") "none" "underline") }}
+
 	text-decoration: {{ $textDecor }};
 
 	color: {{ $hoverTextColor }} !important;
@@ -771,13 +730,10 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 @media screen and (min-width: 767px) {
 	.menu {
-		{{ $borderBottom := "0px" }}
-		{{ if eq .Site.Params.themestyle "old" }}
-		{{ $borderBottom = "5px solid #e22d30"}}
-		{{ end }}
+
+		{{ $borderBottom := (cond (eq .Site.Params.themestyle "old") "5px solid #e22d30" "0px") }}
+
 		border-bottom: {{ $borderBottom }};
-		//border-bottom: 5px solid {{ $highlightColor }};
-	//	border-bottom: 5px solid {{ $midgray }};
 
 	}
 
@@ -801,23 +757,19 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .main {
-	{{ $marginLeftMain := "70px"}}
-	{{ if eq .Site.Params.themestyle "old"}}
-	{{ $marginLeftMain = "0px"}}
-	{{ end }}
+
+	{{ $marginLeftMain := (cond (eq .Site.Params.themestyle "old") "0px" "70px") }}
+
 	margin-left: {{ $marginLeftMain }};
 
-	{{ $marginRightMain := "10%"}}
-	{{ if eq .Site.Params.themestyle "old"}}
-	{{ $marginRightMain = "0px"}}
-	{{ end }}
+	{{ $marginRightMain := (cond (eq .Site.Params.themestyle "old") "0px" "10%") }}
+
 	margin-right: {{ $marginRightMain }};
 }
 /* Posts/Pages */
 .post__header,
 .main__header {
 	margin-bottom: 20px;
-	//margin-bottom: 50px;
 	margin-bottom: 1.25rem;
 }
 
@@ -827,9 +779,6 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .main__content {
-	//margin-bottom: 20px;
-	//margin-right: 10%;
-	//margin-left: 70px;
 	margin-bottom: 1.25rem;
 }
 
@@ -1109,8 +1058,6 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	padding-bottom: 1.25rem;
 	margin-bottom: 20px;
 	margin-bottom: 1.25rem;
-	//margin-left: 70px;
-	//margin-right: 10%;
 	border-bottom: 1px solid #ebebeb;
 }
 
@@ -1307,22 +1254,13 @@ textarea {
 
 .widget-archive.widget {
 
-	{{ $archiveBackground := "#ffdede" }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $archiveBackground = "#cbb" }}
-	{{ end }}
+	{{ $archiveBackground := (cond (eq .Site.Params.themestyle "old") "#cbb" "ffdede") }}
 	background: {{ $archiveBackground }};
 
-	{{ $archiveColor := $midgray }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $archiveColor = "black" }}
-	{{ end }}
+	{{ $archiveColor := (cond (eq .Site.Params.themestyle "old") "black" $midgray) }}
 	color: {{ $archiveColor }};
 
-	{{ $archiveBorder := "5px solid #c5050c"}}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $archiveBorder = "0px"}}
-	{{ end }}
+	{{ $archiveBorder := (cond (eq .Site.Params.themestyle "old") "0px" "5px solid #c5050c") }}
 	border-bottom: {{ $archiveBorder }};
 }
 
@@ -1334,13 +1272,10 @@ textarea {
 	position: relative;
 	color: {{ $midgray }};
 
-	{{ $widgetTitleWeight := 400 }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $widgetTitleWeight = 700 }}
-	{{ end }}
+	{{ $widgetTitleWeight := (cond (eq .Site.Params.themestyle "old") 700 400) }}
 	font-weight: {{ $widgetTitleWeight }};
+
 	padding-bottom: 5px;
-	//font-size: 16px;
 	font-size: 1rem;
 	text-transform: uppercase;
 	border-bottom: 3px solid {{ $highlightColor }};

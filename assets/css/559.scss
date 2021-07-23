@@ -30,6 +30,7 @@ $widgetLinkColor: {{- .Site.Params.widgetLinkColor | default "#006cae"}};
 {{ $fontSans = .Site.Params.style.vars.fontSans | default "Open Sans" }}
 {{end }}
 
+
 {{ $fontMono := .Site.Params.style.vars.fontMono | default "Georgia" }}
 {{ if eq .Site.Params.themestyle "old" }}
 {{- $fontMono = `SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` -}}
@@ -85,16 +86,11 @@ ol p {
 /* Make the widgets have their own space */
 .widget {
 	background-color: $widgetBackground;
-	{{ $widgetPadding := "20px 30px"}}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $widgetPadding = "5px"}}
-	{{ end }}
+
+	{{ $widgetPadding := (cond (eq .Site.Params.themestyle "old") "5px" "20px 30px") }}
 	padding: {{ $widgetPadding }};
 
-	{{ $borderWidget := " 5px solid #c5050c"}}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $borderWidget = "0px"}}
-	{{ end }}
+	{{ $borderWidget := (cond (eq .Site.Params.themestyle "old") "0px" "5px solid #c5050c") }}
 	border-bottom: {{ $borderWidget }};
 }
 
@@ -129,10 +125,8 @@ ol p {
 	margin: 0 0 .5rem;
 
 
-	{{ $widgetTitleBorder := "none" }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $widgetTitleBorder = "3px solid #e22d30"}}
-	{{ end }}
+	{{ $widgetTitleBorder := (cond (eq .Site.Params.themestyle "old") "3px solid #e22d30" "none") }}
+
 	border-bottom: {{ $widgetTitleBorder }};
 }
 
@@ -140,34 +134,24 @@ ol p {
 .widget__list li {
 	display: block;
 
-	{{ $widgetListPadding := "3px 0"}}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $widgetListPadding = "5px 0"}}
-	{{ end }}
+	{{ $widgetListPadding := (cond (eq .Site.Params.themestyle "old") "5px 0" "3px 0") }}
 	padding: {{ $widgetListPadding}};
+
 	font-weight: 300;
 
-	{{ $widgetListBorder := "0px"}}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $widgetListBorder = "1px dotted #ebebeb"}}
-	{{ end }}
+	{{ $widgetListBorder := (cond (eq .Site.Params.themestyle "old") "1px dotted #ebebeb" "0px") }}
 	border-bottom: {{ $widgetListBorder }};
 
-	{{ $widgetListFontSize := "14px"}}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $widgetListFontSize = "inherit" }}
-	{{ end }}
+	{{ $widgetListFontSize := (cond (eq .Site.Params.themestyle "old") "inherit" "14px") }}
+
 	font-size: {{$widgetListFontSize}};
 
 	font-family: {{ $fontFamilySecondary }};
 }
 
 .widget__list li :hover {
-	//color: #77b6d4;
-	{{ $widgetListTextDecor := "underline"}}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $widgetListTextDecor = "normal" }}
-	{{ end }}
+
+	{{ $widgetListTextDecor := (cond (eq .Site.Params.themestyle "old") "normal" "underline") }}
 	text-decoration: {{ $widgetListTextDecor }};
 }
 
@@ -202,11 +186,8 @@ ol p {
 	-o-user-select: none;
 	user-select: none;
 	font-family: {{ $fontFamilySecondary }};
-	
-	{{ $tocBackground := "#c5050c" }}
-	{{ if eq .Site.Params.themestyle "old" }}
-	{{ $tocBackground = "#2a2a2a" }}
-	{{ end }}
+
+	{{ $tocBackground := (cond (eq .Site.Params.themestyle "old") "#2a2a2a" "#c5050c") }}
 	background: {{ $tocBackground }};
 }
 
@@ -303,35 +284,23 @@ $border-radius: 0.15rem;
 
   /** from the 2008 class */
   .dimbox {
-	  {{ $dimboxBackground := "#dee7ff" }}
-	  {{ if eq .Site.Params.themestyle "old"}}
-	  {{ $dimboxBackground = "#ffd"}}
-	  {{ end }}
+	{{ $dimboxBackground := (cond (eq .Site.Params.themestyle "old") "#ffd" "#dee7ff") }}
+
+	//{{ $dimboxBackground := (cond (eq .Site.Params.themestyle "old") (.Site.Params.style.dimboxBackground | default "#ffd") "#dee7ff") }}
+	{{ $dimboxBackground := (cond (eq .Site.Params.themestyle "old") "#ffd" (.Site.Params.style.vars.dimboxBackground | default "#dee7ff"))  }}
+
 	background: {{ $dimboxBackground }};
 
-	{{ $dimBorder := "0px"}}
-	{{ if eq .Site.Params.themestyle "old"}}
-	{{ $dimBorder = "1px solid #bbd" }}
-	{{ end }}
-
+	{{ $dimBorder := (cond (eq .Site.Params.themestyle "old") "1px solid #bbd" "0px") }}
 	border: {{ $dimBorder }};
 
-	{{ $dimMargin := "0pt 0pt 40pt"}}
-	{{ if eq .Site.Params.themestyle "old"}}
-	{{ $dimMargin = "10pt"}}
-	{{ end }}
+	{{ $dimMargin := (cond (eq .Site.Params.themestyle "old") "10pt" "0pt 0pt 40pt") }}
 	margin: {{ $dimMargin }};
 
-	{{ $dimPadding := "32pt"}}
-	{{ if eq .Site.Params.themestyle "old"}}
-	{{ $dimPadding = "6pt"}}
-	{{ end }}
+	{{ $dimPadding := (cond (eq .Site.Params.themestyle "old") "6pt" "32pt") }}
 	padding: {{ $dimPadding}};
 
-	{{ $dimColor := "#4a4a4a" }}
-	{{ if eq .Site.Params.themestyle "old"}}
-	{{ $dimColor = "black" }}
-	{{ end }}
+	{{ $dimColor := (cond (eq .Site.Params.themestyle "old") "black" "#4a4a4a") }}
 	color: {{ $dimColor }};
 	}
 	
