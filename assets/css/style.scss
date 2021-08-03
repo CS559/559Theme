@@ -530,10 +530,10 @@ select {
 .logo__title {
 
 	{{ $logoTransform := (cond (eq .Site.Params.themestyle "old") "normal" "uppercase") }}
-
 	text-transform: {{ $logoTransform }};
 	
-	color: $uwred;
+	{{ $logoColor := (cond (eq .Site.Params.themestyle "old") $uwred (.Site.Params.style.vars.logoColor | default $uwred))  }}
+	color: {{ $logoColor }};
 
 	font-size: 32;
 	font-size: 2rem;
@@ -546,8 +546,8 @@ select {
 
 .logo__tagline {
 
-	{{ $taglineColor := (cond (eq .Site.Params.themestyle "old") $uwred $midgray) }}
-
+	//{{ $taglineColor := (cond (eq .Site.Params.themestyle "old") $uwred $midgray) }}
+	{{ $taglineColor := (cond (eq .Site.Params.themestyle "old") $uwred (.Site.Params.style.vars.taglineColor | default $midgray))  }}
 	color:  {{ $taglineColor }};
 
 	{{ $taglineWeight := (cond (eq .Site.Params.themestyle "old") 700 400) }}
@@ -639,9 +639,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .menu__list {
 	list-style: none;
 
-
-	{{ $menuListColor := (cond (eq .Site.Params.themestyle "old") "#2a2a2a" $uwred) }}
-
+	{{ $menuListColor := (cond (eq .Site.Params.themestyle "old") "#2a2a2a" (.Site.Params.style.vars.menuListColor | default $uwred))  }}
 	background: {{ $menuListColor }};
 
 	//background: {{ $midgray }};
@@ -660,14 +658,20 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item:hover {
+	{{ $hoverColor := ( cond (eq .Site.Params.style.vars.hoverMenuUnderline "true") "white" (.Site.Params.style.vars.menuListColor | default $uwred))}}
+	{{ $hoverBackgroundColor := ( cond (eq .Site.Params.style.vars.hoverMenuUnderline "true") (.Site.Params.style.vars.menuListColor | default $uwred) "white" )}}
+	{{ $hoverTextDecor := ( cond (eq .Site.Params.style.vars.hoverMenuUnderline "true") "underline" "normal" )}}
 
-	{{ $hoverMenuItem := (cond (eq .Site.Params.themestyle "old") $highlightColor "white") }}
+
+	{{ $hoverMenuItem := (cond (eq .Site.Params.themestyle "old") $highlightColor $hoverBackgroundColor) }}
+
+	{{ $hoverTextColor := (cond (eq .Site.Params.themestyle "old") "white" (.Site.Params.style.vars.menuListColor | default $uwred))  }}
+	{{ $hoverTextColor := (cond (eq .Site.Params.themestyle "old") "white" $hoverColor)  }}
+
 
 	background: {{ $hoverMenuItem }};
-
-	{{ $hoverTextColor := (cond (eq .Site.Params.themestyle "old") "white" $uwred) }}
-
 	color: {{ $hoverTextColor }};
+	text-decoration: {{ $hoverTextDecor }};
 }
 
 .menu__item:first-child {
@@ -675,9 +679,8 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item--active {
-	{{ $activeBackground := (cond (eq .Site.Params.themestyle "old") "#e22d30" "#c5050c") }}
+	{{ $activeBackground := (cond (eq .Site.Params.themestyle "old") "#322d30" (.Site.Params.style.vars.menuListColor | default $uwred))  }}
 	background-color: {{ $activeBackground }};
-	//background-color: {{ $hoverMenuItem }};
 
 	{{ $textDecor := (cond (eq .Site.Params.themestyle "old") "none" "underline") }}
 
@@ -685,6 +688,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 	color: {{ $hoverTextColor }} !important;
 }
+
 
 .js .menu__btn--active {
 	background-color: {{ $hoverMenuItem }};
