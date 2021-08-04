@@ -555,7 +555,9 @@ select {
 	font-weight: {{ $taglineWeight }};
 
 	font-family: {{ $fontFamilySecondary}};
-	font-size: 10;
+	{{ $taglineFontSize := (cond (eq .Site.Params.themestyle "old") "1rem" "10") }}
+
+	font-size: {{ $taglineFontSize}};
 
 	{{ $topPadTagline := (cond (eq .Site.Params.themestyle "old") "10px" 0) }}
 
@@ -1116,7 +1118,9 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 .list__title {
 	font-size: 20px;
-	font-size: 1.25rem;
+	{{ $listFontSize := (cond (eq .Site.Params.themestyle "old") "1.25rem" "1.5rem") }}
+
+	font-size: {{ $listFontSize }};
 }
 
 .list__meta {
@@ -1343,7 +1347,9 @@ textarea {
 
 // because the widgets are a different background, we might want a different color for them 
 .widget a {
-    color: {{ $widgetLinkColor }};
+	{{ $sidebarLinkColor := (cond (eq .Site.Params.themestyle "old") "black" $widgetLinkColor) }}
+
+    color: {{ $sidebarLinkColor }};
 }
 
 
