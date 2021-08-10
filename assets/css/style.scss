@@ -1040,15 +1040,19 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 .toc__menu ul {
 	margin: 0;
+	//padding-left: 25px;
 	list-style: none;
 }
 
-.toc__menu ul ul ul a {
+.toc__menu ul ul li a {
 	padding-left: 25px;
-	color: $linkColor;
+	//color: $linkColor;
+	{{ $tocSubheadingColor := (cond (eq .Site.Params.themestyle "old") "#c5050c" (.Site.Params.style.vars.tocSubheadingColor | default $widgetLinkColor))  }}
+	color: {{ $tocSubheadingColor }};
+
 }
 
-.toc__menu ul ul ul ul a {
+.toc__menu ul ul li li a {
 	padding-left: 45px;
 }
 
