@@ -137,7 +137,9 @@ body {
 .container {
 	position: relative;
 	width: 100%;
-	max-width: 1080px;
+	{{ $containerWidth := (cond (eq .Site.Params.themestyle "old") "1080px" (.Site.Params.style.vars.containerWidth | default "1500px"))  }}
+	max-width: {{ $containerWidth }};
+
 	margin: 0 auto;
 }
 
@@ -491,7 +493,7 @@ select {
 .header {
 	background: #fff;
 
-	{{ $paddingBottom := (cond (eq .Site.Params.themestyle "old") "0px" "50px") }}
+	{{ $paddingBottom := (cond (eq .Site.Params.themestyle "old") "0px" "20px") }}
 
 	padding-bottom: {{ $paddingBottom }};
 	//padding-top: 30px;
@@ -814,11 +816,11 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 .main {
 
-	{{ $marginLeftMain := (cond (eq .Site.Params.themestyle "old") "0px" "70px") }}
+	{{ $marginLeftMain := (cond (eq .Site.Params.themestyle "old") "0px" "5%") }}
 
 	margin-left: {{ $marginLeftMain }};
 
-	{{ $marginRightMain := (cond (eq .Site.Params.themestyle "old") "0px" "10%") }}
+	{{ $marginRightMain := (cond (eq .Site.Params.themestyle "old") "0px" "5%") }}
 
 	margin-right: {{ $marginRightMain }};
 }
@@ -1367,8 +1369,12 @@ textarea {
 // because the widgets are a different background, we might want a different color for them 
 .widget a {
 	{{ $sidebarLinkColor := (cond (eq .Site.Params.themestyle "old") "black" $widgetLinkColor) }}
-
     color: {{ $sidebarLinkColor }};
+}
+
+.widget a:hover {
+	{{ $sidebarLinkUnderline := (cond (eq .Site.Params.style.vars "old") (.Site.Params.style.vars.old.sidebarLinkUnderline | default "normal") "normal") }}
+	text-decoration: underline;
 }
 
 

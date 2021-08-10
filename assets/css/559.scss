@@ -310,11 +310,11 @@ $border-radius: 0.15rem;
 
 	.dimbox a {
 		color: $uwred;
-		text-decoration: underline;
 	}
 
 	.dimbox a:hover {
 		color: $highlightColor;
+		text-decoration: underline;
 	}
 
 table {

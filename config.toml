@@ -8,3 +8,6 @@ logoColor = "#c5050c"
 menuListColor = "#c5050c"
 taglineColor = "#4a4a4a"
 hoverMenuUnderline = "yes"
+
+[Params.style.vars.old]
+sidebarLinkUnderline = "underline"
