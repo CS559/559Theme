@@ -242,12 +242,9 @@ h6 {
 	//color: #000;
 
 	{{ $hColor := (cond (eq .Site.Params.themestyle "old") "black" (.Site.Params.style.vars.headerColor | default $uwred))  }}
-
-
 	color: {{ $hColor }};
 
 	font-family: {{ $fontFamilySecondary }};
-
 	{{ $hVariant := (cond (eq .Site.Params.themestyle "old") "normal" "small-caps") }}
 
 
@@ -365,8 +362,14 @@ samp {
 
 pre,
 code {
-	background-color: #f5f5f5;
-	border: 1px solid #ebebeb;
+	{{ $codeBackground := (cond (eq .Site.Params.themestyle "old") "#f5f5f5" (.Site.Params.style.vars.codeBackground | default "#f7f7f7"))  }}
+	background-color: {{ $codeBackground }};
+
+	{{ $codeBorder := (cond (eq .Site.Params.themestyle "old") "1px solid #ebebeb" (.Site.Params.style.vars.codeBorder | default "none"))  }}
+	border: {{ $codeBorder }};
+
+
+
 }
 
 code {
@@ -381,15 +384,18 @@ pre {
 	margin-bottom: 20px;
 	margin-bottom: 1.25rem;
 	overflow: auto;
-	color: #000;
+	{{ $codeColor := (cond (eq .Site.Params.themestyle "old") "inherit" (.Site.Params.style.vars.codeColor | default $uwred))  }}
+	color: {{ $codeColor }};
 }
 
 pre code {
 	padding: 0;
 	color: inherit;
 	white-space: inherit;
-	background: inherit;
+	{{ $codeBackground := (cond (eq .Site.Params.themestyle "old") "inherit" (.Site.Params.style.vars.codeBackground | default "#f7f7f7"))  }}
+	background: {{ $codeBackground }};
 	border: 0;
+	font-family: "Courier New";
 }
 
 kbd {
@@ -1085,19 +1091,28 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	padding: 25px 0;
 	margin-bottom: 25px;
 	line-height: 1.5;
-	border-top: 1px solid #ebebeb;
-	border-bottom: 1px solid #ebebeb;
+	{{ $authorboxBorder := (cond (eq .Site.Params.themestyle "old") "1px solid #ebebeb" (.Site.Params.style.vars.authorboxBorder | default "5px solid #c5050c"))  }}
+
+	border-top: {{ $authorboxBorder }};
+	border-bottom: {{ $authorboxBorder }};
 }
 
 .authorbox__avatar {
 	float: left;
 	padding: 3px;
 	margin: 0 25px 0 0;
+	
 	border: 1px solid #ebebeb;
+}
+
+.authorbox__description {
+	padding-left: 130px;
+
 }
 
 .authorbox__header {
 	margin-bottom: 10px;
+	padding-left: 130px;
 }
 
 .authorbox__name {
