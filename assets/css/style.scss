@@ -674,13 +674,8 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item:hover {
-	{{ $hoverColor := ( cond (eq .Site.Params.style.vars.hoverMenuUnderline "yes") "white" (.Site.Params.style.vars.menuListColor | default $uwred))}}
-	{{ $hoverBackgroundColor := ( cond (eq .Site.Params.style.vars.hoverMenuUnderline "yes") (.Site.Params.style.vars.menuListColor | default $uwred) "white" )}}
-	{{ $hoverTextDecor := ( cond (eq .Site.Params.style.vars.hoverMenuUnderline "yes") "underline" "underline" )}}
-
-
 	{{ $hoverMenuItem := (cond (eq .Site.Params.themestyle "old") $highlightColor $uwred) }}
-	{{ $hoverTextColor := (cond (eq .Site.Params.themestyle "old") "white" (.Site.Params.style.vars.menuListColor | default "white"))  }}
+	{{ $hoverTextColor := (cond (eq .Site.Params.themestyle "old") "white" (.Site.Params.style.vars.hoverTextColor | default "white"))  }}
 	{{ $hoverTextDecor := ( cond (eq .Site.Params.themestyle "old") "normal" "underline" )}}
 
 
