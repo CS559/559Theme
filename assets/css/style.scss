@@ -741,7 +741,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	position: absolute;
 	max-width: 15rem;
 	transition: all 0.5s ease;
-	{{ $submenuBorderTop := (cond (eq .Site.Params.themestyle "old") $highlightColor (.Site.Params.style.vars.submenuBorderTop | default "white"))  }}
+	{{ $submenuBorderTop := (cond (eq .Site.Params.themestyle "old") $highlightColor (.Site.Params.style.vars.submenuBorderTop | default $uwred))  }}
 	border-top: 5px solid {{ $submenuBorderTop }};
 	display: none;
   }
