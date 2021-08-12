@@ -1369,7 +1369,7 @@ textarea {
 
 .widget a:hover {
 	{{ $sidebarLinkUnderline := (cond (eq .Site.Params.style.vars "old") (.Site.Params.style.vars.old.sidebarLinkUnderline | default "normal") "normal") }}
-	text-decoration: underline;
+	text-decoration: {{ $sidebarLinkUnderline }};
 }
 
 
