@@ -341,12 +341,27 @@ mark {
 figure {
 	margin: 0 0 20px;
 	margin: 0 0 1.25rem;
+    display: flex;
+    flex-flow: column;
+    padding: 5px;
+    max-width: 284;
+}
+
+figure img {
+	object-fit: contain;
+	width: auto;
+	height: auto;
 }
 
 figcaption {
 	margin-top: 4px;
 	margin-top: .25rem;
 	color: $dimColor;
+    font: italic smaller sans-serif;
+    padding: 3px;
+    text-align: center;
+	{{ $figColor := (cond (eq .Site.Params.themestyle "old") "gray" (.Site.Params.style.vars.figColor | default $midgray))  }}
+	color: {{ $figColor }};
 }
 
 figcaption h4 {
