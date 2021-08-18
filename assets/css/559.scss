@@ -46,15 +46,24 @@ $widgetLinkColor: {{- .Site.Params.widgetLinkColor | default "#006cae"}};
 .inlinebtn {
 	padding: 1px 5px 2px;
 	font-weight: 700;
-	color: #fff;
+
+	{{ $inlineBtnColor := (cond (eq .Site.Params.themestyle "old") "#fff" (.Site.Params.style.vars.inlineBtnColor | default "#006cae"))  }}
+	color: {{ $inlineBtnColor }};
+
 	white-space: pre-line;
-    background: darkred;
+
+	{{ $inlineBtnBack := (cond (eq .Site.Params.themestyle "old") "darkred" (.Site.Params.style.vars.inlineBtnBack | default "#fff"))  }}
+    background: {{ $inlineBtnBack }};
+	
     white-space: nowrap;
 }
 
 .inlinebtn:hover {
-	color: #fff;
-	background: black;
+	{{ $inlineBtnColorHover := (cond (eq .Site.Params.themestyle "old") "#fff" (.Site.Params.style.vars.inlineBtnColorHover | default "#4a4a4a" ))  }}
+	color: {{ $inlineBtnColorHover }};
+
+	{{ $inlineBtnBackHover := (cond (eq .Site.Params.themestyle "old") "black" (.Site.Params.style.vars.inlineBtnBackHover | default "#fff"))  }}
+	background: {{ $inlineBtnBackHover }};
 }
 
 /* Animation */

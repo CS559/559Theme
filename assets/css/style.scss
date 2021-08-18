@@ -1182,14 +1182,20 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	display: inline-block;
 	padding: 10px 15px;
 	font-weight: 700;
-	color: #000;
-	background: #f5f5f5;
+
+	{{ $nextBtnColor := (cond (eq .Site.Params.themestyle "old") "#000" (.Site.Params.style.vars.nextBtnColor | default $widgetLinkColor))  }}
+	color: {{ $nextBtnColor }};
+	{{ $nextBtnBack := (cond (eq .Site.Params.themestyle "old") "#f5f5f5" (.Site.Params.style.vars.nextBtnBack | default "#fff"))  }}
+	background: {{ $nextBtnBack }};
 }
 
 .pagination__item:hover,
 .pagination__item--current {
-	color: #fff;
-	background: {{ $highlightColor }};
+	{{ $paginItemColor := (cond (eq .Site.Params.themestyle "old") "#fff" (.Site.Params.style.vars.paginItemColor | default $midgray))  }}
+	color: {{ $paginItemColor }};
+
+	{{ $paginItemBack := (cond (eq .Site.Params.themestyle "old") "#e22d30" (.Site.Params.style.vars.paginItemBack | default "transparent"))  }}
+	background: {{ $paginItemBack }};
 }
 
 // at some point, this changed from "post-nav" to "pager"
