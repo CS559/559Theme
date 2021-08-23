@@ -91,6 +91,31 @@ One thing to beware of (it drives me nuts): if a tag or category has the same na
 ## New UW Theme Based Design
 - change between old and new by using themestyle = "new" or "old" in config.toml
 - update miscellaneous parameters to the website such as color, headers, backgrounds, using config.toml in the 559Theme directory
+- config.toml theme parameters:
+    - highlightColor: color that lights up on hovers and other miscellaneous places on website
+    - uwred: basic dark red color for UW
+    - fontSans: sans font used in secondaryFontFamily, used in headings and sidebar
+    - fontMono: font used in primaryFontFamily, used for body text
+    - bodyFontSize: size of body text
+    - containerWidth: width of container for website
+    - headerColor: color for headers
+    - figColor: color of figure caption text
+    - codeBackground: color of background on code
+    - codeBorder: style of border around code
+    - codeColor: text color for pre
+    - logoColor: color of logo text
+    - taglineColor: color of tagline text
+    - menuListColor: background color of menu and submenu
+    - hoverTextColor: color of menu text upon hover
+    - submenuBorderTop: color for border on top of submenu
+    - tocSubheadingColor: color for table of contents subheading
+    - authorboxBorder: styling for authorbox border
+    - nextBtnColor: text color for next pagination button
+    - nextBtnBack: background color for next pagination button
+    - paginItemColor: text color for pagination items
+    - paginItemBack: background color for pagination items
+    - sidebarLinkUnderline: toggle between having underline when hovering on sidebar items for the "old" style
+  
 
 ## Known bugs / missing features:
 - it might be better to make this separate / different from my home page, since they have different uses/needs
