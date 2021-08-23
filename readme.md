@@ -129,6 +129,7 @@ One thing to beware of (it drives me nuts): if a tag or category has the same na
 - lunr search doesn't check page titles (which would be really useful) - although the code seems to say that it does
 - this is still heavily dependent on mainroad - it would be nice to remove that dependence
 - paginator could use better icons
+- menu active tabs seems to not completely work
 
 ## startup process
 
