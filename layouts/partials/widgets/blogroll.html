@@ -1,0 +1,8 @@
+<div class="widget-links widget">
+    <h4 class="widget__title">Blogroll</h4>
+    <div class="widget__content widget__list">
+      {{ with .Site.GetPage "widgetlinks" }}
+      {{ .Content }}
+      {{ end }}
+    </div>
+  </div>
