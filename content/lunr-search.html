@@ -69,7 +69,7 @@ onWindowOnload(function() {
   addText(message,"  ... Loading index data");
 
   // this page is only used for search, so it's OK to take time to load the index
-  fetch('{{< ref "/" "json" >}}').then(function (res) {
+  fetch('{{< relref "/" "json" >}}').then(function (res) {
     return res.json();
   }).then(function (data) {
     // message.innerText = null;
