@@ -70,7 +70,10 @@ onWindowOnload(function() {
 
   // this page is only used for search, so it's OK to take time to load the index
   // problem: how to not hard code in the root (when everything is relative)
-  fetch('{{< relref "/" "json" >}}').then(function (res) {
+  // this was {{< ref "/" "json" >}} - but I'm not even sure why that worked
+  // here, I have hard coded things - which means we assume that "lunr-search" is
+  // a top level directory
+  fetch("../index.json").then(function (res) {
     return res.json();
   }).then(function (data) {
     // message.innerText = null;
