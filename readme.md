@@ -26,7 +26,7 @@ Changes (not exhaustive):
   - links (puts a link list page - must be content/widgetlinks - be sure to create **widgetlinks**)
   - allpages (makes a list of all pages in a site - not sure how to scope it correctly, probably not that valuable)
   - archive (puts a message that this is an archived class - be sure to set Site.Params.Archive and Site.Params.Archivenote)
-  - recents (useful thing from other blog-like themes)
+  - recents (useful thing from other blog-like themes) - mainroad has this built in, but we use a separate list of sections to pull from
   - toc (puts the toc in a widget - which can be a useful place for it)
   - important - makes a list of important pages (uses a site parameter "ImportantPages")
   - thisweek - puts a "this week" page in the sidebar
