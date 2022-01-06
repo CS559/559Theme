@@ -2,13 +2,15 @@
 
 A theme created by Michael Gleicher to make a class web page. Over time, it evolved to also do my home page, so there is a lot of stuff specific to that.
 
-This builds on the "MainRoad" theme - it needs to be "mixed in" to that theme.in the config.toml file, have the line
+This builds on the "MainRoad" theme - it needs to be "mixed in" to that theme.in the config.toml file, have the line.
+
+Note: usually, we will also have a "semester theme" that has information common between the workbook and the semester class. For spring 22, this is "sp22".
 
 ~~~toml
-theme = ["559Theme","mainroad"]
+theme = ["spxx","559Theme","mainroad"]
 ~~~
 
-and make sure that both mainroad and 559Theme are in the themes directory
+and make sure that spxx, mainroad and 559Theme are in the themes directory
 
 - New variables for tuning:
   - noheader - set to true on a page to skip the header (default/baseof.html) - this was meant to allow the home page to look different
@@ -59,7 +61,7 @@ Changes (not exhaustive):
   - resource-image.md (put a page resource image into markdown)
   - resource-link.md (makes a link to a page resource)
   - resource-svg (puts an SVG file in place - allows for showing the code)
-  - snippet.md (include a markdown snippet from assets/snippets.md)
+  - snippet.md (include a markdown snippet from assets/snippets/*.md)
   - static (generates a link to a static object)
   - tableofcontents (does the regular table of contents, inline)
   - teasehtml
