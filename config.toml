@@ -6,8 +6,9 @@ dimboxBackground = "#dee7ff"
 headerColor = "#c5050c"
 logoColor = "#c5050c"
 menuListColor = "#c5050c"
+hoverTextColor = "white"
 taglineColor = "#4a4a4a"
-hoverMenuUnderline = "yes"
+hoverMenuUnderline = "no"
 
 [Params.style.vars.old]
 sidebarLinkUnderline = "underline"

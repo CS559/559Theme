@@ -8,12 +8,12 @@
 {{- $global := resources.GetMatch $name}}
 {{- $img := $local | default $global -}}
 {{- with $img }}
-    {{ $img := .Fit $size }}
-    <figure class="{{ $class }}">
-        <a href="{{ .RelPermalink }}">
-            <img src="{{ $img.RelPermalink }}" alt="{{ $alt }}" />
-        </a>
-    </figure>
+{{ $img := .Fit $size }}
+<figure class="{{ $class }}">
+    <a href="{{ .RelPermalink }}">
+        <img src="{{ $img.RelPermalink }}" alt="{{ $alt }}" />
+    </a>
+</figure>
 {{- else}}
     {{  errorf "resource-image couldn't open '%s':" $name -}}
 {{- end}}

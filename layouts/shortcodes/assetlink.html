@@ -1,2 +1,5 @@
-{{- $asset := (resources.Get (.Get 0))  -}}
-{{- $asset.RelPermalink -}}
+{{- with (resources.Get (.Get 0))  -}}
+    {{- .RelPermalink -}}
+{{- else -}}
+    {{- errorf "Can't find global resource" (.Get 0) -}}
+{{- end -}}

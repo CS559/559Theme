@@ -341,12 +341,27 @@ mark {
 figure {
 	margin: 0 0 20px;
 	margin: 0 0 1.25rem;
+    display: flex;
+    flex-flow: column;
+    padding: 5px;
+    max-width: 284;
+}
+
+figure img {
+	object-fit: contain;
+	width: auto;
+	height: auto;
 }
 
 figcaption {
 	margin-top: 4px;
 	margin-top: .25rem;
 	color: $dimColor;
+    font: italic smaller sans-serif;
+    padding: 3px;
+    text-align: center;
+	{{ $figColor := (cond (eq .Site.Params.themestyle "old") "gray" (.Site.Params.style.vars.figColor | default $midgray))  }}
+	color: {{ $figColor }};
 }
 
 figcaption h4 {
@@ -674,13 +689,8 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item:hover {
-	{{ $hoverColor := ( cond (eq .Site.Params.style.vars.hoverMenuUnderline "yes") "white" (.Site.Params.style.vars.menuListColor | default $uwred))}}
-	{{ $hoverBackgroundColor := ( cond (eq .Site.Params.style.vars.hoverMenuUnderline "yes") (.Site.Params.style.vars.menuListColor | default $uwred) "white" )}}
-	{{ $hoverTextDecor := ( cond (eq .Site.Params.style.vars.hoverMenuUnderline "yes") "underline" "underline" )}}
-
-
 	{{ $hoverMenuItem := (cond (eq .Site.Params.themestyle "old") $highlightColor $uwred) }}
-	{{ $hoverTextColor := (cond (eq .Site.Params.themestyle "old") "white" (.Site.Params.style.vars.menuListColor | default "white"))  }}
+	{{ $hoverTextColor := (cond (eq .Site.Params.themestyle "old") "white" (.Site.Params.style.vars.hoverTextColor | default "white"))  }}
 	{{ $hoverTextDecor := ( cond (eq .Site.Params.themestyle "old") "normal" "underline" )}}
 
 
@@ -841,8 +851,8 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .meta {
-	font-size: 13px;
-	font-size: .8125rem;
+	font-size: 14px;
+	font-family: {{ $fontFamilySecondary }};
 	vertical-align: baseline;
 }
 
@@ -885,6 +895,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	margin-top: .625rem;
 	border-top: 1px dotted #ebebeb;
 	border-bottom: 1px dotted #ebebeb;
+	
 }
 
 .post__lead {
@@ -1146,6 +1157,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 .list__meta {
 	margin-top: 5px;
+	
 }
 
 .list__thumbnail {
@@ -1172,14 +1184,20 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	display: inline-block;
 	padding: 10px 15px;
 	font-weight: 700;
-	color: #000;
-	background: #f5f5f5;
+
+	{{ $nextBtnColor := (cond (eq .Site.Params.themestyle "old") "#000" (.Site.Params.style.vars.nextBtnColor | default $widgetLinkColor))  }}
+	color: {{ $nextBtnColor }};
+	{{ $nextBtnBack := (cond (eq .Site.Params.themestyle "old") "#f5f5f5" (.Site.Params.style.vars.nextBtnBack | default "#fff"))  }}
+	background: {{ $nextBtnBack }};
 }
 
 .pagination__item:hover,
 .pagination__item--current {
-	color: #fff;
-	background: {{ $highlightColor }};
+	{{ $paginItemColor := (cond (eq .Site.Params.themestyle "old") "#fff" (.Site.Params.style.vars.paginItemColor | default $midgray))  }}
+	color: {{ $paginItemColor }};
+
+	{{ $paginItemBack := (cond (eq .Site.Params.themestyle "old") "#e22d30" (.Site.Params.style.vars.paginItemBack | default "transparent"))  }}
+	background: {{ $paginItemBack }};
 }
 
 // at some point, this changed from "post-nav" to "pager"
@@ -1374,7 +1392,7 @@ textarea {
 
 .widget a:hover {
 	{{ $sidebarLinkUnderline := (cond (eq .Site.Params.style.vars "old") (.Site.Params.style.vars.old.sidebarLinkUnderline | default "normal") "normal") }}
-	text-decoration: underline;
+	text-decoration: {{ $sidebarLinkUnderline }};
 }
 
 
@@ -1401,12 +1419,13 @@ textarea {
 	width: 90%;
 	padding: 8px;
 	margin: 0 auto;
-	font-size: 11px;
+	font-size: 14px;
 	cursor: pointer;
 	background: #fff;
 	border: 1px solid #ebebeb;
 	border-radius: 0;
 	outline-offset: -2px;
+	font-family: {{ $fontFamilySecondary }};
 	transition: none;
 	-webkit-appearance: none;
 }
