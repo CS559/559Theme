@@ -1,0 +1,4 @@
+{{- $utitle := .Get 0 -}}
+{{- with .Page.Next -}}
+<a href="{{ .RelPermalink }}" class="Prev__Page">{{ with $utitle }}{{ . }}{{else}}Prev: {{ .Title | default (.File.BaseFileName ) }} {{end}}</a>
+{{- end -}}

@@ -1,0 +1,7 @@
+{{- $utitle := .Get 0 -}}
+{{- with .Page.Prev -}}
+<a href="{{ .RelPermalink }}" class="Next__Page">{{ with $utitle }}{{ . }}{{else}}Next: {{ .Title | default (.File.BaseFileName ) }} {{end}}</a>
+{{- else -}}
+<span style="color:red;"><b>ERROR: Next Link with No Next Page</b></span>
+{{ errorf "next with no next page "}}
+{{- end -}}
