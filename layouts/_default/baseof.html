@@ -41,6 +41,10 @@
 	{{- if not .Site.IsServer }}
 		{{ template "_internal/google_analytics_async.html" . }}
 	{{- end }}
+    {{/* a new redirect feature */}}
+    {{- if isset .Page.Params "redirect" -}}
+    <meta http-equiv="refresh" content="6; URL={{- .Page.Params.redirect -}}" />
+    {{- end -}}
 </head>
 <body class="body">
 	<div class="container container--outer">
@@ -51,6 +55,14 @@
 		{{- end -}}
 		<div class="wrapper flex">
 			<div class="primary">
+                {{- if isset .Page.Params "redirect" -}}
+                <div class="dimbox"><h3>
+                    A newer version of this page is available at:
+                    <a href="{{- .Page.Params.redirect }}">{{- .Page.Params.redirect }}</a>
+                </h3>
+                <p>You will be redirected there in a few seconds...</p>
+                </div>
+                {{- end }}
 			{{ block "main" . }}
 				{{ with .Content }}
 				<div class="content main__content clearfix">

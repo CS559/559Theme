@@ -87,6 +87,7 @@ Changes (not exhaustive):
 
 ### New Page Variables
 
+- redirect - give a URL that directs to a newer version of the page (for next year) - useful for tutorials and things where pages are updated and we want to go to the newer version
 - resourcethumb - allows you to give a thumbnail that is a page resource/ this is resized (based on videosize)
 
 ## Using Links
