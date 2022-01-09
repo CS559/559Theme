@@ -409,8 +409,10 @@ pre code {
 	padding: 0;
 	color: inherit;
 	white-space: inherit;
+    {{/* unfortunately, this seems to break the code formatter - so we skip it }}
 	{{ $codeBackground := (cond (eq .Site.Params.themestyle "old") "inherit" (.Site.Params.style.vars.codeBackground | default "#f7f7f7"))  }}
-	background: {{ $codeBackground }};
+	background: {{ $codeBackground }}; */}}
+    background: inherit; /* fix by gleicher 1/8/22 - to make work with code formatter */
 	border: 0;
 	font-family: "Courier New";
 }
