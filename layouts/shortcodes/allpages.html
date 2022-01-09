@@ -1,9 +1,32 @@
 <ul>
 {{ range .Site.Pages.ByTitle }}
 {{- if .Title }}
-<li> <a href="{{ .RelPermalink }}">{{ .Title }} </a> 
-{{/* note stacked if because and doesn't short circuit */}}
-{{- if .Parent}}{{- if .Parent.Title }} in <a href="{{ .Parent.RelPermalink }}">{{ .Parent.Title}}</a>{{- end }}</li>
-{{- end }}{{- end}}
-{{ end }}
+    {{/* because there is no show circuiting, it's easier to do it as multiple ifs */}}
+    {{- if .Parent -}}
+      {{- if and (ne .Parent.Title "Tags") (ne .Parent.Title "Categories") -}}
+        <li> <a href="{{ .RelPermalink }}">{{ .Title }} </a>    
+             {{- if .Parent.Title }} in <a href="{{ .Parent.RelPermalink }}">{{ .Parent.Title}}</a>{{- end }}  </li>
+      {{- end -}}
+    {{- else -}} {{/* no parent */}}
+        <li> <a href="{{ .RelPermalink }}">{{ .Title }} </a></li>
+    {{- end -}}
+{{- end -}}{{/* if .Title*/}}
+{{- end -}}{{/* range */}}
 </ul>
+<h3>Tag and Category Pages</h3>
+<ul>
+    {{ range .Site.Pages.ByTitle }}
+    {{- if .Title }}
+        {{/* because there is no show circuiting, it's easier to do it as multiple ifs */}}
+        {{- if .Parent -}}
+          {{- if or (eq .Parent.Title "Tags") (eq .Parent.Title "Categories") -}}
+            <li> <a href="{{ .RelPermalink }}">{{ .Title }} </a>    
+                 {{- if .Parent.Title }} in <a href="{{ .Parent.RelPermalink }}">{{ .Parent.Title}}</a>{{- end }}  </li>
+          {{- end -}}
+        {{- else -}} {{/* no parent */}}
+            <li> <a href="{{ .RelPermalink }}">{{ .Title }} </a></li>
+        {{- end -}}
+    {{- end -}}{{/* if .Title*/}}
+    {{- end -}}{{/* range */}}
+    </ul>
+    
