@@ -63,6 +63,14 @@
                 <p>You will be redirected there in a few seconds...</p>
                 </div>
                 {{- end }}
+                {{- if .Site.Params.archive -}}
+                    <div class="dimbox">
+                    <h2 style="color:black"> {{ .Site.Params.archive }} </h2>
+                    {{- if .Site.Params.archivenote -}}
+                        <h3> {{ .Site.Params.archivenote }} </h3>
+                    {{- end -}}
+                    </div>
+                {{- end -}}
 			{{ block "main" . }}
 				{{ with .Content }}
 				<div class="content main__content clearfix">
