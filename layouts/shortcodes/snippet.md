@@ -5,4 +5,8 @@
    */}}
 {{- $name := .Get 0 }}
 {{- $fullname := (printf "/assets/snippets/%s" $name) -}}
+{{- if fileExists $fullname -}}
 {{- $fullname | readFile | markdownify -}}
+{{- else -}}
+{{- errorf "Can't find snippet '%s' (on page %s)"  $fullname .Page.File -}}
+{{- end -}}
