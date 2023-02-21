@@ -348,3 +348,10 @@ table {
     font-weight: bold;
 }
 
+// used for includebox to match workbooks
+.includebox {
+    overflow:hidden;
+    border: 2px solid gray;
+    border-radius: 5px;
+    width:640px;
+}
