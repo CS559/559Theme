@@ -1,0 +1,10 @@
+{{/* Inspired by the "details" shortcode from the hugo book theme */}}
+<div class="expand-box">
+<details class="myexpand" {{ if or (.Get "open") (in .Params "open") }}open{{ end }}>
+    <summary class="myexpand-head">{{ cond .IsNamedParams (.Get "title") (.Get 0) }}</summary>
+    <div class="markdown-inner myexpand-content">
+    {{ .Inner | markdownify }}
+    </div>
+    </details>
+</div>      
+      
