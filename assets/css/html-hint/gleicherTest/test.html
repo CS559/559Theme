@@ -10,14 +10,45 @@
 </head>
 
 <body>
+
     <p>This is a paragraph</p>
-    <p>This is a paragraph with a tooltip
-        <span class="hint--bottom" data-hint="Thank you!"><b>hover me.</b></span>
+    <p>This is a paragraph with a span tooltip -
+        <span class="hint--bottom" data-hint="Thank you!"><b>hover me</b></span>
+        - inline.
     </p>
-    <div class="hint--html">
+    <p>This is a paragraph with a div tooltip -
+    <div style="display:inline" class="hint--bottom" data-hint="Thank you!"><b>hover me</b></span>
+    </div>
+    - inline.
+    </p>
+    <p style="display:inline;color:blueviolet">This is an inline paragraph with a div -
+    <div style="display:inline">Div Material</div>
+    - inline
+    </p>
+    <p>This is a paragraph with a div -
+        <span style="display:inline">AA
+            <div style="display:inline">Div Material</div>
+            BB
+        </span>
+        - inline
+    </p>
+    <div class="hint--html html-top">
         This is a naked HTML Hint (no hint)
     </div>
     <p>
+    <hr/>
+    <p>This is a paragraph with a span.
+        <span class="hint--html hint--top">
+            This is inside the span
+            <span class="hint__content">
+                This is a tooltip.<br/>
+                This is a second line.<br/>
+                This is a third line.
+            </span>
+        </span>
+        This is after the span
+    </p>
+    <hr/>
     <div class="hint--html hint--top">
         Place here any element
         <div class="hint__content">
@@ -60,14 +91,17 @@
     </div>
     </p>
 
+
     <style>
         .testGroup {
             display: flex;
-         }
+        }
+
         .testrow {
             display: flex;
             flex-direction: row;
         }
+
         .testblock {
             background: #AEA;
             width: 120px;
@@ -75,11 +109,13 @@
             padding: 1rem;
             display: inline;
         }
+
         .hint__content {
             font-family: Arial, Helvetica, sans-serif;
         }
+
         .my_width {
-            width:max-content;
+            width: max-content;
             max-width: 200px;
         }
     </style>
@@ -106,8 +142,8 @@
                     This is a This is a <b>success</b> hint hint<br>
                     With a <a href="#">Link!</a>
                 </div>
-            </div>    
-        </div><br/>
+            </div>
+        </div><br />
         <div class="testrow">
             <div class="testblock hint--html hint--left hint--error">
                 Middle Left
@@ -129,8 +165,8 @@
                     This is an <b>blackarrow</b> hint<br>
                     With a <a href="#">Link!</a>
                 </div>
-            </div>    
-        </div><br/>
+            </div>
+        </div><br />
         <div class="testrow">
             <div class="testblock hint--html hint--bottom-left hint--error hint--hoverable">
                 Bottom Left Hoverable
@@ -140,7 +176,7 @@
                 </div>
             </div>
             <div class="testblock hint--html hint--bottom hint--hoverable">
-                Bottom Middle  Hoverable
+                Bottom Middle Hoverable
                 <div class="hint__content">
                     This is an <b>unstyled</b> hint<br>
                     With a <a href="#">Link!</a>
@@ -152,11 +188,12 @@
                     This is an <b>blackarrow</b> hint<br>
                     With a <a href="#">Link!</a>
                 </div>
-            </div>    
-        </div><br/>
+            </div>
+        </div><br />
 
         <div class="testrow">
-            <div class="testblock hint--html hint--bottom-left hint--error hint--hoverable hint--small">
+            <div
+                class="testblock hint--html hint--bottom-left hint--error hint--hoverable hint--small">
                 Bottom Left Hoverable
                 <div class="hint__content">
                     This is a <b>error</b> hint<br>
@@ -164,20 +201,21 @@
                 </div>
             </div>
             <div class="testblock hint--html hint--bottom hint--hoverable hint--medium">
-                Bottom Middle  Hoverable
+                Bottom Middle Hoverable
                 <div class="my_width hint__content">
                     This is an <b>unstyled</b> hint<br>
                     With a <a href="#">Link!</a>
                 </div>
             </div>
-            <div class="testblock hint--html hint--bottom-right blackarrow hint--hoverable hint--large">
+            <div
+                class="testblock hint--html hint--bottom-right blackarrow hint--hoverable hint--large">
                 Bottom Right Hoverable
                 <div class="hint__content" style="width:max-content;max-width:300px">
                     This is an <b>blackarrow</b> hint<br>
                     With a <a href="#">Link!</a>
                 </div>
-            </div>    
-        </div><br/>
+            </div>
+        </div><br />
 
 
 </body>
