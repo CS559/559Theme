@@ -1,0 +1,15 @@
+{{- $element := .Get "element" -}}
+{{- if $element }}{{- else }}{{errorf "tooltip needs an element" }}{{- end}}
+{{- $color := .Get "color" | default "blackarrow" -}}
+{{- $width := .Get "width" | default "max-content" -}}
+{{- $title := .Get "title" -}}
+{{- $maxwidth := .Get "maxwidth" | default "300px" -}}
+<span class="hint--html hint--top hint--hoverable {{ $color }}" style="color:blueviolet;">
+    {{- $element | markdownify -}}
+    <span class="hint__content" style="width:{{$width}};max-width:{{$maxwidth}}">
+        {{- with $title -}}
+        <span class="tooltip-title"> {{ . }} </span>
+        {{- end -}}
+            {{- .Inner | markdownify -}}
+    </span>
+</span>
