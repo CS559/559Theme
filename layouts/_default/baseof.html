@@ -38,9 +38,9 @@
 	  <link rel="stylesheet" href="{{ $style.RelPermalink }}" crossorigin="anonymous">
 		{{- end -}}
 	<link rel="shortcut icon" href="{{ "favicon.ico" | relURL }}">
-	{{- if not .Site.IsServer }}
+    {{/* {{- if not .Site.IsServer }}
 		{{ template "_internal/google_analytics_async.html" . }}
-	{{- end }}
+	{{- end }} */}}
     {{/* a new redirect feature */}}
     {{- if isset .Page.Params "redirect" -}}
     <meta http-equiv="refresh" content="6; URL={{- .Page.Params.redirect -}}" />
