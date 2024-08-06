@@ -1,0 +1,11 @@
+/** SCSS for fancy tooltips
+ *  this is required for the tooltips shortcodes
+ */
+@import "./html-hint/html-hint.scss";
+
+// The title of a tooltip (if it has one)
+span.tooltip-title {
+    display:block;
+    height:1.2em;
+    font-weight: bold;
+}

@@ -56,6 +56,7 @@ Changes (not exhaustive):
   - listtoc (makes a table of contents for a list page)
   - listtoc (puts a table of contents in place in a document, rather than at the top)
   - mailto
+  - mikes-notes (basically makes a section of markdown like a comment)
   - mini (like a tease, but puts the whole page content - has its own layout)
   - pages (like link, but goes into pages)
   - resource-image.md (put a page resource image into markdown)
@@ -66,6 +67,7 @@ Changes (not exhaustive):
   - tableofcontents (does the regular table of contents, inline)
   - teasehtml
   - teaser (put a page summary in place)
+  - tooltip (make a rich "markdown" tooltip)
   - url (makes a link to a URL with the URL as the text)
 - pagination of sections is improved
   - pagination controls has first/last

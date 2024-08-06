@@ -1,0 +1,24 @@
+{{/* An attempt to implement "rich" tooltips
+You can make some text (the element parameter) and put a 
+tooltip (written in markdown) inside the shortcode (begin/end)
+
+This uses the "html-hint" CSS library I found, that I had to adapt acordingly.
+The html-hint CSS magic must be loaded - it isn't part of the 559Theme base.
+In the config.toml, you need something like:
+    customCss = ["css/tooltip.scss"]
+   */}}
+{{- $element := .Get "element" -}}
+{{- if $element }}{{- else }}{{errorf "tooltip needs an element" }}{{- end}}
+{{- $color := .Get "color" | default "blackarrow" -}}
+{{- $width := .Get "width" | default "max-content" -}}
+{{- $title := .Get "title" -}}
+{{- $maxwidth := .Get "maxwidth" | default "300px" -}}
+<span class="hint--html hint--top hint--hoverable {{ $color }}" style="color:blueviolet;">
+    {{- $element | markdownify -}}
+    <span class="hint__content" style="width:{{$width}};max-width:{{$maxwidth}}">
+        {{- with $title -}}
+        <span class="tooltip-title"> {{ . }} </span>
+        {{- end -}}
+            {{- .Inner | markdownify -}}
+    </span>
+</span>

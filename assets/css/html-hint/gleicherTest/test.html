@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="../hint.css-2.7.0/hint.css"> -->
+    <!-- hint-html includes hint, so we don't need to include it separately -->
+    <link rel="stylesheet" href="../dist/html-hint.css" <title>Test of Tooltips</title>
+</head>
+
+<body>
+
+    <p>This is a paragraph</p>
+    <p>This is a paragraph with a span tooltip -
+        <span class="hint--bottom" data-hint="Thank you!"><b>hover me</b></span>
+        - inline.
+    </p>
+    <p>This is a paragraph with a div tooltip -
+    <div style="display:inline" class="hint--bottom" data-hint="Thank you!"><b>hover me</b></span>
+    </div>
+    - inline.
+    </p>
+    <p style="display:inline;color:blueviolet">This is an inline paragraph with a div -
+    <div style="display:inline">Div Material</div>
+    - inline
+    </p>
+    <p>This is a paragraph with a div -
+        <span style="display:inline">AA
+            <div style="display:inline">Div Material</div>
+            BB
+        </span>
+        - inline
+    </p>
+    <div class="hint--html html-top">
+        This is a naked HTML Hint (no hint)
+    </div>
+    <p>
+    <hr/>
+    <p>This is a paragraph with a span.
+        <span class="hint--html hint--top">
+            This is inside the span
+            <span class="hint__content">
+                This is a tooltip.<br/>
+                This is a second line.<br/>
+                This is a third line.
+            </span>
+        </span>
+        This is after the span
+    </p>
+    <hr/>
+    <div class="hint--html hint--top">
+        Place here any element
+        <div class="hint__content">
+            Place here your tooltip HTML content
+        </div>
+    </div>
+    </p>
+    <p>
+    <div class="hint--html hint--bottom">
+        Place here any element
+        <div class="hint__content">
+            Place here your <b>tooltip HTML</b> content
+        </div>
+    </div>
+    </p>
+    <p>
+    <div class="hint--html hint--bottom hint--hoverable">
+        This is a bottom hint
+        <div class="hint__content">
+            This is a <b>Hoverable bottom hint</b> blah
+        </div>
+    </div>
+    </p>
+    <p>
+        And, just for funsies, this this somne more text
+    </p>
+
+    <p>
+    <div class="hint--html hint--top-left hint--warning">
+        Top Left Warning
+        <div class="hint__content">
+            This is a top left Warning
+        </div>
+    </div>
+    <div class="hint--html hint--top-left">
+        Top Left Plain
+        <div class="hint__content">
+            This is a top left plain
+        </div>
+    </div>
+    </p>
+
+
+    <style>
+        .testGroup {
+            display: flex;
+        }
+
+        .testrow {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .testblock {
+            background: #AEA;
+            width: 120px;
+            margin: .1rem 1rem;
+            padding: 1rem;
+            display: inline;
+        }
+
+        .hint__content {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .my_width {
+            width: max-content;
+            max-width: 200px;
+            font-weight: bold;
+        }
+    </style>
+
+    <div class="testgroup">
+        <div class="testrow">
+            <div class="testblock hint--html hint--top-left hint--warning">
+                Upper Left
+                <div class="hint__content">
+                    This is a <b>warning</b> hint<br>
+                    With a <a href="#">Link!</a>
+                </div>
+            </div>
+            <div class="testblock hint--html hint--top hint--info">
+                Upper Middle
+                <div class="hint__content">
+                    This is a <b>info</b> hint<br>
+                    With a <a href="#">Link!</a>
+                </div>
+            </div>
+            <div class="testblock hint--html hint--top-right hint--success">
+                Upper Right
+                <div class="hint__content">
+                    This is a This is a <b>success</b> hint hint<br>
+                    With a <a href="#">Link!</a>
+                </div>
+            </div>
+        </div><br />
+        <div class="testrow">
+            <div class="testblock hint--html hint--left hint--error">
+                Middle Left
+                <div class="hint__content">
+                    This is a <b>error</b> hint<br>
+                    With a <a href="#">Link!</a>
+                </div>
+            </div>
+            <div class="testblock hint--html hint">
+                Middle Middle
+                <div class="hint__content">
+                    This is an <b>unstyled</b> hint<br>
+                    With a <a href="#">Link!</a>
+                </div>
+            </div>
+            <div class="testblock hint--html hint--right blackarrow">
+                Middle Right
+                <div class="hint__content">
+                    This is an <b>blackarrow</b> hint<br>
+                    With a <a href="#">Link!</a>
+                </div>
+            </div>
+        </div><br />
+        <div class="testrow">
+            <div class="testblock hint--html hint--bottom-left hint--error hint--hoverable">
+                Bottom Left Hoverable
+                <div class="hint__content">
+                    This is a <b>error</b> hint<br>
+                    With a <a href="#">Link!</a>
+                </div>
+            </div>
+            <div class="testblock hint--html hint--bottom hint--hoverable">
+                Bottom Middle Hoverable
+                <div class="hint__content">
+                    This is an <b>unstyled</b> hint<br>
+                    With a <a href="#">Link!</a>
+                </div>
+            </div>
+            <div class="testblock hint--html hint--bottom-right blackarrow hint--hoverable">
+                Bottom Right Hoverable
+                <div class="hint__content">
+                    This is an <b>blackarrow</b> hint<br>
+                    With a <a href="#">Link!</a>
+                </div>
+            </div>
+        </div><br />
+
+        <div class="testrow">
+            <div
+                class="testblock hint--html hint--bottom-left hint--error hint--hoverable hint--small">
+                Bottom Left Hoverable
+                <div class="hint__content">
+                    This is a <b>error</b> hint<br>
+                    With a <a href="#">Link!</a>
+                </div>
+            </div>
+            <div class="testblock hint--html hint--bottom hint--hoverable hint--medium">
+                Bottom Middle Hoverable
+                <div class="my_width hint__content">
+                    This is an <b>unstyled</b> hint<br>
+                    With a <a href="#">Link!</a>
+                </div>
+            </div>
+            <div
+                class="testblock hint--html hint--bottom-right blackarrow hint--hoverable hint--large">
+                Bottom Right Hoverable
+                <div class="hint__content" style="width:max-content;max-width:300px">
+                    This is an <b>blackarrow</b> hint<br>
+                    With a <a href="#">Link!</a>
+                </div>
+            </div>
+        </div><br />
+
+
+</body>
+
+
+</html>

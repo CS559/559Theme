@@ -1,0 +1,9 @@
+{{/* A Widget that reads from the "sectionlinks.md" file */}}
+<div class="widget-links widget">
+  <h4 class="widget__title">Sections</h4>
+  <div class="widget__content widget__list">
+    {{ with .Site.GetPage "sectionlinks" }}
+    {{ .Content }}
+    {{ end }}
+  </div>
+</div>
