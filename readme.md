@@ -82,6 +82,7 @@ Changes (not exhaustive):
   - put "visual_summary" as a page parameter (to true) to get it
 - the header (logo.html) is different than mainroad - to get the spacing right (vertical alignment)
 - some colors and stylings are changed in styles.css - done since styles.css got converted to scss
+- copyrightdate
 
 ### New Section Variables
 
