@@ -183,7 +183,10 @@ This is important so that we render HTML in the markdown:
 unsafe= true
 ~~~
 
-You do need to either set `baseURL` or use `hugo --baseURL` even if everything uses relative paths, as the `index.json` (used for text search) does not
+You do need to either set `baseURL` or use `hugo --baseURL` even if everything uses relative paths, as the `index.json` (used for text search) does not.
+
+There's also a weird thing with baseURL for GitHub pages - so you probably need
+to set the Params.errorBase to the "real" baseURL (especially when baseURL is "")
 
 ## for the talks and videos
 
