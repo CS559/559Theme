@@ -1,0 +1,7 @@
+<div class="dimbox">
+<p>URL Debugging</p>
+Base URL: <code>{{ .Site.BaseURL }}</code><br/>
+{{- $testLogo := resources.Get "/svg/crest.svg" }}
+Logo Link RelPermalink: <code>{{ $testLogo.RelPermalink }}</code><br/>
+Logo Link Permalink: <code>{{ $testLogo.Permalink }}</code><br/>
+</div>
