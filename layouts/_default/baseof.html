@@ -9,28 +9,40 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-    {{/* gleicher - add a base href for 404 pages */}}
+    {{/* gleicher - add a base href for 404 pages 
     {{ if eq .Kind "404" }}
     <base href="{{ .Site.Params.errorBase | default "./" }}">
-    {{ end }}
+    {{ end }} */}}
     <title>{{ block "title" . }}{{ if not .IsHome }}{{ .Title }} - {{ end }}{{ .Site.Title }}{{ end }}</title>
     {{/* this script let's us know that JavaScript is working - it changes the document class from no-js to js if (and only if) js is working */}}
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
 	<meta name="description" content="{{ if .IsHome }}{{ .Site.Params.description }}{{ else }}{{ .Params.Description }}{{ end }}">
-	{{ if .Site.Params.opengraph }}{{ template "_internal/opengraph.html" . }}{{ end }} 
-	{{ if .Site.Params.twitter_cards }}{{ template "_internal/twitter_cards.html" . }}{{ end }}
+	{{- if .Site.Params.opengraph }}
+		{{ template "_internal/opengraph.html" . }}
+	{{- end }}
+	{{- if .Site.Params.schema }}
+		{{ template "_internal/schema.html" . }}
+	{{- end }}
+	{{- if .Site.Params.twitter_cards }}
+		{{ template "_internal/twitter_cards.html" . }}
+	{{- end }}
+    {{/* Fonts Section  - modern mainroad has conditionals and variables - we assume we want several google fonts */}}
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
 	<link rel="dns-prefetch" href="//fonts.gstatic.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Bellota+Text:ital,wght@0,300;0,700;1,300&family=Libre+Baskerville&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
-	{{ with .OutputFormats.Get "rss" -}}
-	{{ printf `<link rel="%s" type="%s" href="%s" title="%s">` .Rel .MediaType.Type .RelPermalink $.Site.Title  | safeHTML }}
-	{{ end -}}
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+    {{/* include this for mainroad compatibility */}}
+    {{- $googleFontsLink := .Site.Params.googleFontsLink | default "https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700&display=swap" }}
+	<link rel="stylesheet" {{ printf `href="%s"` $googleFontsLink | safeHTMLAttr }}>
+
+	{{- with .OutputFormats.Get "rss" }}
+	{{ printf `<link rel="%s" type="%s" href="%s" title="%s">` .Rel .MediaType.Type .RelPermalink $.Site.Title | safeHTML }}
+	{{- end }}
+
+    {{/* CSS section */}}
     {{/* gleicher - allow for SASS */}}
-		{{ $style := resources.Get "css/style.scss" | resources.ExecuteAsTemplate "css/style.scss" . | resources.ToCSS -}}
+		{{- $style := resources.Get "css/style.scss" | resources.ExecuteAsTemplate "css/style.scss" . | resources.ToCSS -}}
 		<link rel="stylesheet" href="{{ $style.RelPermalink }}">
 	{{/* gleicher - load the 559 SASS file - so we don't need to have it as a custom */}}
 		{{- $mystyle := resources.Get "css/559.scss" | resources.ExecuteAsTemplate "css/559.scss" . | resources.ToCSS -}}
@@ -42,9 +54,7 @@
 	  <link rel="stylesheet" href="{{ $style.RelPermalink }}" crossorigin="anonymous">
 		{{- end -}}
 	<link rel="shortcut icon" href="{{ "favicon.ico" | relURL }}">
-    {{/* {{- if not .Site.IsServer }}
-		{{ template "_internal/google_analytics_async.html" . }}
-	{{- end }} */}}
+
     {{/* a new redirect feature */}}
     {{- if isset .Page.Params "redirect" -}}
     <meta http-equiv="refresh" content="6; URL={{- .Page.Params.redirect -}}" />
@@ -55,9 +65,9 @@
         {{/* gleicher - have a noheader options */}}
 		{{- if isset .Page.Params "noheader" -}}
 		{{- else -}}
-			{{ partial "header" . }}
+            {{- block "header" . }}{{ partial "header.html" . }}{{ end }}
 		{{- end -}}
-		<div class="wrapper flex">
+        <div class="wrapper flex">
 			<div class="primary">
                 {{- if isset .Page.Params "redirect" -}}
                 <div class="dimbox"><h3>
@@ -78,6 +88,7 @@
                     {{- end -}}
                     </div>
                 {{- end -}}
+
 			{{ block "main" . }}
 				{{ with .Content }}
 				<div class="content main__content clearfix">
@@ -86,9 +97,9 @@
 				{{ end }}
 			{{ end }}
 			</div>
-			{{ partial "sidebar.html" . }}
+			{{ block "sidebar" . }}{{ partial "sidebar.html" . }}{{ end }}
 		</div>
-		{{ partial "footer" . }}
+		{{ block "footer" . }}{{ partial "footer.html" . }}{{ end }}
 	</div>
 <script async defer src="{{ "/js/menu.js" | relURL }}"></script>
 {{ range .Site.Params.customJS -}}
