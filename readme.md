@@ -154,7 +154,7 @@ One thing to beware of (it drives me nuts): if a tag or category has the same na
 - git submodule add git@github.com:CS559/559Theme.git themes/559Theme
 - git submodule init
 - git submodule update
-- create a config.toml
+- create a hugo.toml file (~~config.toml~~ was the old way in hugo)
 - create a content/widgetlinks.md  - width headless:true
 
 These GIT incantations help keep the subrepos on track if you care about that:
