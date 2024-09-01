@@ -1,0 +1,3 @@
+{{- if .Page.Draft -}}
+{{ .Inner | markdownify }}
+{{- else -}} <p>Content coming soon.</p> {{- end -}}
