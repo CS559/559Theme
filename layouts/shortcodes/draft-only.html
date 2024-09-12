@@ -1,3 +1,3 @@
 {{- if .Site.BuildDrafts -}}
 {{ .Inner | markdownify }}
-{{- else -}} <p>Content coming soon.</p> {{- end -}}
+{{- else -}} <p>{{(.Get 0 | default "Content coming soon.")|markdownify}}</p> {{- end -}}
