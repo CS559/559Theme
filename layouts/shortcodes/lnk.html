@@ -1,0 +1,12 @@
+{{/*recreation of the link shortcode
+
+the actual link shortcode is old, and takes the anchor as it's second argument. this is less convenient, but chaging it would cause too many problems, so I made a different (and confusingly named) alternative.
+
+this macro links to another page. it gets the title from the page.
+Unless there is a second argument, which is used as the link text
+     */}}
+{{- $pagename := .Get 0 -}}
+{{- $targtitle := (.Site.GetPage $pagename).Title -}}
+{{- $linklname := (.Get 1) | default $targtitle -}}
+{{- $target := relref . $pagename -}}
+<a href="{{- $target -}}">{{- $linklname -}}</a>
