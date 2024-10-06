@@ -1,0 +1,17 @@
+<h3>Drafts</h3>
+<ul>
+{{ range .Site.Pages.ByTitle }}
+{{- if and .Title .Draft}}
+    {{/* because there is no short circuiting, it's easier to do it as multiple ifs */}}
+    {{- if .Parent -}}
+      {{- if and (ne .Parent.Title "Tags") (ne .Parent.Title "Categories") -}}
+        <li> <a href="{{ .RelPermalink }}">{{ .Title }} </a>    
+             {{- if .Parent.Title }} {{ if .Draft }}<b>(DRAFT)</b>{{end}} in <a href="{{ .Parent.RelPermalink }}">{{ .Parent.Title}}</a>{{- end }}  </li>
+      {{- end -}}
+    {{- else -}} {{/* no parent */}}
+        <li> <a href="{{ .RelPermalink }}">{{ .Title }} {{ if .Draft }}<b>(DRAFT)</b>{{end}}</a></li>
+    {{- end -}}
+{{- end -}}{{/* if .Title*/}}
+{{- end -}}{{/* range */}}
+</ul>
+   
