@@ -42,15 +42,15 @@
 
     {{/* CSS section */}}
     {{/* gleicher - allow for SASS */}}
-		{{- $style := resources.Get "css/style.scss" | resources.ExecuteAsTemplate "css/style.scss" . | resources.ToCSS -}}
+		{{- $style := resources.Get "css/style.scss" | resources.ExecuteAsTemplate "css/style.scss" . | css.Sass -}}
 		<link rel="stylesheet" href="{{ $style.RelPermalink }}">
-	{{/* gleicher - load the 559 SASS file - so we don't need to have it as a custom */}}
-		{{- $mystyle := resources.Get "css/559.scss" | resources.ExecuteAsTemplate "css/559.scss" . | resources.ToCSS -}}
+	{{/* gleicher - load the 559 SASS file - so we don't need to have it as a custom. then in Hugo 136, resources .resources.ToCSS was deprecated */}}
+		{{- $mystyle := resources.Get "css/559.scss" | resources.ExecuteAsTemplate "css/559.scss" . | css.Sass -}}
 		<link rel="stylesheet" href="{{ $mystyle.RelPermalink }}">
 	{{/* gleicher - make customCSS work correctly using SASS*/}}
 		{{ $dot := . -}}
 		{{ range .Site.Params.customCSS -}}
-		{{ $style := resources.Get . | resources.ExecuteAsTemplate . $dot | resources.ToCSS }}
+		{{ $style := resources.Get . | resources.ExecuteAsTemplate . $dot | css.Sass }}
 	  <link rel="stylesheet" href="{{ $style.RelPermalink }}" crossorigin="anonymous">
 		{{- end -}}
 	<link rel="shortcut icon" href="{{ "favicon.ico" | relURL }}">
