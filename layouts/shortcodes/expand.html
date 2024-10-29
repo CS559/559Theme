@@ -1,6 +1,6 @@
 {{/* Inspired by the "details" shortcode from the hugo book theme */}}
 <details class="myexpand" {{ if or (.Get "open") (in .Params "open") }}open{{ end }}>
-<summary class="myexpand-head">{{ cond .IsNamedParams (.Get "title") (.Get 0) }}</summary>
+<summary class="myexpand-head">{{ (cond .IsNamedParams (.Get "title") (.Get 0)) | markdownify }}</summary>
 <div class="markdown-inner myexpand-content">
 {{ .Inner | markdownify }}
 </div>
