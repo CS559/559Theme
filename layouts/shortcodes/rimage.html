@@ -1,0 +1,57 @@
+{{/* This is the preferred way to include images. It supports captions, attributions, and resizing. It should work for SVG and for PNG/JPG/GIF. 
+
+this is meant to take the place of resource-image 
+it is not a drop-in for resrouce image, because it uses WIDTH not SIZE
+we need to use WIDTH since we need it for the caption
+
+it takes the place of figure (in that it allows for a caption), but allows for the resource finding and re-sizing of resource-image (it doesn't resize SVGs - it just sets the width)
+
+this whole thing was caused by the need to have the caption sized to the width of the image (since the captions look stupid otherwise)
+
+the argugements are:
+src - the reource name
+width - target width (default 300) - height is auto
+alt - alt text (default is the resource name)
+class - class for the figure (default is "")
+caption - caption for the image (default is "")
+attr - attribution for the image (default is "")
+attrlink - link for the attribution (default is "")
+
+*/}}
+{{- $page := . }}
+{{- $name := .Get "src" }}
+{{- if $name }}{{- else }}{{errorf "rimage needs a src argument" }}{{- end}}
+{{- $width := .Get "width" | default (cond (or (hasSuffix $name ".svg") (hasSuffix $name ".SVG")) "80%" "300") -}}
+{{- $size := (printf "%vx%v" $width 5000) }}
+{{- $alt := .Get "alt" | default $name }}
+{{- $class := .Get "class" | default "" }}
+{{- $local := .Page.Resources.GetMatch $name }}
+{{- $global := resources.GetMatch $name}}
+{{- $img := $local | default $global -}}
+{{- $caption := .Get "caption" | default "" }}
+{{- $attr := .Get "attr" | default "" }}
+{{- $attrlink := .Get "attrlink" | default "" }}
+{{- if (.Get "size") }}{{ errorf "rimage does not allow size - use width"}}{{end -}}
+{{- with $img }}
+{{- if (not (or (hasSuffix $name ".svg") (hasSuffix $name ".SVG"))) -}}
+{{- $img := .Fit $size -}}
+{{- end -}}
+{{- $pct := "%" -}}
+{{- $px := "px" -}}
+{{- $ns := "" -}}
+<figure class="{{ $class }}" style="width: {{ $width }}{{ cond (hasSuffix $width $pct) $ns $px }};">
+    <a href="{{ .RelPermalink }}">
+        <img src="{{ $img.RelPermalink }}" alt="{{ $alt }}" />
+    </a>
+    {{- if or $caption $attr -}}<figcaption><p>
+        {{- $caption | markdownify -}}
+        {{- with $attrlink }}
+            <a href="{{ . }}">
+        {{- end -}}
+        &nbsp;{{- $attr | markdownify -}}
+        {{- if $attrlink }}</a>{{ end }}</p></figcaption>
+    {{- end }}
+</figure>
+{{- else}}
+    {{  errorf "rimage couldn't open '%s':" $name -}}
+{{- end}}
