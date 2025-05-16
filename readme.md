@@ -2,7 +2,7 @@
 
 A theme created by Michael Gleicher to make a class web page. Over time, it evolved to also do my home page, so there is a lot of stuff specific to that.
 
-This builds on the "MainRoad" theme - it needs to be "mixed in" to that theme.in the config.toml file, have the line.
+This builds on the ~~"MainRoad"~~ "Roadster" theme - it needs to be "mixed in" to that theme.in the config.toml file, have the line. (we switched from Mainroad to Roadster in 2025).
 
 Since mainroad seems to be abandoned, this will switch to the "roadster" theme.
 https://discourse.gohugo.io/t/roadster-a-modern-fork-of-mainroad-theme/53102
@@ -11,10 +11,12 @@ git@github.com:mansoorbarri/roadster.git
 Note: usually, we will also have a "semester theme" that has information common between the workbook and the semester class. For spring 22, this is "sp22".
 
 ~~~toml
-theme = ["spxx","559Theme","mainroad"]
+theme = ["spxx","559Theme","roadster"]
 ~~~
 
-and make sure that spxx, mainroad and 559Theme are in the themes directory
+and make sure that spxx, mainroad and 559Theme are in the themes directory. The "spxx" is a specific thing for a particular 559 semester, and isn't always used.
+
+**Warning:** this documentation isn't up to date.
 
 - New variables for tuning:
   - noheader - set to true on a page to skip the header (default/baseof.html) - this was meant to allow the home page to look different
@@ -40,39 +42,7 @@ Changes (not exhaustive):
 - SASS friendly CSS loading (baseof)
 - multiple built in CSS files (baseof)
 - less obnoxious read more (summary.html) (set myreadmore to true)
-- shortcodes (*note that mainroad doesn't provide any!*)
-  - allpages (makes a list of all pages)
-  - anchorlink
-  - assetlink
-  - bold-red (makes a span with a `boldred` class)
-  - comment (comments out something)
-  - content (includes the content of another page inline)
-  - content (inserts the content of another page)
-  - dimbox (makes a dimbox div)
-  - expand (puts text into an expander)
-  - figure (improved on the Hugo figure to allow for rsrc parameters)
-  - htmllink (shows the HTML of a reference - gives the whole link)
-  - includemd (includes a markdown file - which is not a page)
-  - inline (includes another page in place - uses a special style template)
-  - leftpic (puts a picture to the left of text)
-  - link (makes a relref link - and gets the page title)
-  - linkit (probably could be deprecated)
-  - listtoc (makes a table of contents for a list page)
-  - listtoc (puts a table of contents in place in a document, rather than at the top)
-  - mailto
-  - mikes-notes (basically makes a section of markdown like a comment)
-  - mini (like a tease, but puts the whole page content - has its own layout)
-  - pages (like link, but goes into pages)
-  - resource-image.md (put a page resource image into markdown)
-  - resource-link.md (makes a link to a page resource)
-  - resource-svg (puts an SVG file in place - allows for showing the code)
-  - snippet.md (include a markdown snippet from assets/snippets/*.md)
-  - static (generates a link to a static object)
-  - tableofcontents (does the regular table of contents, inline)
-  - teasehtml
-  - teaser (put a page summary in place)
-  - tooltip (make a rich "markdown" tooltip)
-  - url (makes a link to a URL with the URL as the text)
+- shortcodes (*note that mainroad doesn't provide any!*) - see the list below
 - pagination of sections is improved
   - pagination controls has first/last
   - section pages can control paginate and top_pagination (this is per section)
@@ -96,6 +66,45 @@ Changes (not exhaustive):
 
 - redirect - give a URL that directs to a newer version of the page (for next year) - useful for tutorials and things where pages are updated and we want to go to the newer version
 - resourcethumb - allows you to give a thumbnail that is a page resource/ this is resized (based on videosize)
+
+### Shortcodes
+
+There are a lot of shortcodes - and they need to be cleaned up, because there is redundancy and incompatibility. 
+
+- allpages (makes a list of all pages)
+- anchorlink
+- assetlink
+- bold-red (makes a span with a `boldred` class)
+- comment (comments out something)
+- content (includes the content of another page inline)
+- content (inserts the content of another page)
+- dimbox (makes a dimbox div)
+- draft-only (so you can have a stub page - and still have draft only content)
+- expand (puts text into an expander)
+- figure (improved on the Hugo figure to allow for rsrc parameters)
+- htmllink (shows the HTML of a reference - gives the whole link)
+- includemd (includes a markdown file - which is not a page)
+- inline (includes another page in place - uses a special style template)
+- leftpic (puts a picture to the left of text)
+- link (makes a relref link - and gets the page title)
+- linkit (probably could be deprecated)
+- listtoc (makes a table of contents for a list page)
+- listtoc (puts a table of contents in place in a document, rather than at the top)
+- mailto
+- mikes-notes (basically makes a section of markdown like a comment)
+- mini (like a tease, but puts the whole page content - has its own layout)
+- resource-image.md (warning - prefer rimage!)
+- resource-link.md (makes a link to a page resource)
+- resource-svg (puts an SVG file in place - allows for showing the code)
+- rimage - the new, prefered way to put a figure onto a page (SVG or image)
+- snippet.md (include a markdown snippet from assets/snippets/*.md)
+- static (generates a link to a static object)
+- tableofcontents (does the regular table of contents, inline)
+- teasehtml
+- teaser (put a page summary in place)
+- tooltip (make a rich "markdown" tooltip)
+- url (makes a link to a URL with the URL as the text)
+
 
 ## Using Links
 
