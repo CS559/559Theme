@@ -4,6 +4,10 @@ A theme created by Michael Gleicher to make a class web page. Over time, it evol
 
 This builds on the "MainRoad" theme - it needs to be "mixed in" to that theme.in the config.toml file, have the line.
 
+Since mainroad seems to be abandoned, this will switch to the "roadster" theme.
+https://discourse.gohugo.io/t/roadster-a-modern-fork-of-mainroad-theme/53102
+git@github.com:mansoorbarri/roadster.git
+
 Note: usually, we will also have a "semester theme" that has information common between the workbook and the semester class. For spring 22, this is "sp22".
 
 ~~~toml
@@ -150,7 +154,8 @@ One thing to beware of (it drives me nuts): if a tag or category has the same na
 
 - hugo new site
 - git init
-- git submodule add git@github.com:Vimux/Mainroad.git themes/mainroad
+- git ~~submodule add git@github.com:Vimux/Mainroad.git themes/mainroad~~
+- get submodule add git@github.com:mansoorbarri/roadster.git themes/roadster
 - git submodule add git@github.com:CS559/559Theme.git themes/559Theme
 - git submodule init
 - git submodule update
