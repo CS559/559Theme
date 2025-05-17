@@ -25,6 +25,7 @@ attrlink - link for the attribution (default is "")
 {{- $size := (printf "%vx%v" $width 5000) }}
 {{- $alt := .Get "alt" | default $name }}
 {{- $class := .Get "class" | default "" }}
+{{- $styles := .Get "styles" | default "" }}
 {{- $local := .Page.Resources.GetMatch $name }}
 {{- $global := resources.GetMatch $name}}
 {{- $img := $local | default $global -}}
@@ -39,7 +40,7 @@ attrlink - link for the attribution (default is "")
 {{- $pct := "%" -}}
 {{- $px := "px" -}}
 {{- $ns := "" -}}
-<figure class="{{ $class }}" style="width: {{ $width }}{{ cond (hasSuffix $width $pct) $ns $px }};">
+<figure class="{{ $class }}" style="width: {{ $width }}{{ cond (hasSuffix $width $pct) $ns $px }}; {{ $styles | safeCSS}}">
     <a href="{{ .RelPermalink }}">
         <img src="{{ $img.RelPermalink }}" alt="{{ $alt }}" />
     </a>
