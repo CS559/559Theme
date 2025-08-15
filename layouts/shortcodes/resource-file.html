@@ -1,0 +1,7 @@
+{{/* just returns a link to a page resource - actually makes a line, using the name */}}
+{{- $name := .Get 0 }}
+{{- with .Page.Resources.GetMatch $name }}
+    <a href="{{- .RelPermalink }}">{{ $name }}</a>
+{{- else }}
+    {{  errorf "resource-file couldn't open '%s':" $name -}}
+{{- end }}
