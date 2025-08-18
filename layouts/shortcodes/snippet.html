@@ -1,12 +1,21 @@
 {{/* inserts a markdown snippet from assets
 
+    first parameter is a md file in the /assets/snippets directory
+    second parameter (optional) is an html tag to wrap the result in
+
 * requires the asset to be a plain markdown (not a page with frontmatter)
 * naively looks in /assets/snippets
    */}}
-{{- $name := .Get 0 }}
+{{- $name := .Get 0 -}}
+{{- $tag := .Get 1 -}}
 {{- $fullname := (printf "/assets/snippets/%s" $name) -}}
 {{- if fileExists $fullname -}}
-{{- $fullname | readFile | markdownify -}}
+{{- $html := $fullname | readFile | markdownify -}}
+{{- if $tag -}}
+    {{- (printf "<%s>%s</%s>" $tag $html $tag) | safeHTML -}}
+{{- else -}}
+    {{- $html | safeHTML -}}
+{{- end -}}
 {{- else -}}
 {{- errorf "Can't find snippet '%s' (on page %s)"  $fullname .Page.File -}}
 {{- end -}}
