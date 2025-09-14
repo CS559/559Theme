@@ -1,6 +1,6 @@
 <!-- template for the "this week" widget - be sure to set the "thisweek" setting in config -->
 <div class="widget-links widget">
-    <h4 class="widget__title">This Week</h4>
+    <h4 class="widget__title">{{- .Site.Params.thishead | default "This Week"}}</h4>
     <div class="widget__content widget__list">
         {{- $page := .Site.GetPage .Site.Params.thisweek }}
         {{ $page.Content | markdownify }}
