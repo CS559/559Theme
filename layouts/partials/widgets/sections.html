@@ -1,9 +1,14 @@
-{{/* A Widget that reads from the "sectionlinks.md" file */}}
-<div class="widget-links widget">
-  <h4 class="widget__title">Sections</h4>
-  <div class="widget__content widget__list">
-    {{ with .Site.GetPage "sectionlinks" }}
-    {{ .Content }}
-    {{ end }}
-  </div>
+{{/* This file is used to display the sections widget - a list of the top level sections of the site.
+    The old "sections" widget (which was used for different class sections) was renamed */}}
+<div class="widget-categories widget">
+	<h4 class="widget__title">Sections</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+		{{- range sort .Site.Sections "Title" "asc"}}
+			<li class="widget__item">
+				<a class="widget__link" href="{{ .RelPermalink }}">{{ .Title }}</a>
+			</li>
+		{{- end }}
+		</ul>
+	</div>
 </div>
