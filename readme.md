@@ -105,6 +105,27 @@ There are a lot of shortcodes - and they need to be cleaned up, because there is
 - tooltip (make a rich "markdown" tooltip)
 - url (makes a link to a URL with the URL as the text)
 
+## Full Width Mode
+
+The site supports a "Full Width Mode" which displays only the main content area, hiding the header, sidebar, and footer. This is useful for embedding pages or taking screenshots where only the content is desired.
+
+### Usage
+
+To enable full width mode, append `?fullwidth` to the URL of any page.
+
+Example: `http://localhost:1313/some-page/?fullwidth`
+
+### Design and Implementation
+
+The feature is implemented entirely on the client-side using JavaScript and CSS, avoiding the need for separate Hugo layouts or complex build configurations.
+
+1.  **Structure Changes**: In `themes/559Theme/layouts/_default/baseof.html`, the header, sidebar, and footer partials were wrapped in `<div>` elements with classes `header-wrapper`, `sidebar-wrapper`, and `footer-wrapper`. This allows them to be easily targeted by CSS.
+2.  **CSS**: A `fullwidth-mode` class is defined for the `<body>` element. When this class is present:
+    *   `.header-wrapper`, `.sidebar-wrapper`, and `.footer-wrapper` are set to `display: none !important`.
+    *   The main content containers (`.container`, `.wrapper`, `.primary`) are forced to `width: 100%` and `max-width: none`.
+3.  **JavaScript**: A small script at the end of `baseof.html` checks `window.location.search` for the `fullwidth` parameter. If found, it adds the `fullwidth-mode` class to the `document.body`.
+4.  **Style Adjustments**: `themes/559Theme/assets/css/style.scss` was updated to ensure the new `.sidebar-wrapper` behaves correctly within the flexbox layout (inheriting the order and size properties of the original sidebar).
+
 
 ## Using Links
 

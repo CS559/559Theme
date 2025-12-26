@@ -178,6 +178,19 @@ body {
 	margin: 0 0 0 2.5%;
 }
 
+.sidebar-wrapper {
+	-webkit-flex: 1 0 $sidebar-size;
+	flex: 1 0 $sidebar-size;
+	-webkit-order: 2;
+	order: 2;
+	min-width: 0;
+	margin: 0 0 0 2.5%;
+}
+
+.sidebar-wrapper .sidebar {
+	margin: 0;
+}
+
 .sidebar--left {
 	-webkit-order: 0;
 	order: 0;

@@ -4,6 +4,7 @@
 	- parameterized CSS works correctly
     - make header options
     - default language is English-US
+    - add "fullwidth" mode via query string (hides header/sidebar/footer)
 */}}
 <html class="no-js" lang="{{ .Site.LanguageCode | default "en-us" }}"> {{/* gleicher - add default*/}}
 <head>
@@ -72,13 +73,32 @@
     {{- if isset .Page.Params "redirect" -}}
     <meta http-equiv="refresh" content="6; URL={{- .Page.Params.redirect -}}" />
     {{- end -}}
+    <style>
+        body.fullwidth-mode .header-wrapper,
+        body.fullwidth-mode .sidebar-wrapper,
+        body.fullwidth-mode .footer-wrapper {
+            display: none !important;
+        }
+        body.fullwidth-mode .container,
+        body.fullwidth-mode .wrapper {
+            max-width: none !important;
+            width: 100% !important;
+        }
+        body.fullwidth-mode .primary {
+            width: 100% !important;
+            flex: 0 0 100% !important;
+            max-width: none !important;
+        }
+    </style>
 </head>
 <body class="body">
 	<div class="container container--outer">
         {{/* gleicher - have a noheader options */}}
 		{{- if isset .Page.Params "noheader" -}}
 		{{- else -}}
+            <div class="header-wrapper">
             {{- block "header" . }}{{ partial "header.html" . }}{{ end }}
+            </div>
 		{{- end -}}
         <div class="wrapper flex">
 			<div class="primary">
@@ -110,9 +130,13 @@
 				{{ end }}
 			{{ end }}
 			</div>
+            <div class="sidebar-wrapper">
 			{{ block "sidebar" . }}{{ partial "sidebar.html" . }}{{ end }}
+            </div>
 		</div>
+        <div class="footer-wrapper">
 		{{ block "footer" . }}{{ partial "footer.html" . }}{{ end }}
+        </div>
 	</div>
 {{/* gleicher - no / for js (this is different than mainroad) */}}
 <script async defer src="{{ "js/menu.js" | relURL }}"></script>
@@ -120,5 +144,13 @@
 <script src="{{ . | relURL }}"></script>
 {{- end }}
 {{- partial "mathjax.html" . -}}
+<script>
+    (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('fullwidth')) {
+            document.body.classList.add('fullwidth-mode');
+        }
+    })();
+</script>
 </body>
 </html>
