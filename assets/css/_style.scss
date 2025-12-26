@@ -1407,7 +1407,7 @@ textarea {
 	} @else {
 		background: $widget-background;
 		color: $mid-gray;
-		border-bottom: 5px solid #c5050c;
+		border-bottom: 5px solid $uw-red;
 	}
 }
 

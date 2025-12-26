@@ -103,6 +103,17 @@ The `559Theme` is based on an older version of `mainroad` (now `roadster`). A co
 
 ### 4. Visual Regressions & Fixes
 *   **Subtitle Size**: The site subtitle was inadvertently shrunk to `10px` during the SASS refactor. This has been fixed by introducing a `$tagline-font-size` variable in `main.scss` (defaulting to `1rem`) and updating `_style.scss` to use it.
+*   **Hardcoded Colors**: An audit of `_style.scss` revealed a hardcoded color `#c5050c` in the widget archive border. This has been replaced with the `$uw-red` variable to ensure consistency.
+
+## Audit Strategy for Regressions
+
+To prevent and detect similar issues where hardcoded values or incorrect defaults were introduced during the SASS refactor, the following audit strategy was employed:
+
+1.  **Search for Hardcoded Values**: Scanned `_style.scss` for hardcoded pixel values (e.g., `10px`) and hex colors (e.g., `#c5050c`) inside `@else` blocks (which correspond to the "new" theme style).
+2.  **Review Variable Defaults**: Checked `main.scss` to ensure that SASS variables are initialized with sensible defaults that match the original theme's intent.
+3.  **Logic Verification**: Manually reviewed the `@if $theme-style == "old"` logic blocks to ensure the "else" branch (the new style) correctly implements the intended design.
+
+This audit caught the subtitle size issue and the hardcoded border color. Future changes should follow this pattern of checking both the variable definitions and their usage in the SASS partials.
 
 **Update**: We attempted to remove these wrappers to align with `roadster`, but this caused layout regressions (footer appearing as sidebar, sidebar stacking). The `559Theme` CSS (`_style.scss`) relies on these wrappers for flexbox layout and Full Width Mode targeting.
 **Decision**: We have retained the wrappers in `baseof.html` to ensure stability. Future refactoring of `_style.scss` could allow their removal, but it is out of scope for the current cleanup.
