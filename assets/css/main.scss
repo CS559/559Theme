@@ -18,6 +18,7 @@ $widget-link-color: {{ if eq .Site.Params.themestyle "old" }}black{{ else }}#006
 $font-sans: {{ if eq .Site.Params.themestyle "old" }}"Open Sans", Helvetica, Arial, sans-serif{{ else }}{{ .Site.Params.style.vars.fontSans | default "Open Sans" }}{{ end }};
 $font-mono: {{ if eq .Site.Params.themestyle "old" }}SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace{{ else }}{{ .Site.Params.style.vars.fontMono | default "Georgia" }}{{ end }};
 $body-font-size: {{ .Site.Params.style.vars.bodyFontSize | default "1rem" }}; // Defaulting to 1rem if not set
+$tagline-font-size: {{ .Site.Params.style.vars.taglineFontSize | default "1rem" }};
 
 // Inline Button Colors
 $inline-btn-color: {{ if eq .Site.Params.themestyle "old" }}#fff{{ else }}{{ .Site.Params.style.vars.inlineBtnColor | default "#006cae" }}{{ end }};

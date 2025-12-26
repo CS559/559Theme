@@ -51,3 +51,58 @@ The `559Theme` has evolved organically, leading to a mix of coding styles, dupli
 ### Phase 3: Standardization
 1.  **Naming Conventions**: Standardize on SASS variable names (kebab-case) vs Hugo params (camelCase).
 2.  **Documentation**: Document the available parameters in `config.toml` clearly.
+
+## Status Update (December 2025)
+
+### Completed: Phase 1 (SASS Unification)
+The SASS architecture has been successfully refactored to separate Hugo configuration from style logic.
+
+*   **`assets/css/main.scss`**: Created as the single entry point. This file:
+    *   Retrieves Hugo parameters (e.g., `.Site.Params.themestyle`).
+    *   Maps them to SASS variables (e.g., `$theme-style`).
+    *   Imports the style partials.
+*   **`assets/css/_style.scss`**: Formerly `style.scss`.
+    *   Converted to a pure SASS partial.
+    *   All Hugo templating (`{{ ... }}`) has been removed.
+    *   Logic now uses SASS `@if $theme-style == "old"` instead of Hugo `{{ if eq ... }}`.
+*   **`assets/css/_559.scss`**: Formerly `559.scss`.
+    *   Converted to a pure SASS partial.
+    *   Cleaned of Hugo syntax.
+*   **`layouts/_default/baseof.html`**: Updated to compile and link `main.scss` instead of individual files.
+
+This change means the stylesheets are now valid SASS files that can be linted and edited with standard tools. The build process is cleaner and more robust.
+
+## Modernization & Synchronization with Roadster
+
+The `559Theme` is based on an older version of `mainroad` (now `roadster`). A comparison with the current `roadster` theme reveals several opportunities to modernize the template structure and reduce technical debt.
+
+### 1. Modularize `baseof.html`
+**Current State**: `559Theme/layouts/_default/baseof.html` is a monolithic file containing the entire `<head>` section, inline scripts, and complex logic.
+**Roadster Approach**: `roadster` delegates almost all logic to partials:
+*   `{{- partial "head.html" . -}}` handles the `<head>`.
+*   `head.html` is further broken down into `head/seo.html`, `head/gfonts.html`, and `head/stylesheet.html`.
+
+**Recommendation**:
+*   Create `layouts/partials/head.html` and move the `<head>` content there.
+*   Create `layouts/partials/head/css.html` to contain the SASS compilation logic we just built.
+*   This will make `baseof.html` much easier to read and maintain.
+
+### 2. Standardize Script Loading
+**Current State**: `559Theme` has inline JavaScript in the `<head>` (e.g., the `no-js` class replacement).
+**Roadster Approach**: `roadster` loads scripts at the end of the `<body>` tag and uses external files where possible.
+
+**Recommendation**:
+*   Move the inline `no-js` script to a partial or external file.
+*   Adopt `roadster`'s pattern of loading non-critical scripts at the bottom of the page to improve performance.
+
+### 3. Wrapper Structure & Full Width Mode
+**Current State**: `559Theme` adds custom wrappers (`header-wrapper`, `sidebar-wrapper`, `footer-wrapper`) to `baseof.html`.
+**Roadster Approach**: Uses a cleaner `container` > `wrapper` structure without these extra divs.
+
+**Note**: An attempt to remove these wrappers caused layout regressions (footer appearing as sidebar). They have been retained for now to ensure stability. Future refactoring should investigate how to implement "Full Width Mode" without them, possibly by using more specific CSS selectors on the standard Roadster classes.
+
+### 4. Visual Regressions & Fixes
+*   **Subtitle Size**: The site subtitle was inadvertently shrunk to `10px` during the SASS refactor. This has been fixed by introducing a `$tagline-font-size` variable in `main.scss` (defaulting to `1rem`) and updating `_style.scss` to use it.
+
+**Update**: We attempted to remove these wrappers to align with `roadster`, but this caused layout regressions (footer appearing as sidebar, sidebar stacking). The `559Theme` CSS (`_style.scss`) relies on these wrappers for flexbox layout and Full Width Mode targeting.
+**Decision**: We have retained the wrappers in `baseof.html` to ensure stability. Future refactoring of `_style.scss` could allow their removal, but it is out of scope for the current cleanup.

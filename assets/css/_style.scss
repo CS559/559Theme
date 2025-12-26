@@ -95,6 +95,27 @@ body {
 	}
 }
 
+/* Full Width Mode */
+body.fullwidth-mode {
+	.header-wrapper,
+	.sidebar-wrapper,
+	.footer-wrapper {
+		display: none !important;
+	}
+
+	.container,
+	.wrapper {
+		max-width: none !important;
+		width: 100% !important;
+	}
+
+	.primary {
+		width: 100% !important;
+		flex: 0 0 100% !important;
+		max-width: none !important;
+	}
+}
+
 .container {
 	position: relative;
 	width: 100%;
@@ -574,7 +595,7 @@ select {
 		border-top: 1px solid #ebebeb;
 	} @else {
 		font-weight: 400;
-		font-size: 10px;
+		font-size: $tagline-font-size;
 		padding-top: 0;
 		border-top: 0px;
 	}

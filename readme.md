@@ -58,6 +58,15 @@ Changes (not exhaustive):
 - some colors and stylings are changed in styles.css - done since styles.css got converted to scss
 - copyrightdate
 
+
+### CSS Architecture (Updated Dec 2025)
+
+The theme uses a unified SASS compilation pipeline to keep styles clean and maintainable.
+
+*   **`assets/css/main.scss`**: The entry point. It bridges Hugo configuration with SASS. It defines SASS variables based on `config.toml` parameters and imports the style partials.
+*   **`assets/css/_style.scss`** & **`assets/css/_559.scss`**: Pure SASS partials containing the actual styles. These files contain **no** Hugo templating syntax (`{{ ... }}`), making them valid SASS files.
+*   **Configuration**: Styles are configured via `config.toml` params (e.g., `themestyle = "old"`), which are injected into `main.scss` as SASS variables (e.g., `$theme-style`).
+
 ### New Section Variables
 
 - visual_summary - uses a format for talks/videos where everything has a place for a thumbnail and links to the various assets are shown
