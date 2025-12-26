@@ -43,15 +43,14 @@
 	<link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
 
     {{/* CSS section */}}
-    {{/* gleicher - allow for SASS (actually, we replace style.css with style.scss - which diverges from mainroad/roaster) */}}
-		{{- $style := resources.Get "css/style.scss" | resources.ExecuteAsTemplate "css/style.scss" . | css.Sass -}}
-		<link rel="stylesheet" href="{{ $style.RelPermalink }}">
-    {{/* gleicher - add the v2 styles, just for compatibility */}}
+    {{/* gleicher - Unified SASS compilation */}}
+		{{- $mainStyle := resources.Get "css/main.scss" | resources.ExecuteAsTemplate "css/main.scss" . | css.Sass -}}
+		<link rel="stylesheet" href="{{ $mainStyle.RelPermalink }}">
+
+    {{/* gleicher - add the v2 styles, just for compatibility - keeping this separate for now as it might be used by old content */}}
         {{ $v2Styles := resources.Get "css/v2-styles.css" | resources.ExecuteAsTemplate "css/v2-styles.css" . -}}
         <link rel="stylesheet" href="{{ $v2Styles.RelPermalink }}">
-	{{/* gleicher - load the 559 SASS file - so we don't need to have it as a custom. then in Hugo 136, resources .resources.ToCSS was deprecated */}}
-		{{- $mystyle := resources.Get "css/559.scss" | resources.ExecuteAsTemplate "css/559.scss" . | css.Sass -}}
-		<link rel="stylesheet" href="{{ $mystyle.RelPermalink }}">
+
 	{{/* gleicher - make customCSS work correctly using SASS*/}}
 		{{ $dot := . -}}
 		{{ range .Site.Params.customCSS -}}

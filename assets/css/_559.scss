@@ -1,0 +1,330 @@
+/* CS559 Theme - 559.scss */
+
+// modified version of BTN for better inline .Button
+.inlinebtn {
+	padding: 1px 5px 2px;
+	font-weight: 700;
+
+	color: $inline-btn-color;
+
+	white-space: pre-line;
+
+    background: $inline-btn-back;
+	
+    white-space: nowrap;
+}
+
+.inlinebtn:hover {
+	color: $inline-btn-color-hover;
+
+	background: $inline-btn-back-hover;
+}
+
+/* Animation */
+.inlinebtn {
+	transition: background-color .25s ease-out;
+}
+
+
+/* for some reason, ordered list items are marked as paragraphs by hugo's markdown? */
+ol p {
+	margin-bottom: 0;
+}
+
+/* important to make the teaser look like a list (undoing what is in content)
+*/
+.teaser .meta a {
+	color: $dim-color;
+	font-weight: 400;
+}
+
+.teaser h3 a {
+	color: black;
+}
+
+.mini h3 a {
+	color: black;
+}
+
+/* Make the widgets have their own space */
+.widget {
+	background-color: $widget-background;
+
+	@if $theme-style == "old" {
+		padding: 5px;
+	} @else {
+		padding: 20px 30px;
+	}
+
+	@if $theme-style == "old" {
+		border-bottom: 0px;
+	} @else {
+		border-bottom: 5px solid #c5050c;
+	}
+}
+
+/* the padding arond the widgets looks terrible for search */
+.widget-search.widget {
+	padding: 0px;
+}
+/* Search widget */
+.widget-search__form {
+	padding:0px;
+	margin:10px;
+	border:0px;
+	background-color: $widget-background;
+}
+.widget-search__field {
+	margin:0px;
+	width:100%;
+}
+
+/* search results page */
+.search__string {
+	font-weight: 700;
+	font-style: normal;
+}
+.search__context {
+	font-style: italic;
+}
+
+/* Default Widget Spacing is Ugly */
+.widget__title {
+	padding-bottom: 0px;
+	margin: 0 0 .5rem;
+
+
+	@if $theme-style == "old" {
+		border-bottom: 3px solid #e22d30;
+	} @else {
+		border-bottom: none;
+	}
+}
+
+/* links come from MD - no easy way to style individually */
+.widget__list li {
+	display: block;
+
+	@if $theme-style == "old" {
+		padding: 5px 0;
+		border-bottom: 1px dotted #ebebeb;
+		font-size: inherit;
+	} @else {
+		padding: 3px 0;
+		border-bottom: 0px;
+		font-size: 14px;
+	}
+
+	font-weight: 300;
+
+	font-family: $fontFamilySecondary;
+}
+
+.widget__list li :hover {
+
+	@if $theme-style == "old" {
+		text-decoration: normal;
+	} @else {
+		text-decoration: underline;
+	}
+}
+
+/* make the logo appear correctly */
+.logo__img {
+	margin-right: 20px;
+	width:3rem;
+}
+
+
+/* Table of Contents */
+.toc {
+	margin-bottom: 20px;
+	font-weight: 700;
+	color: #0000FF;
+	background: #fff;
+	border-color: #ebebeb;
+	border-style: solid;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 0;
+	border-left-width: 1px;
+}
+
+.toc__title {
+	padding: 5px 10px;
+	color: #fff;
+	text-transform: uppercase;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	font-family: $fontFamilySecondary;
+
+	@if $theme-style == "old" {
+		background: #2a2a2a;
+	} @else {
+		background: #c5050c;
+	}
+}
+
+// the sidebar TOC - might be a little different than the real toc
+.toc__sidebar ul {
+	margin: 0;
+	list-style: none;
+}
+.toc__sidebar ul ul a {
+	padding-left: 25px;
+}
+.toc__sidebar ul ul ul a {
+	padding-left: 45px;
+}
+.toc__sidebar ul ul ul ul ul a {
+	padding-left: 65px;
+}
+.toc__sidebar ul ul ul ul ul ul a {
+	padding-left: 85px;
+}
+.toc__sidebar li {
+	margin: 0;
+}
+
+.toc__sidebar a {
+	display: block;
+	padding: 1px 5px;
+	color: $link-color;
+}
+
+// let it light up - rather than underline, since the spacing is tighter
+//	.toc__sidebar a:hover { text-decoration: underline; } 
+
+// stuff for expand (adapted from book) 
+$padding-1: 1px;
+$padding-4: 0.25rem;
+$padding-8: 0.5rem;
+$padding-16: 1rem;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$border-radius: 0.15rem;
+
+// for the "expanders" - originally, this was a hack, now I use the HTML built in stuff since
+// its cleaner
+.myexpand {
+    margin-top: $padding-16;
+    margin-bottom: $padding-16;
+
+    border: $padding-1 solid $gray-200;
+    border-radius: $border-radius;
+
+    .myexpand-head {
+        background: $gray-100;
+        padding: $padding-8 $padding-16;
+        cursor: pointer;
+      }
+  
+      .myexpand-content {
+        padding: $padding-16;
+      }
+}
+
+// this is from the book theme
+// it was the "old way" to do an expander
+.book-expand {
+    margin-top: $padding-16;
+    margin-bottom: $padding-16;
+
+    border: $padding-1 solid $gray-200;
+    border-radius: $border-radius;
+
+    overflow: hidden;
+
+    .book-expand-head {
+      background: $gray-100;
+      padding: $padding-8 $padding-16;
+      cursor: pointer;
+    }
+
+    .book-expand-content {
+      display: none;
+      padding: $padding-16;
+    }
+
+    input[type="checkbox"]:checked + .book-expand-content {
+      display: block;
+    }
+  }
+
+  .expand__button {
+      color: $uw-red;
+      font-style: italic;
+  }
+
+  /** from the 2008 class */
+  .dimbox {
+	@if $theme-style == "old" {
+		background: #ffd;
+		border: 1px solid #bbd;
+		margin: 10pt;
+		padding: 6pt;
+		color: black;
+	} @else {
+		background: #dee7ff; // Default to dimboxBackground new value
+		border: 0px;
+		margin: 0pt 0pt 40pt;
+		padding: 32pt;
+		color: #4a4a4a;
+	}
+	}
+	
+	.dimbox h2 {
+		@if $theme-style == "old" {
+			color: black;
+		} @else {
+			color: #4a4a4a;
+		}
+	}
+
+	.dimbox a {
+		color: $uw-red;
+	}
+
+	.dimbox a:hover {
+		color: $highlight-color;
+		text-decoration: underline;
+	}
+
+table {
+	pre {
+			border: 0;
+			margin: 0;
+			padding: 1em;
+	}
+}
+
+
+.footer__copyright {
+	text-align: left;
+}
+.footer__lastmod {
+	text-align: right;
+}
+
+// make for nicer "emphatic" emphasis (bold-red)
+.boldred {
+    color: $highlight-color;
+    font-weight: bold;
+}
+
+// used for includebox to match workbooks
+.includebox {
+    overflow:hidden;
+    border: 2px solid gray;
+    border-radius: 5px;
+    width:640px;
+}
+
+//
+.galleryimagebox {
+    display: flex;
+    flex-direction: row;
+}

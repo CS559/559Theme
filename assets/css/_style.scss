@@ -1,38 +1,9 @@
 /* CS559 Theme SCSS style.scss - diverged from mainroad's style.css
 */
-{{/* 
-// sadly this has diverged enough from mainroad that it is hard to go back...
-//
-// mainroad prefers to use Hugo variables - I tend to prefer SASS variables, but mainly
-// since at one point I couldn't make Hugo vars work well
-// (and mainroad doesn't use SASS!)
-//
-// switch to Hugo variables in order to be more consistent with mainroad
-// it makes doing the compare easier
-//
-*/}}
 
 // use SASS variables for constants
 $uwred: "#c5050c";
 $mainroadred: "#e22d30";
-//$midgray: "#646569";
-
-// $highlightColor: {{- .Site.Params.highlightColor | default "#e22d30" -}};
-{{- $highlightColor := .Site.Params.style.vars.highlightColor | default (.Site.Params.highlightColor | default "#e22d30") -}}
-{{- $uwred := .Site.Params.style.vars.uwred | default (.Site.Params.uwred | default "#c5050c") -}}
-
-
-{{ $midgray := (cond (eq .Site.Params.themestyle "old") "#646569" "#4a4a4a") }}
-
-
-// still using SASS for my own params
-$linkColor: {{- .Site.Params.linkColor | default "#c5050c" }};
-
-{{ $widgetLinkColor := (cond (eq .Site.Params.themestyle "old") "#black" "#006cae") }}
-
-//$midgray: {{- .Site.Params.widgetLinkColor | default "#4a4a4a"}};
-$dimColor: {{- .Site.Params.dimColor | default "gray" }};
-$widgetBackground: {{-  .Site.Params.widgetBackground | default "#f7f7f7"}};
 
 // Mainroad had these as fixed: 65.83%, 31.66% (2.5% unnused)
 // parameterize them 
@@ -40,27 +11,8 @@ $sidebar-size: 25%;
 $sidebar-gutter-size: 2.5%;     // seems to be right margin
 $content-size: 100% - $sidebar-size - $sidebar-gutter-size;
 
-
-// new in mainroad: parameterize fonts
-//{{- $fontSans := `"Open Sans", Helvetica, Arial, sans-serif` -}}
-
-{{ $fontSans := "Open Sans"}}
-{{ if eq .Site.Params.themestyle "old" }}
-{{- $fontSans = `"Open Sans", Helvetica, Arial, sans-serif` -}}
-{{ else }}
-{{ $fontSans = .Site.Params.style.vars.fontSans | default "Open Sans" }}
-{{end }}
-
-{{ $fontMono := .Site.Params.style.vars.fontMono | default "Georgia" }}
-{{ if eq .Site.Params.themestyle "old" }}
-{{- $fontMono = `SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` -}}
-{{ end }}
-
-{{- $bodyFontSize := .Site.Params.style.vars.bodyFontSize -}}
-{{- $fontFamilyPrimary :=  $fontMono -}}
-{{- $fontFamilySecondary := $fontSans -}}
-
-
+$fontFamilyPrimary:  $font-mono;
+$fontFamilySecondary: $font-sans;
 
 // these rules don't seem to like following Hugo stuff
 *,
@@ -109,36 +61,48 @@ html {
 body {
 	margin: 0;
 
-{{ $hFont := (cond (eq .Site.Params.themestyle "old") $fontFamilySecondary $fontFamilyPrimary) }}
-	font-family: {{ $hFont }};
+	@if $theme-style == "old" {
+		font-family: $fontFamilySecondary;
+	} @else {
+		font-family: $fontFamilyPrimary;
+	}
 
 
 
-	{{ $fontSize := (cond (eq .Site.Params.themestyle "old") ".875rem" $bodyFontSize) }}
-	font-size: {{ $fontSize }};
+	@if $theme-style == "old" {
+		font-size: .875rem;
+	} @else {
+		font-size: $body-font-size;
+	}
 
 
 
-	{{ $lineHeight := (cond (eq .Site.Params.themestyle "old") 1.6 1.48) }}
-
-	
-	line-height: {{ $lineHeight }};
+	@if $theme-style == "old" {
+		line-height: 1.6;
+	} @else {
+		line-height: 1.48;
+	}
 	word-wrap: break-word;
 	background: #f7f7f7;
 	-webkit-font-smoothing: antialiased;
 //	color: $midgray;
 
 
-	{{ $bodyColor := (cond (eq .Site.Params.themestyle "old") "black" $midgray) }}
-
-	color: {{ $bodyColor }};
+	@if $theme-style == "old" {
+		color: black;
+	} @else {
+		color: $mid-gray;
+	}
 }
 
 .container {
 	position: relative;
 	width: 100%;
-	{{ $containerWidth := (cond (eq .Site.Params.themestyle "old") "1080px" (.Site.Params.style.vars.containerWidth | default "1500px"))  }}
-	max-width: {{ $containerWidth }};
+	@if $theme-style == "old" {
+		max-width: 1080px;
+	} @else {
+		max-width: 1500px;
+	}
 
 	margin: 0 auto;
 }
@@ -234,7 +198,7 @@ textarea {
 
 .btn:hover {
 	color: #fff;
-	background: {{ $highlightColor }};
+	background: $highlight-color;
 }
 
 /* Animation */
@@ -256,15 +220,15 @@ h6 {
 	line-height: 1.3;
 	//color: #000;
 
-	{{ $hColor := (cond (eq .Site.Params.themestyle "old") "black" (.Site.Params.style.vars.headerColor | default $uwred))  }}
-	color: {{ $hColor }};
+	@if $theme-style == "old" {
+		color: black;
+		font-variant: normal;
+	} @else {
+		color: $uw-red; // Default to uw-red if headerColor not set (simplification)
+		font-variant: small-caps;
+	}
 
-	font-family: {{ $fontFamilySecondary }};
-	{{ $hVariant := (cond (eq .Site.Params.themestyle "old") "normal" "small-caps") }}
-
-
-
-	font-variant: {{ $hVariant }};
+	font-family: $fontFamilySecondary;
 	//font-family: 'Luckiest Guy', cursive;
 }
 
@@ -300,7 +264,7 @@ h6 {
 
 // this historically was black - but I thought it might be nice to be more consistent
 a {
-	color: $linkColor;
+	color: $link-color;
 	//color: $widgetLinkColor;
 	text-decoration: none;
 }
@@ -310,7 +274,7 @@ a {
 
 
 a:hover {
-	color: {{ $highlightColor }};
+	color: $highlight-color;
 }
 
 hr {
@@ -369,12 +333,15 @@ figure img {
 figcaption {
 	margin-top: 4px;
 	margin-top: .25rem;
-	color: $dimColor;
+	color: $dim-color;
     font: italic smaller sans-serif;
     padding: 3px;
     text-align: center;
-	{{ $figColor := (cond (eq .Site.Params.themestyle "old") "gray" (.Site.Params.style.vars.figColor | default $midgray))  }}
-	color: {{ $figColor }};
+	@if $theme-style == "old" {
+		color: gray;
+	} @else {
+		color: $mid-gray;
+	}
 }
 
 figcaption h4 {
@@ -386,20 +353,23 @@ pre,
 code,
 kbd,
 samp {
-	font-family: {{ $fontFamilySecondary }};
+	font-family: $fontFamilySecondary;
 		font-size: inherit;
 }
 
 pre,
 code {
-	{{ $codeBackground := (cond (eq .Site.Params.themestyle "old") "#f5f5f5" (.Site.Params.style.vars.codeBackground | default "#f7f7f7"))  }}
-	background-color: {{ $codeBackground }};
+	@if $theme-style == "old" {
+		background-color: #f5f5f5;
+	} @else {
+		background-color: #f7f7f7; // Default to #f7f7f7 if codeBackground not set
+	}
 
-	{{ $codeBorder := (cond (eq .Site.Params.themestyle "old") "1px solid #ebebeb" (.Site.Params.style.vars.codeBorder | default "none"))  }}
-	border: {{ $codeBorder }};
-
-
-
+	@if $theme-style == "old" {
+		border: 1px solid #ebebeb;
+	} @else {
+		border: none;
+	}
 }
 
 code {
@@ -414,17 +384,18 @@ pre {
 	margin-bottom: 20px;
 	margin-bottom: 1.25rem;
 	overflow: auto;
-	{{ $codeColor := (cond (eq .Site.Params.themestyle "old") "inherit" (.Site.Params.style.vars.codeColor | default $uwred))  }}
-	color: {{ $codeColor }};
+	@if $theme-style == "old" {
+		color: inherit;
+	} @else {
+		color: $uw-red;
+	}
 }
 
 pre code {
 	padding: 0;
 	color: inherit;
 	white-space: inherit;
-    {{/* unfortunately, this seems to break the code formatter - so we skip it }}
-	{{ $codeBackground := (cond (eq .Site.Params.themestyle "old") "inherit" (.Site.Params.style.vars.codeBackground | default "#f7f7f7"))  }}
-	background: {{ $codeBackground }}; */}}
+    /* unfortunately, this seems to break the code formatter - so we skip it */
     background: inherit; /* fix by gleicher 1/8/22 - to make work with code formatter */
 	border: 0;
 	font-family: "Courier New";
@@ -442,7 +413,7 @@ blockquote {
 	margin: 0 0 20px;
 	margin: 0 0 1.25rem;
 	line-height: 1.6;
-	border-left: 5px solid {{ $highlightColor }};
+	border-left: 5px solid $highlight-color;
 }
 
 blockquote p:last-child {
@@ -523,17 +494,21 @@ select {
 .header {
 	background: #fff;
 
-	{{ $paddingBottom := (cond (eq .Site.Params.themestyle "old") "0px" "20px") }}
-
-	padding-bottom: {{ $paddingBottom }};
+	@if $theme-style == "old" {
+		padding-bottom: 0px;
+	} @else {
+		padding-bottom: 20px;
+	}
 	//padding-top: 30px;
 }
 
 .logo {
 
-	{{ $logoPadding := (cond (eq .Site.Params.themestyle "old") "25px" "50px") }}
-
-	padding: {{ $logoPadding }};
+	@if $theme-style == "old" {
+		padding: 25px;
+	} @else {
+		padding: 50px;
+	}
 
 }
 
@@ -567,11 +542,13 @@ select {
 
 .logo__title {
 
-	{{ $logoTransform := (cond (eq .Site.Params.themestyle "old") "normal" "uppercase") }}
-	text-transform: {{ $logoTransform }};
-	
-	{{ $logoColor := (cond (eq .Site.Params.themestyle "old") $uwred (.Site.Params.style.vars.logoColor | default $uwred))  }}
-	color: {{ $logoColor }};
+	@if $theme-style == "old" {
+		text-transform: normal;
+		color: $uw-red;
+	} @else {
+		text-transform: uppercase;
+		color: $uw-red; // Default to uw-red if logoColor not set
+	}
 
 	font-size: 32;
 	font-size: 2rem;
@@ -579,38 +556,34 @@ select {
 	line-height: 1;
 	padding-bottom: 0px;
 	font-weight: 700;
-	font-family: {{ $fontFamilySecondary}}
+	font-family: $fontFamilySecondary
 }
 
 .logo__tagline {
 
-	//{{ $taglineColor := (cond (eq .Site.Params.themestyle "old") $uwred $midgray) }}
-	{{ $taglineColor := (cond (eq .Site.Params.themestyle "old") $uwred (.Site.Params.style.vars.taglineColor | default $midgray))  }}
-	color:  {{ $taglineColor }};
+	@if $theme-style == "old" {
+		color: $uw-red;
+	} @else {
+		color: $mid-gray; // Default to mid-gray if taglineColor not set
+	}
 
-	{{ $taglineWeight := (cond (eq .Site.Params.themestyle "old") 700 400) }}
+	@if $theme-style == "old" {
+		font-weight: 700;
+		font-size: 1rem;
+		padding-top: 10px;
+		border-top: 1px solid #ebebeb;
+	} @else {
+		font-weight: 400;
+		font-size: 10px;
+		padding-top: 0;
+		border-top: 0px;
+	}
 
-	font-weight: {{ $taglineWeight }};
-
-	font-family: {{ $fontFamilySecondary}};
-	{{ $taglineFontSize := (cond (eq .Site.Params.themestyle "old") "1rem" "10") }}
-
-	font-size: {{ $taglineFontSize}};
-
-	{{ $topPadTagline := (cond (eq .Site.Params.themestyle "old") "10px" 0) }}
-
-
-	padding-top: {{ $topPadTagline }};
-
-
-	{{ $topBorder := (cond (eq .Site.Params.themestyle "old") "1px solid #ebebeb" "0px") }}
-
-
-	border-top: {{ $topBorder }}
+	font-family: $fontFamilySecondary;
 }
 
 .logo__tagline a{
-	color:  {{ $midgray }};
+	color:  $mid-gray;
 	display: inline-block;
 	//padding-top: 0px;
 	margin-top: 10px;
@@ -623,7 +596,7 @@ select {
 .divider {
 	height: 5px;
 	margin: 0;
-	background: {{ $highlightColor }};
+	background: $highlight-color;
 	border: 0;
 }
 
@@ -639,7 +612,7 @@ select {
 	//padding-bottom: 50px;
 	font: inherit;
 	color: #fff;
-	background: $uwred;
+	background: $uw-red;
 	border: 0;
 	outline: 0;
 }
@@ -662,7 +635,7 @@ select {
 }
 
 :focus > .menu__btn-title {
-	//box-shadow: inset 0 0 1px 3px {{ $highlightColor }};
+	//box-shadow: inset 0 0 1px 3px $highlight-color;
 }
 
 button:not(:-moz-focusring):focus > .menu__btn-title {
@@ -680,19 +653,20 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .submenu__list {
 	list-style: none;
 
-	{{ $menuListColor := (cond (eq .Site.Params.themestyle "old") "#2a2a2a" (.Site.Params.style.vars.menuListColor | default $uwred))  }}
-	background: {{ $menuListColor }};
+	@if $theme-style == "old" {
+		background: #2a2a2a;
+		font-size: .875rem;
+	} @else {
+		background: $uw-red; // Default to uw-red if menuListColor not set
+		font-size: 15px;
+	}
 
-	//background: {{ $midgray }};
-
-	{{ $menuFontSize := (cond (eq .Site.Params.themestyle "old") ".875rem" "15px") }}
-
-	font-size: {{ $menuFontSize }};
-
-	{{ $paddingLeft := (cond (eq .Site.Params.themestyle "old") 0 "80px") }}
-
-	padding-left: {{ $paddingLeft }};
-	font-family: {{ $fontFamilySecondary }};
+	@if $theme-style == "old" {
+		padding-left: 0;
+	} @else {
+		padding-left: 80px;
+	}
+	font-family: $fontFamilySecondary;
 
 	//padding-top: 10px;
 	//padding-bottom: 10px;
@@ -704,14 +678,15 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item:hover {
-	{{ $hoverMenuItem := (cond (eq .Site.Params.themestyle "old") $highlightColor $uwred) }}
-	{{ $hoverTextColor := (cond (eq .Site.Params.themestyle "old") "white" (.Site.Params.style.vars.hoverTextColor | default "white"))  }}
-	{{ $hoverTextDecor := ( cond (eq .Site.Params.themestyle "old") "normal" "underline" )}}
-
-
-	background: {{ $hoverMenuItem }};
-	color: {{ $hoverTextColor }};
-	text-decoration: {{$hoverTextDecor }};
+	@if $theme-style == "old" {
+		background: $highlight-color;
+		color: white;
+		text-decoration: normal;
+	} @else {
+		background: $uw-red;
+		color: white; // Default to white if hoverTextColor not set
+		text-decoration: underline;
+	}
 }
 
 
@@ -720,28 +695,47 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item--active {
-	background-color: {{ $menuListColor }};
-	background: $uwred;
+	@if $theme-style == "old" {
+		background-color: #2a2a2a; // Assuming menuListColor old value
+	} @else {
+		background-color: $uw-red; // Assuming menuListColor new value
+	}
+	background: $uw-red;
 
-	{{ $textDecor := (cond (eq .Site.Params.themestyle "old") "none" "underline") }}
-
-	text-decoration: {{ $hoverTextDecor }};
-
-	color: {{ $hoverTextColor }} !important;
+	@if $theme-style == "old" {
+		text-decoration: none;
+		color: white !important;
+	} @else {
+		text-decoration: underline;
+		color: white !important; // Default to white
+	}
 }
 
 
 .js .menu__btn--active {
-	background-color: {{ $hoverMenuItem }};
-	color: {{ $hoverTextColor }};
+	@if $theme-style == "old" {
+		background-color: $highlight-color;
+		color: white;
+	} @else {
+		background-color: $uw-red;
+		color: white;
+	}
 }
 
 .menu__link:hover {
-	color: {{ $hoverTextColor }};
+	@if $theme-style == "old" {
+		color: white;
+	} @else {
+		color: white;
+	}
 }
 
 .menu__link--active {
-	color: {{ $hoverTextColor }};
+	@if $theme-style == "old" {
+		color: white;
+	} @else {
+		color: white;
+	}
 }
 
 .menu__link {
@@ -757,17 +751,23 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 
 .menu__list .menu__item .submenu__list {
-	{{ $activeBackground := (cond (eq .Site.Params.themestyle "old") "#322d30" (.Site.Params.style.vars.menuListColor | default $uwred))  }}
+	@if $theme-style == "old" {
+		background: #2a2a2a; // menuListColor old
+		color: white;
+		border-top: 5px solid $highlight-color;
+	} @else {
+		background: $uw-red; // menuListColor new
+		color: white;
+		border-top: 5px solid $uw-red; // Default to uw-red if submenuBorderTop not set
+	}
 
-	background: {{ $menuListColor }};
-	color: {{ $hoverTextColor }};
 	visibility: hidden;
 	opacity: 0;
 	position: absolute;
 	max-width: 15rem;
 	transition: all 0.5s ease;
-	{{ $submenuBorderTop := (cond (eq .Site.Params.themestyle "old") $highlightColor (.Site.Params.style.vars.submenuBorderTop | default $uwred))  }}
-	border-top: 5px solid {{ $submenuBorderTop }};
+	display: none;
+
 	display: none;
   }
 
@@ -785,7 +785,11 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__link:hover {
-	color: {{ $hoverTextColor }};
+	@if $theme-style == "old" {
+		color: white;
+	} @else {
+		color: white; // Default to white if hoverTextColor not set
+	}
 }
 
 .js .menu__list {
@@ -814,9 +818,11 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 @media screen and (min-width: 767px) {
 	.menu {
 
-		{{ $borderBottom := (cond (eq .Site.Params.themestyle "old") "5px solid #e22d30" "0px") }}
-
-		border-bottom: {{ $borderBottom }};
+		@if $theme-style == "old" {
+			border-bottom: 5px solid #e22d30;
+		} @else {
+			border-bottom: 0px;
+		}
 
 	}
 
@@ -841,13 +847,13 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 .main {
 
-	{{ $marginLeftMain := (cond (eq .Site.Params.themestyle "old") "0px" "5%") }}
-
-	margin-left: {{ $marginLeftMain }};
-
-	{{ $marginRightMain := (cond (eq .Site.Params.themestyle "old") "0px" "5%") }}
-
-	margin-right: {{ $marginRightMain }};
+	@if $theme-style == "old" {
+		margin-left: 0px;
+		margin-right: 0px;
+	} @else {
+		margin-left: 5%;
+		margin-right: 5%;
+	}
 }
 /* Posts/Pages */
 .post__header,
@@ -867,18 +873,18 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 .meta {
 	font-size: 14px;
-	font-family: {{ $fontFamilySecondary }};
+	font-family: $fontFamilySecondary;
 	vertical-align: baseline;
 }
 
 .meta,
 .meta a {
-	color: $dimColor;
+	color: $dim-color;
 }
 
 // this is intentionally not linkColor, since it is just when it is lit up
 .meta a:hover {
-	color: {{ $highlightColor }};
+	color: $highlight-color;
 }
 
 .meta__item {
@@ -937,14 +943,14 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .authorbox__description a {
 	font-weight: 700;
 	//color:  $linkColor ;
-	color:  {{ $widgetLinkColor }};
+	color:  $widget-link-color;
 }
 
 // use highlight color so there is some "lighting up"
 .content a:hover,
 .warning a:hover,
 .authorbox__description a:hover {
-	//color: {{ $highlightColor }};
+	//color: $highlight-color;
 	text-decoration: underline;
 }
 
@@ -1027,7 +1033,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 // highlight color is often too bright - make it the link color
 .tags__item:hover {
-	background: $linkColor ;
+	background: $link-color ;
 }
 
 .tags__link,
@@ -1042,7 +1048,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	height: 32px;
 	padding: 8px;
 	margin-right: 6px;
-	background: $linkColor ;
+	background: $link-color ;
 	fill: #fff;
 }
 
@@ -1081,8 +1087,11 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .toc__menu ul ul li a {
 	padding-left: 25px;
 	//color: $linkColor;
-	{{ $tocSubheadingColor := (cond (eq .Site.Params.themestyle "old") "#c5050c" (.Site.Params.style.vars.tocSubheadingColor | default $widgetLinkColor))  }}
-	color: {{ $tocSubheadingColor }};
+	@if $theme-style == "old" {
+		color: #c5050c;
+	} @else {
+		color: $widget-link-color; // Default to widgetLinkColor if tocSubheadingColor not set
+	}
 
 }
 
@@ -1106,7 +1115,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .toc__menu a {
 	display: block;
 	padding: 5px 10px;
-	color: {{ $widgetLinkColor }};
+	color: $widget-link-color;
 	border-bottom: 1px solid #ebebeb;
 }
 
@@ -1119,10 +1128,13 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	padding: 25px 0;
 	margin-bottom: 25px;
 	line-height: 1.5;
-	{{ $authorboxBorder := (cond (eq .Site.Params.themestyle "old") "1px solid #ebebeb" (.Site.Params.style.vars.authorboxBorder | default "5px solid #c5050c"))  }}
-
-	border-top: {{ $authorboxBorder }};
-	border-bottom: {{ $authorboxBorder }};
+	@if $theme-style == "old" {
+		border-top: 1px solid #ebebeb;
+		border-bottom: 1px solid #ebebeb;
+	} @else {
+		border-top: 5px solid #c5050c; // Default to 5px solid #c5050c if authorboxBorder not set
+		border-bottom: 5px solid #c5050c;
+	}
 }
 
 .authorbox__avatar {
@@ -1165,9 +1177,11 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 .list__title {
 	font-size: 20px;
-	{{ $listFontSize := (cond (eq .Site.Params.themestyle "old") "1.25rem" "1.5rem") }}
-
-	font-size: {{ $listFontSize }};
+	@if $theme-style == "old" {
+		font-size: 1.25rem;
+	} @else {
+		font-size: 1.5rem;
+	}
 }
 
 .list__meta {
@@ -1200,19 +1214,24 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	padding: 10px 15px;
 	font-weight: 700;
 
-	{{ $nextBtnColor := (cond (eq .Site.Params.themestyle "old") "#000" (.Site.Params.style.vars.nextBtnColor | default $widgetLinkColor))  }}
-	color: {{ $nextBtnColor }};
-	{{ $nextBtnBack := (cond (eq .Site.Params.themestyle "old") "#f5f5f5" (.Site.Params.style.vars.nextBtnBack | default "#fff"))  }}
-	background: {{ $nextBtnBack }};
+	@if $theme-style == "old" {
+		color: #000;
+		background: #f5f5f5;
+	} @else {
+		color: $widget-link-color;
+		background: #fff;
+	}
 }
 
 .pagination__item:hover,
 .pagination__item--current {
-	{{ $paginItemColor := (cond (eq .Site.Params.themestyle "old") "#fff" (.Site.Params.style.vars.paginItemColor | default $midgray))  }}
-	color: {{ $paginItemColor }};
-
-	{{ $paginItemBack := (cond (eq .Site.Params.themestyle "old") "#e22d30" (.Site.Params.style.vars.paginItemBack | default "transparent"))  }}
-	background: {{ $paginItemBack }};
+	@if $theme-style == "old" {
+		color: #fff;
+		background: #e22d30;
+	} @else {
+		color: $mid-gray;
+		background: transparent;
+	}
 }
 
 // at some point, this changed from "post-nav" to "pager"
@@ -1335,7 +1354,7 @@ input[type=reset] {
 
 input[type=submit]:hover,
 input[type=reset]:hover {
-	background: {{ $highlightColor }};
+	background: $highlight-color;
 }
 
 textarea {
@@ -1360,33 +1379,39 @@ textarea {
 
 .widget-archive.widget {
 
-	{{ $archiveBackground := (cond (eq .Site.Params.themestyle "old") "#cbb" "ffdede") }}
-	background: {{ $archiveBackground }};
-
-	{{ $archiveColor := (cond (eq .Site.Params.themestyle "old") "black" $midgray) }}
-	color: {{ $archiveColor }};
-
-	{{ $archiveBorder := (cond (eq .Site.Params.themestyle "old") "0px" "5px solid #c5050c") }}
-	border-bottom: {{ $archiveBorder }};
+	@if $theme-style == "old" {
+		background: #f7f7f7; // Assuming widgetBackground old value
+		color: black;
+		border-bottom: 0px;
+	} @else {
+		background: $widget-background;
+		color: $mid-gray;
+		border-bottom: 5px solid #c5050c;
+	}
 }
 
 .widget-archive.widget h3 {
-	color: {{ $archiveColor }};
+	@if $theme-style == "old" {
+		color: black;
+	} @else {
+		color: $mid-gray;
+	}
 }
 
 .widget__title {
 	position: relative;
-	color: {{ $midgray }};
-
-	{{ $widgetTitleWeight := (cond (eq .Site.Params.themestyle "old") 700 400) }}
-	font-weight: {{ $widgetTitleWeight }};
+	@if $theme-style == "old" {
+		color: black;
+		font-weight: 700;
+	} @else {
+		color: $mid-gray;
+		font-weight: 400;
+	}
 
 	padding-bottom: 5px;
 	font-size: 1rem;
 	text-transform: uppercase;
-	border-bottom: 3px solid {{ $uwred }};
-
-	color: {{ $archiveColor }}
+	border-bottom: 3px solid $uw-red;
 }
 
 .widget__item {
@@ -1401,13 +1426,15 @@ textarea {
 
 // because the widgets are a different background, we might want a different color for them 
 .widget a {
-	{{ $sidebarLinkColor := (cond (eq .Site.Params.themestyle "old") "black" $widgetLinkColor) }}
-    color: {{ $sidebarLinkColor }};
+	@if $theme-style == "old" {
+		color: black;
+	} @else {
+		color: $widget-link-color;
+	}
 }
 
 .widget a:hover {
-	{{ $sidebarLinkUnderline := (cond (eq .Site.Params.style.vars "old") (.Site.Params.style.vars.old.sidebarLinkUnderline | default "normal") "normal") }}
-	text-decoration: {{ $sidebarLinkUnderline }};
+	text-decoration: $sidebar-link-underline;
 }
 
 
@@ -1440,7 +1467,7 @@ textarea {
 	border: 1px solid #ebebeb;
 	border-radius: 0;
 	outline-offset: -2px;
-	font-family: {{ $fontFamilySecondary }};
+	font-family: $fontFamilySecondary;
 	transition: none;
 	-webkit-appearance: none;
 }
@@ -1474,7 +1501,7 @@ a.widget-taglist__link {
 	margin: 0 4px 8px 0;
 	font-size: 12px;
 	font-weight: 600;
-	font-family: {{ $fontFamilySecondary}};
+	font-family: $fontFamilySecondary;
     text-transform: uppercase;
     background-color: darkred;
     color: white;
@@ -1487,7 +1514,7 @@ a.widget-taglist__link {
 
 .widget-languages__link:hover .widget-languages__link-btn {
 	color: #fff;
-	background: {{ $highlightColor }};
+	background: $highlight-color;
 }
 
 .widget-languages__link-btn {
