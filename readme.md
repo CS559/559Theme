@@ -2,7 +2,7 @@
 
 A theme created by Michael Gleicher to make a class web page. Over time, it evolved to also do my home page, so there is a lot of stuff specific to that.
 
-This builds on the ~~"MainRoad"~~ "Roadster" theme - it needs to be "mixed in" to that theme.in the config.toml file, have the line. (we switched from Mainroad to Roadster in 2025).
+This builds on the ~~"MainRoad"~~ "Roadster" theme - it needs to be "mixed in" to that theme.in the config.toml file, have the line. (we switched from Mainroad to Roadster in 2025). In December of 2025, Gemini cleaned up the code a bunch.
 
 Since mainroad seems to be abandoned, this will switch to the "roadster" theme.
 https://discourse.gohugo.io/t/roadster-a-modern-fork-of-mainroad-theme/53102
@@ -179,8 +179,6 @@ One thing to beware of (it drives me nuts): if a tag or category has the same na
 - pagination is set per page, but top_paginate is global
 - I don't know why the section thing works now (the way mainroad does it does not seem different)
 - make an integrated css (using sass)
-- mathjax should include the cool hack that allows us to quote math (see the workbook theme)
-- the new mainroad includes better logo support - revisit how header.html works
 - mainroad doesn't seem to work if the root page is `index.md` - it has to be `_index.md`
   - workaround: use `_index.md` but make the `mainSections` in config.toml not have any posts
 - lunr search doesn't check page titles (which would be really useful) - although the code seems to say that it does
