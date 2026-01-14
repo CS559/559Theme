@@ -2,7 +2,7 @@
 
 A theme created by Michael Gleicher to make a class web page. Over time, it evolved to also do my home page, so there is a lot of stuff specific to that.
 
-This builds on the ~~"MainRoad"~~ "Roadster" theme - it needs to be "mixed in" to that theme.in the config.toml file, have the line. (we switched from Mainroad to Roadster in 2025).
+This builds on the ~~"MainRoad"~~ "Roadster" theme - it needs to be "mixed in" to that theme.in the config.toml file, have the line. (we switched from Mainroad to Roadster in 2025). In December of 2025, Gemini cleaned up the code a bunch.
 
 Since mainroad seems to be abandoned, this will switch to the "roadster" theme.
 https://discourse.gohugo.io/t/roadster-a-modern-fork-of-mainroad-theme/53102
@@ -58,6 +58,15 @@ Changes (not exhaustive):
 - some colors and stylings are changed in styles.css - done since styles.css got converted to scss
 - copyrightdate
 
+
+### CSS Architecture (Updated Dec 2025)
+
+The theme uses a unified SASS compilation pipeline to keep styles clean and maintainable.
+
+*   **`assets/css/main.scss`**: The entry point. It bridges Hugo configuration with SASS. It defines SASS variables based on `config.toml` parameters and imports the style partials.
+*   **`assets/css/_style.scss`** & **`assets/css/_559.scss`**: Pure SASS partials containing the actual styles. These files contain **no** Hugo templating syntax (`{{ ... }}`), making them valid SASS files.
+*   **Configuration**: Styles are configured via `config.toml` params (e.g., `themestyle = "old"`), which are injected into `main.scss` as SASS variables (e.g., `$theme-style`).
+
 ### New Section Variables
 
 - visual_summary - uses a format for talks/videos where everything has a place for a thumbnail and links to the various assets are shown
@@ -105,6 +114,27 @@ There are a lot of shortcodes - and they need to be cleaned up, because there is
 - tooltip (make a rich "markdown" tooltip)
 - url (makes a link to a URL with the URL as the text)
 
+## Full Width Mode
+
+The site supports a "Full Width Mode" which displays only the main content area, hiding the header, sidebar, and footer. This is useful for embedding pages or taking screenshots where only the content is desired.
+
+### Usage
+
+To enable full width mode, append `?fullwidth` to the URL of any page.
+
+Example: `http://localhost:1313/some-page/?fullwidth`
+
+### Design and Implementation
+
+The feature is implemented entirely on the client-side using JavaScript and CSS, avoiding the need for separate Hugo layouts or complex build configurations.
+
+1.  **Structure Changes**: In `themes/559Theme/layouts/_default/baseof.html`, the header, sidebar, and footer partials were wrapped in `<div>` elements with classes `header-wrapper`, `sidebar-wrapper`, and `footer-wrapper`. This allows them to be easily targeted by CSS.
+2.  **CSS**: A `fullwidth-mode` class is defined for the `<body>` element. When this class is present:
+    *   `.header-wrapper`, `.sidebar-wrapper`, and `.footer-wrapper` are set to `display: none !important`.
+    *   The main content containers (`.container`, `.wrapper`, `.primary`) are forced to `width: 100%` and `max-width: none`.
+3.  **JavaScript**: A small script at the end of `baseof.html` checks `window.location.search` for the `fullwidth` parameter. If found, it adds the `fullwidth-mode` class to the `document.body`.
+4.  **Style Adjustments**: `themes/559Theme/assets/css/style.scss` was updated to ensure the new `.sidebar-wrapper` behaves correctly within the flexbox layout (inheriting the order and size properties of the original sidebar).
+
 
 ## Using Links
 
@@ -149,8 +179,6 @@ One thing to beware of (it drives me nuts): if a tag or category has the same na
 - pagination is set per page, but top_paginate is global
 - I don't know why the section thing works now (the way mainroad does it does not seem different)
 - make an integrated css (using sass)
-- mathjax should include the cool hack that allows us to quote math (see the workbook theme)
-- the new mainroad includes better logo support - revisit how header.html works
 - mainroad doesn't seem to work if the root page is `index.md` - it has to be `_index.md`
   - workaround: use `_index.md` but make the `mainSections` in config.toml not have any posts
 - lunr search doesn't check page titles (which would be really useful) - although the code seems to say that it does

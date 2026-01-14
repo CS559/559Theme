@@ -1,0 +1,13 @@
+{{ $style := resources.Get "css/main.scss" | resources.ExecuteAsTemplate "css/main.scss" . | css.Sass -}}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}">
+
+{{/* gleicher - add the v2 styles, just for compatibility - keeping this separate for now as it might be used by old content */}}
+{{ $v2Styles := resources.Get "css/v2-styles.css" | resources.ExecuteAsTemplate "css/v2-styles.css" . -}}
+<link rel="stylesheet" href="{{ $v2Styles.RelPermalink }}">
+
+{{/* gleicher - make customCSS work correctly using SASS*/}}
+{{ $dot := . -}}
+{{ range .Site.Params.customCSS -}}
+{{ $style := resources.Get . | resources.ExecuteAsTemplate . $dot | css.Sass }}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" crossorigin="anonymous">
+{{- end -}}

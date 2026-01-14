@@ -1,0 +1,34 @@
+/* Main SASS file for 559Theme */
+
+// Define SASS variables from Hugo parameters
+$theme-style: "{{ .Site.Params.themestyle | default "new" }}";
+
+// Colors
+$highlight-color: {{ .Site.Params.style.vars.highlightColor | default (.Site.Params.highlightColor | default "#e22d30") }};
+$uw-red: {{ .Site.Params.style.vars.uwred | default (.Site.Params.uwred | default "#c5050c") }};
+$link-color: {{ .Site.Params.linkColor | default "#c5050c" }};
+$dim-color: {{ .Site.Params.dimColor | default "gray" }};
+$widget-background: {{ .Site.Params.widgetBackground | default "#f7f7f7" }};
+
+// Conditional Colors based on theme style
+$mid-gray: {{ if eq .Site.Params.themestyle "old" }}#646569{{ else }}#4a4a4a{{ end }};
+$widget-link-color: {{ if eq .Site.Params.themestyle "old" }}black{{ else }}#006cae{{ end }};
+
+// Fonts
+$font-sans: {{ if eq .Site.Params.themestyle "old" }}"Open Sans", Helvetica, Arial, sans-serif{{ else }}{{ .Site.Params.style.vars.fontSans | default "Open Sans" }}{{ end }};
+$font-mono: {{ if eq .Site.Params.themestyle "old" }}SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace{{ else }}{{ .Site.Params.style.vars.fontMono | default "Georgia" }}{{ end }};
+$body-font-size: {{ .Site.Params.style.vars.bodyFontSize | default "1rem" }}; // Defaulting to 1rem if not set
+$tagline-font-size: {{ .Site.Params.style.vars.taglineFontSize | default "1rem" }};
+
+// Inline Button Colors
+$inline-btn-color: {{ if eq .Site.Params.themestyle "old" }}#fff{{ else }}{{ .Site.Params.style.vars.inlineBtnColor | default "#006cae" }}{{ end }};
+$inline-btn-back: {{ if eq .Site.Params.themestyle "old" }}darkred{{ else }}{{ .Site.Params.style.vars.inlineBtnBack | default "#fff" }}{{ end }};
+$inline-btn-color-hover: {{ if eq .Site.Params.themestyle "old" }}#fff{{ else }}{{ .Site.Params.style.vars.inlineBtnColorHover | default "#4a4a4a" }}{{ end }};
+$inline-btn-back-hover: {{ if eq .Site.Params.themestyle "old" }}black{{ else }}{{ .Site.Params.style.vars.inlineBtnBackHover | default "#fff" }}{{ end }};
+
+// Sidebar
+$sidebar-link-underline: {{ if eq .Site.Params.themestyle "old" }}{{ .Site.Params.style.vars.old.sidebarLinkUnderline | default "normal" }}{{ else }}normal{{ end }};
+
+// Import Partials
+@import "style";
+@import "559";
