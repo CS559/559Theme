@@ -1,0 +1,22 @@
+{{- /* process a display equation - allows for an id to refer to it */ -}}
+{{- /* 1. Increment Counter */ -}}
+{{- $count := .Page.Scratch.Get "eq_counter" | default 0 -}}
+{{- $count = add $count 1 -}}
+{{- .Page.Scratch.Set "eq_counter" $count -}}
+
+{{- /* 2. Register ID */ -}}
+{{- $id := .Get "id" -}}
+{{- if $id -}}
+  {{- .Page.Scratch.SetInMap "eq_refs" $id $count -}}
+{{- end -}}
+
+<div class="math-display" {{ with $id }}id="{{ . }}"{{ end }}>
+    <div class="math-content">
+        {{- /* Fix: Pass "displayMode" true to allow environments like 'align' */ -}}
+        {{- $opts := dict "displayMode" true -}}
+        {{- transform.ToMath .Inner $opts | safeHTML -}}
+    </div>
+    <div class="math-number">
+        ({{ $count }})
+    </div>
+</div>

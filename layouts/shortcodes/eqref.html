@@ -1,0 +1,9 @@
+{{- $id := .Get 0 -}}
+{{- $refs := .Page.Scratch.Get "eq_refs" -}}
+{{- $num := index $refs $id -}}
+
+{{- if $num -}}
+<a href="#{{ $id }}" class="math-ref">Equation {{ $num }}</a>
+{{- else -}}
+<a href="#{{ $id }}" class="math-ref">Equation (See below)</a>
+{{- end -}}

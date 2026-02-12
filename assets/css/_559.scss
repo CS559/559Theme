@@ -328,3 +328,26 @@ table {
     display: flex;
     flex-direction: row;
 }
+
+// for displaymath
+/***********************************************/
+.math-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 1em 0;
+    width: 100%;
+}
+
+.math-content {
+    flex-grow: 1;
+    text-align: center; /* Centers the math */
+    overflow-x: auto;   /* Scrollbars for long equations */
+}
+
+.math-number {
+    flex-shrink: 0;
+    margin-left: 10px;
+    font-weight: bold;
+    color: #555;
+}
