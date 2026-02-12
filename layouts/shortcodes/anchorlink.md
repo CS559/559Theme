@@ -1,1 +1,0 @@
-[{{- .Get 1 | default (.Get 0) -}}](#{{- anchorize (.Get 0) -}})
