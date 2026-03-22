@@ -963,8 +963,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .warning a,
 .authorbox__description a {
 	font-weight: 700;
-	//color:  $linkColor ;
-	color:  $widget-link-color;
+	color: $link-color;
 }
 
 // use highlight color so there is some "lighting up"
