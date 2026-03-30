@@ -7,6 +7,7 @@
     {{- $p := .Page }}
     {{- $r := (.Get "rsrc") }}
     {{- $a := (.Get "asset") }}
+    {{- $alt := .Get "alt" }}
     <div class="leftpic__left" style="width:{{$imgwidth}}px; padding-right:{{$gutter}}px">
         {{- if (or $r $a (.Get "url") (.Get "nopic" ) ) }}
             {{- if (or $r (.Get "asset")) }}
@@ -20,13 +21,13 @@
                 {{- $bigimage := $s.Get "bigimage"}}
                 {{- $image := $bigimage.Resize $size }}
                 {{- $imageurl := $image.RelPermalink}}
-                {{- $alttxt := .Get "alt" | default "Left Picture" }}
                 {{- $title := .Get "title" | default $image.Title }}
+                {{- $alttxt := $alt | default $title | default "Left Picture" }}
                 <a href="{{ $bigimage.RelPermalink }}"><img src="{{ $imageurl }}" alt = "{{ $alttxt }}" title="{{$title}}"/></a>
             {{ else if .Get "url" }}
                 {{- $imageurl := .Get "url" }}
-                {{- $alttxt := .Get "alt" | default "Left Picture" }}
                 {{- $title := .Get "title" | default "Left Picture" }}
+                {{- $alttxt := $alt | default $title | default "Left Picture" }}
                 <img src="{{ $imageurl }}" alt = "{{ $alttxt }}" title="{{$title}}"/>
             {{ end }}
         {{- else }}
