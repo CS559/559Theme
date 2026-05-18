@@ -1,3 +1,1 @@
-{{- if .Site.BuildDrafts -}}
-{{ .Inner | markdownify }}
-{{- else -}} <p>{{(.Get 0 | default "Content coming soon.")|markdownify}}</p> {{- end -}}
+{{errorf "BuildDrafts Deprecated"}}
