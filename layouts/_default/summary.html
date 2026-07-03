@@ -21,12 +21,17 @@
         {{- with .Page.Resources.GetMatch .Params.resourcethumb }}
             {{ $thumb := .Fit ( $page.Site.Params.videoThumbSize | default "180x120" )  }}
             <figure class="list__thumbnail">
-                <a href="{{ .Permalink }}">
-                    <img src="{{ $thumb.RelPermalink }}" alt="{{ .Title }}" />
+				<a href="{{ $page.RelPermalink }}">
+					<img src="{{ $thumb.RelPermalink }}" alt="{{ $page.Title }}" />
                 </a>
             </figure>
         {{- end}}
     {{- end }}
+	{{- $summary := .Summary -}}
+	{{- if .Params.resourcethumb -}}
+		{{- $summary = replaceRE `(?s)<p>(?:<a[^>]*>)?<img[^>]*>(?:</a>)?</p>` "" $summary -}}
+	{{- end -}}
+	{{- $summary = trim $summary " \n\r\t" -}}
 	<header class="list__header">
 		<h3 class="list__title post__title " id="{{ anchorize .Title }}">
 			<a href="{{ .RelPermalink }}" rel="bookmark">
@@ -46,7 +51,9 @@
 		</p>
 		{{- end}}
 	<div class="content list__excerpt post__content clearfix">
-		{{ .Summary }}
+		{{- if $summary }}
+		{{ $summary | safeHTML }}
+		{{- end }}
 		{{- if .Site.Params.myreadmore | default true }}
 		{{- if or .Truncated .Params.summary }}
 		<span class="summary__readmore"><a href="{{ .RelPermalink }}">{{ T "read_more" }}</a></span>

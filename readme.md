@@ -88,7 +88,7 @@ There are a lot of shortcodes - and they need to be cleaned up, because there is
 - content (includes the content of another page inline)
 - content (inserts the content of another page)
 - dimbox (makes a dimbox div)
-- draft-only (so you can have a stub page - and still have draft only content)
+- (deprecated) - ~~draft-only (so you can have a stub page - and still have draft only content)~~ no more draft
 - expand (puts text into an expander)
 - figure (improved on the Hugo figure to allow for rsrc parameters)
 - htmllink (shows the HTML of a reference - gives the whole link)
