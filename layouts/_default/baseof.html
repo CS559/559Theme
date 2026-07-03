@@ -6,7 +6,7 @@
     - default language is English-US
     - add "fullwidth" mode via query string (hides header/sidebar/footer)
 */}}
-<html class="no-js" lang="{{ .Site.LanguageCode | default "en-us" }}"> {{/* gleicher - add default*/}}
+<html class="no-js" lang="{{ .Site.Language.Locale | default "en-us" }}"> {{/* gleicher - add default*/}}
 <head>
 	{{- partial "head.html" . -}}
 </head>
