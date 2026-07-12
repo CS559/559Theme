@@ -1,0 +1,191 @@
+# Theme Unification Plan
+
+*July 2026. Execution plan for consolidating the 559Theme/roadster stack into a single core theme serving all Gleicher Hugo sites. Background and evidence: `REVIEW.md` + `ACTION-PLAN.md` (this repo), `765-25/REVIEW.md` (course-site review + four-site addendum).*
+
+**Where this document lives:** here (the hub repo) until work begins. The first act of Phase 0 is copying it into the 559Theme repo on the working branch — the theme repo copy then becomes canonical, since that's where most work happens.
+
+**Intended executor:** Claude Code sessions with Sonnet. Every task below has a mechanical verification step; the golden-master discipline (below) is what makes a weaker agent safe. Exception: Phase 3 (the SCSS collapse) involves the most cross-file reasoning — use Opus for that phase, or run it with Sonnet and review the diff yourself before merging. Phases 0–2 and 4–6 are well within Sonnet's reach *if the ground rules are followed*.
+
+---
+
+## Decisions already made (do not relitigate in-session)
+
+1. **One core theme.** 559Theme absorbs roadster; roadster is removed from every site. Rationale: four-site evidence in `765-25/REVIEW.md` addendum.
+2. **Style presets replace `themestyle`.** Two named presets: `uw-serif` (current "new": Georgia body 1.1rem, Poppins small-caps red headings, red menu) and `mainroad-sans` (current "old": Open Sans .875rem, black normal-case headings, charcoal menu, 1080px container). Sites choose via `params.style.preset`; individual `style.vars` still override. Back-compat: `themestyle = "old"|"new"` maps to the presets with a deprecation `warnf`.
+3. **Course machinery moves into the core theme** (assign-link, assign-linkonly, reading, page, moddesc, modlo, modname + the snippet mechanism), reconciling the 765-25/sp26 fork: adopt sp26's error style (include `.Position`), standardize on **`data/assignments.yaml`** (sp26's name), with a fallback read of `assigns.yaml` + `warnf` during transition.
+4. **Per-site personality mechanisms:** courses use a thin overlay theme (the sp26 pattern); singleton sites (homepage, VisSnacks) use local `layouts/`. Don't force one mechanism on both.
+5. **Lifecycle:** live sites track the theme and get pin bumps deliberately; archived course sites freeze at their pin forever. Migrating an archived site (765-25) is done as a *test* — merge only because the golden master proves output-identical.
+6. **Migration order:** VisSnacks → 559-sp26 → 765-25 → gleicher.github.io. Simplest consumer first; the personal site goes last because it's the only `old`-style consumer and validates the `mainroad-sans` preset.
+7. **Renames while passing through:** SASS `$font-mono` → `$font-body` (it's Georgia, not mono); collapse `link`/`lnk` into one shortcode (courses only; keep `lnk` as a deprecated alias that `warnf`s).
+8. **MiniSearch replaces Lunr** (Phase 5b). Lunr's actual problems here are the unpinned unpkg dependency, per-search in-browser index rebuilds, and the 140-line results renderer living in `content/`. Site scale is small (~250–300KB of Markdown text per site → ~100KB gzipped index), so a client-side index is fine. MiniSearch is vendored into the theme (no CDN, no node), the index JSON stays Hugo-generated (dev search keeps working under `hugo serve -D`), and no CI step is added. *Pagefind was considered and rejected for now:* it requires a post-build indexing step Hugo cannot run itself, and `hugo server` renders to memory so dev search would break. It remains the upgrade path if a site outgrows client-side search — the widget boundary makes the swap contained.
+9. **menu.js shrinks to a documented toggle-only script.** Of its 139 lines, only the mobile hamburger toggle (~25 lines) is live; the submenu handler (no site has submenus) and the entire dark-theme system (no toggle button exists in any layout) are dead. Replace with a ~12-line commented script using the same markup/classes — zero visual change.
+
+## Ground rules for every Claude Code session
+
+- **Golden-master discipline.** Before changing anything, build the affected site(s) and save `public/` as a baseline. After the change, rebuild and compare. Phases 1, 2, 4, 5 and every site migration must produce **identical rendered output** (modulo asset fingerprint hashes). Any unexplained diff = stop, investigate, do not proceed. Phase 3 intentionally changes CSS — it uses the probe checklist instead.
+- **One phase (or one site migration) per session/branch/PR.** Commit checkpoints after each numbered task. Never combine phases in one diff.
+- **Never modify `content/` or `data/`** except where a task explicitly says so (e.g., the `assigns.yaml` rename). Theme work must not touch prose.
+- **Pin the toolchain.** Hugo 0.163.3 extended (match `.github/workflows/hugo.yml`). If local Hugo differs, install the matching version rather than upgrading the sites mid-migration. Upgrading Hugo is its own future task, easier after Phase 2.
+- **Stop conditions.** If a build errors after a mechanical move, or a diff shows content-bearing changes, or a lookup seems to resolve from an unexpected place: stop and report rather than patching around it.
+
+### Verification harness (create in Phase 0, use everywhere)
+
+`tools/baseline.sh` (per site repo):
+
+```bash
+#!/bin/sh
+# usage: baseline.sh <label>   — builds and snapshots public/ for comparison
+set -e
+rm -rf public
+hugo --baseURL / --quiet
+rm -rf "/tmp/golden-$1" && cp -R public "/tmp/golden-$1"
+echo "baseline saved: /tmp/golden-$1"
+```
+
+`tools/compare.sh`:
+
+```bash
+#!/bin/sh
+# usage: compare.sh <label>  — rebuild and diff against saved baseline
+set -e
+rm -rf public
+hugo --baseURL / --quiet
+# normalize asset fingerprint hashes before diffing
+normalize() { find "$1" -name '*.html' -exec sed -i.bak -E 's/\.[0-9a-f]{40,128}\.(css|js)/.HASH.\1/g' {} \; ; find "$1" -name '*.bak' -delete; }
+cp -R public /tmp/candidate.$$ && normalize /tmp/candidate.$$ 
+cp -R "/tmp/golden-$1" /tmp/golden.$$ && normalize /tmp/golden.$$
+diff -r --exclude='*.css' --exclude='*.js' /tmp/golden.$$ /tmp/candidate.$$ && echo "HTML: IDENTICAL"
+rm -rf /tmp/candidate.$$ /tmp/golden.$$
+```
+
+CSS/JS are excluded from the strict diff (their filenames/content legitimately change in Phases 1 and 3); when a phase claims "no visual change," verify CSS by diffing the *un-fingerprinted compiled output* and confirming changes are limited to what the task predicts. Where available (VisSnacks), also run `htmltest`.
+
+**Probe checklist** (Phase 3 + final site sign-off; run with a headless browser or by hand):
+for each site's homepage + one content page, record: body `font-family`/`font-size`/`line-height`/`color`; `h1` `color`/`font-variant`/`font-family`; menu bar `background`; `.container` `max-width`; widget link color; one dimbox background. Compare to the expected preset values in **Appendix A** (`uw-serif` = current live 765-25 values, `mainroad-sans` = current live personal-site values).
+
+---
+
+## Phase 0 — Setup and baselines (½ day)
+
+1. Clone `github.com:CS559/559Theme` directly (not via a site's submodule). Create branch `unify`. Copy this document into the repo root. **Accept:** branch exists; plan committed.
+2. Note the three divergent site pins (`63f35e4`, `db6205c`, `634eb2c`). Diff each against `master` and confirm nothing on master breaks the older consumers' expectations, or record what does. **Accept:** a short `NOTES-pins.md` in the theme repo listing any behavioral differences (may be "none").
+3. In each of the four site repos: add `tools/baseline.sh` + `tools/compare.sh`; run `baseline.sh pre-unify`. For 559-sp26 expect a slow build (564MB galleries). **Accept:** four baselines exist and `compare.sh pre-unify` passes trivially on unchanged repos.
+4. Record the file inventory that roadster actually contributes per site. Method: `hugo --templateMetrics` per site, plus the known list — `_partials/{header,sidebar,mathjax,post_tags}.html`, `home.html`, `static/js/menu.js`, `assets/css/v2-styles.css`. **Accept:** `NOTES-roadster-files.md` listing every roadster-resolved file per site, verified empirically (temporarily remove roadster from one site's theme list; enumerate what breaks; restore).
+
+## Phase 1 — Absorb roadster into 559Theme (1 day)
+
+Work in the theme repo; test against VisSnacks and gleicher.github.io checkouts with the submodule pointed at the `unify` branch.
+
+1. Copy the Phase 0 inventory files from roadster into 559Theme *in 559Theme's current template-layout convention* (don't mix generation migration into this phase). Keep file contents byte-identical where possible.
+2. Fold `v2-styles.css` (93 lines) into the theme's SCSS bundle. Define the four dangling custom properties it references (`--color-menu-bg`, `--color-menu-border`, `--color-inverse-text`, `--color-overlay-shadow`) from the corresponding SASS vars.
+3. In each of the two test sites: change `theme = ["559Theme"]` (drop roadster), point the 559Theme submodule at `unify`, run `compare.sh pre-unify`. **Accept: HTML identical** on both sites; CSS diff shows only the v2 merge.
+4. Repeat the config change + compare for 765-25 and 559-sp26 (sp26 keeps its overlay: `theme = ["sp26","559Theme"]`). **Accept:** identical HTML on all four.
+5. Remove the roadster submodule from all four repos (`.gitmodules`, config). Update each repo's CLAUDE.md/pullall script if it references roadster. **Accept:** clean builds from fresh clones (CI dry-run or `git clone --recurse-submodules` into /tmp).
+
+## Phase 2 — Modern template layout (½–1 day)
+
+Theme repo only. Migrate 559Theme to the current Hugo convention: `layouts/_default/*` → `layouts/*`, `layouts/partials/` → `layouts/_partials/`, etc. This removes the dual-generation lookup risk documented in `REVIEW.md`. Purely mechanical: `hugo mod` isn't in play, so it's file moves + updated partial references. **Accept:** all four sites rebuild with HTML identical to Phase 1 baselines (`baseline.sh post-p1` taken at end of Phase 1).
+
+## Phase 3 — CSS unification and style presets (1–2 days; strongest model / closest review)
+
+1. Replace the Go-templated `main.scss` with: a small generated `_hugo-tokens.scss` (only variable definitions come from Hugo params) + pure SCSS partials that tooling can lint. 
+2. Create `presets/uw-serif.scss` and `presets/mainroad-sans.scss` as token bundles. `uw-serif` = today's "new" defaults (including the values currently in the *theme-level* `config.toml`, which should move into the preset). `mainroad-sans` = today's hardcoded "old" values, extracted from the 44 `@if $theme-style == "old"` branches (36 in `_style.scss`, 8 in `_559.scss`).
+3. Delete all 44 branches; `themestyle` param maps to preset with `warnf`.
+4. Rename `$font-mono` → `$font-body` (keep param alias `fontMono` working with `warnf`).
+5. Make the Google Fonts `<link>` in `head.html` preset-driven; load only families the active preset uses (drop Bellota Text / Libre Baskerville if — verify — nothing references them).
+6. Prune the theme-repo copy of anything Phase 3 orphans (e.g., roadster's never-loaded `style.css` if any remnant was carried over).
+
+**Verification:** this phase changes CSS text by design, so golden HTML diff still applies (HTML must be identical) but CSS is verified by the **probe checklist**: 765-25 and VisSnacks under `uw-serif` must probe identical to their live values; gleicher.github.io under `mainroad-sans` must probe identical to its live values. Screenshot each site's homepage + one content page before/after at 1440px and 390px and compare visually. **Any probe mismatch = stop.**
+
+## Phase 4 — Promote course machinery (1 day)
+
+1. Copy the reconciled shortcodes into the theme: start from **sp26's versions** (better errors), add 765-25's `reading.html`, `moddesc/modlo/modname`, and the `snippet` mechanism if not already in the theme. Data lookups read `data/assignments.yaml`, falling back to `assigns.yaml` with `warnf`.
+2. Write `docs/data-contracts.md` in the theme repo: schema for `assignments.yaml`, `readings.yaml`, `modules.toml`, `pages.yaml` (documented from 765-25's live files; note the sentinel/test entries as schema examples).
+3. Collapse `link`/`lnk` (one implementation, `lnk` aliased + deprecated).
+4. Test on 765-25: delete its 7 local shortcodes, rebuild. **Accept: HTML identical** to baseline (the fallback read makes the `assigns.yaml` name change unnecessary for the archived site — do *not* rename its data file).
+5. Test on 559-sp26: delete the duplicated shortcodes from the `sp26` overlay so they resolve from the core. **Accept: HTML identical** (watch for the `assignments` vs `assigns` key and error-message differences — the overlay versions were the reconciliation source, so output should match).
+
+## Phase 5 — Prune dead weight (½ day)
+
+1. Generate a usage matrix: for each of the theme's shortcodes/partials/widgets, grep all four sites' `content/` + `layouts/` (script it; commit the matrix as `NOTES-usage.md`).
+2. Delete everything with zero usage across all four sites. Expected candidates from the reviews: math/displaymath/eqref (superseded by native Hugo math), mikes-notes, draft-only, next/prev, resource-* cruft, `staff/` templates, course content stubs, the vendored html-hint library (replace the single tooltip use in gleicher.github.io content with a `title=` attribute — this is the one permitted content edit).
+3. **Replace `menu.js`** (decision 9) with a documented toggle-only script. Keep the exact selectors and class names (`.menu__btn`, `.menu__list`, `menu__list--active`, `menu__list--transition`, `menu__btn--active`, `aria-expanded`). Delete the submenu handler and all theme-toggle/localStorage/matchMedia code. Header-comment the file: what it does, what markup it expects. **Accept:** HTML identical; mobile menu opens/closes on every site at 390px (manual or scripted check); no console errors.
+4. **Accept (phase):** all four sites build with HTML identical; theme repo is measurably smaller; `NOTES-usage.md` documents what was deleted and why.
+
+## Phase 5b — Replace Lunr search with MiniSearch (½ day)
+
+Independent of Phases 2–4; requires only Phase 1 (theme owns the widget). Pure-Hugo pipeline: no node, no CI change, dev search keeps working under `hugo serve -D`.
+
+1. Pre-check: grep all four repos for consumers of `index.json` other than `lunr-search` (none expected). **Accept:** documented in commit message.
+2. Vendor `minisearch` (single minified file from the official release; record the version in a comment) into the theme's `assets/js/`; serve through Hugo Pipes with fingerprinting.
+3. Clean the index template (`layouts/index.json`): title, tags, section, permalink, and **full** `plainify`-ed content — do NOT truncate. (Measured July 2026: full text is only ~165–300KB raw / ~100KB gzipped per site, and on 765-25 a 2,000-char cap would exclude ~⅔ of all text — long module pages are exactly what gets searched. A cap would also regress recall vs. the current Lunr setup, which indexes full content. Revisit only if a site's index exceeds ~1MB gzipped, and prefer Pagefind at that point anyway.)
+4. Port the results renderer out of `content/lunr-search.html` into a proper theme layout (e.g., `layouts/page/search.html` + a tiny `content/search.md` stub per site, or a dedicated output — pick the simplest that keeps one canonical implementation in the theme). Rewrite against the MiniSearch API (`new MiniSearch({fields:['title','tags','content'], boost…})`, `search(q, {prefix:true, fuzzy:0.2})`); keep the existing DOM-building approach (it deliberately avoids innerHTML for content) but delete the lunr-specific plumbing and the hard-coded `../index.json` path (derive from `baseURL`/`relref`).
+5. Rename the widget `lunr` → `search` (keep `lunr` as an alias in the widget loop with a `warnf`); placeholder text stops saying "lunr search …".
+6. Per site (fold into each Phase 6 migration): update `widgets` param; replace `content/lunr-search.html` with the search stub; keep `"JSON"` in `[outputs]` (still needed — the index is still Hugo-generated).
+
+**Verification (exception to golden-master):** intentional HTML changes = widget markup + search page only; everything else identical. Functional check per site, in `hugo serve` (this now works in dev — that's the point): search a term appearing on exactly one page and confirm the link resolves under the site's subpath baseURL; check mobile rendering; grep `public/` to confirm no `unpkg` references remain; record `index.json` size (expect roughly today's size; ~100KB gzipped is fine). **Recall check:** search a term that appears only in the final section of the site's longest page (e.g., deep in a 765-25 module page) and confirm it's found.
+
+*Future option, recorded:* if a site outgrows client-side search, swap this widget for Pagefind (post-build `npx pagefind --site public` in CI; dev search degrades). The widget boundary is the seam.
+
+## Phase 6 — Site migrations (½ day each, in order)
+
+For each site — **VisSnacks, then 559-sp26, then 765-25, then gleicher.github.io**:
+
+1. Bump the 559Theme submodule to the `unify` head; confirm roadster already removed (Phase 1).
+2. Set `params.style.preset` (`uw-serif` for the first three; `mainroad-sans` for the personal site). Remove `themestyle`.
+3. Site config modernization: rename `config.toml` → `hugo.toml` where applicable (personal site), lowercase `[params]`, delete dead keys (765-25's `weeks-in-vis`/`assigns` section references; personal site's commented-out cruft).
+4. Apply the per-site search wiring (Phase 5b step 6): widget param rename, search page stub replaces `lunr-search.html`.
+5. Run `compare.sh`, probe checklist, screenshots (desktop + mobile), `htmltest` where configured, and the search functional check.
+6. Merge; for **765-25**, tag the result and treat the new pin as its permanent freeze; for live sites, note the pin-bump routine in the repo's CLAUDE.md.
+
+**Accept per site:** identical HTML, probes match preset, CI deploy green, live spot-check.
+
+## Phase 7 — Follow-on work (separate efforts, separate plans)
+
+- **765-26 bootstrap** on the unified theme: overlay theme + `schedule.yaml` architecture, dashboard homepage, archetypes — see Part 4 of `765-25/REVIEW.md`.
+- **Personal site visual refresh** on the new base — Phase 3 of `ACTION-PLAN.md` (typography, homepage restructure, red discipline). Now expressible as token changes + a homepage template, since the site runs on presets. Consider whether the homepage simply adopts `uw-serif`.
+- Hugo version upgrade across sites (easier post-Phase 2).
+- 559-sp26 gallery externalization (564MB in `assets/`) for future semesters.
+
+---
+
+## Session-starter prompt (copy into Claude Code)
+
+> Read THEME-PLAN.md in this repo. We are executing Phase N. Follow the ground rules exactly: golden-master discipline (tools/baseline.sh + tools/compare.sh), one phase per branch, no content/ edits, stop on unexplained diffs. Do the numbered tasks for Phase N in order, committing after each. Report the verification evidence (diff output, probe values) for each acceptance check.
+
+Total estimate: 6–9 focused days across phases, naturally splittable into single-phase sessions.
+
+---
+
+## Appendix A — Preset reference values (the `themestyle` old/new fork, measured July 2026)
+
+The `themestyle` mechanism: `main.scss` is Go-templated (`ExecuteAsTemplate`) before Sass compilation; the param selects Sass variable values plus **44 `@if $theme-style == "old"` branches** (36 in `_style.scss`, 8 in `_559.scss`). "new" values are param-driven with defaults split between `main.scss` and the **theme-level `config.toml`** (which supplies Poppins/Georgia/1.1rem — move these into the preset in Phase 3). "old" values are hardcoded in the branches. `$font-mono` is misnamed: in "new" mode it holds the Georgia *body* font.
+
+| Probe | `mainroad-sans` (= "old", live on gleicher.github.io) | `uw-serif` (= "new", live on 765-25 / VisSnacks / 559-sp26) |
+|---|---|---|
+| body font-family | "Open Sans", Helvetica, Arial, sans-serif | Georgia (via misnamed `fontMono`) |
+| body font-size / line-height | .875rem (14px) / 1.6 | 1.1rem (17.6px) / 1.48 |
+| body color | black | #4a4a4a |
+| h1–h6 color / font-variant | black / normal | #c5050c / **small-caps**, family = `fontSans` (Poppins-first) |
+| menu bar background | #2a2a2a (charcoal) | #c5050c (UW red), underlined hover |
+| `.container` max-width | 1080px | 1500px (+5% content side margins) |
+| widget link color | black | #006cae (blue) |
+| widget accents | thin #ebebeb borders | 5px #c5050c bottom borders |
+| dimbox | #ffd bg, #bbd border | #dee7ff bg, borderless |
+| code blocks | #f5f5f5 bg, #ebebeb border, inherit color | #f7f7f7 bg, no border, #c5050c color |
+| inline buttons | white on darkred | #006cae on white |
+| logo/tagline | red logo text, normal case, tight header (25px pad) | red uppercase logo, gray tagline, roomy header (50px pad) |
+
+Other conversation-derived facts an executing agent needs: link color both styles ≈ #c5050c on white (≈5.9:1, passes AA); `head.html` unconditionally loads three Google font families (Poppins, Bellota Text, Libre Baskerville) on every page of every site — Phase 3 step 5 makes this preset-driven; `menu.js` anatomy is in decision 9; Lunr/MiniSearch rationale and site text sizes (165–300KB raw, 2,000-char cap would drop ~⅔ of 765-25's text) are in decision 8 and Phase 5b.
+
+## Appendix B — Document map (where everything lives)
+
+| Document | Contents |
+|---|---|
+| `gleicher.github.io/REVIEW.md` | Personal-site design + implementation review; theme-stack fragility analysis; options A/B/C |
+| `gleicher.github.io/ACTION-PLAN.md` | Personal-site roadmap (Phases 0–4: bugs, editorial, consolidation, visual refresh); the visual-refresh spec lives here |
+| `gleicher.github.io/THEME-PLAN.md` | **This file — the canonical execution plan** for theme unification across all sites. Copied to the 559Theme repo at Phase 0; that copy becomes canonical |
+| `765-25/REVIEW.md` | Course-site review; data-layer/workflow analysis; 765-26 design suggestions (schedule.yaml, dashboard homepage, archetypes); **four-site addendum** with the unified-theme evidence and verdict |
+| Theme repo `NOTES-*.md` (created during execution) | Pin differences, roadster file inventory, usage matrix — Phase 0/5 outputs |
+
+Session records: the reviews were produced from a July 2026 Cowork session that also visually inspected all four live sites (desktop + mobile) and verified every factual claim against the repos. Anything not captured in these five documents was judged not needed for execution.
