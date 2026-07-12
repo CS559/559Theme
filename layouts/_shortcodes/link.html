@@ -1,19 +1,52 @@
-{{- /*Mike's first attempt to make a Hugo Template
-     * the first param is the page
-     * the second param (optional) is the anchor
+{{- /*
+  link — link to another page in the site by its logical path.
 
-     update Jan 22 - make this HTML so if you use <> it still works
+  Usage:
+    {{< link "some/page" >}}                          one bare positional arg = the page
+    {{< link page="some/page" >}}                     named form (page is required)
+    {{< link page="some/page" anchor="Section" >}}    link to a heading on that page
+    {{< link page="some/page" text="click me" >}}     custom link text
+    `link` is accepted as an alias for `page`.
 
-     this is less helpful when you want to change the text of the link,
-     but that case is well handled with just using raw Hugo
-     */ -}}
-{{- $pagename := .Get 0 -}}
-{{- $pagetitle := (.Site.GetPage $pagename).Title -}}
-{{- $anchorname := .Get 1 -}}
-{{- $target := relref . $pagename -}}
-{{/**too messy to deal with the different cases - so split**/}}
-{{- with $anchorname -}}{{/*if there is an anchor*/}}
-<a href="{{- $target -}}#{{- anchorize $anchorname -}}">{{- $pagetitle -}}&nbsp;({{- $anchorname -}})</a>
-{{- else -}}{{- /*there is no anchor*/ -}}
-<a href="{{- $target -}}">{{- $pagetitle -}}</a>
+  Defaults (override only with named params):
+    - text: the linked page's title; when an anchor is given and no text is
+      set, it becomes "Title (Anchor)".
+    - anchor: none.
+    - Explicit text is used verbatim; anchor still sets the URL #fragment.
+
+  Removed: two positional arguments. The old shortcode took the anchor as a
+  second positional arg (and the old `lnk` took the text there), which was
+  ambiguous — hence named params now. One positional arg (the page) is fine.
+*/ -}}
+{{- $page := "" -}}
+{{- $anchor := "" -}}
+{{- $text := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $page = .Get "page" -}}
+  {{- if not $page }}{{ $page = .Get "link" }}{{ end -}}
+  {{- $anchor = .Get "anchor" | default "" -}}
+  {{- $text = .Get "text" | default "" -}}
+{{- else -}}
+  {{- if gt (len .Params) 1 -}}
+    {{- errorf "link (%s): positional anchor/text is no longer supported. Use named params, e.g. {{< link page=%q anchor=\"…\" >}} or {{< link page=%q text=\"…\" >}}." .Position (.Get 0) (.Get 0) -}}
+  {{- end -}}
+  {{- $page = .Get 0 -}}
+{{- end -}}
+{{- if not $page -}}
+  {{- errorf "link (%s): missing page — use {{< link \"some/page\" >}} or {{< link page=\"some/page\" >}}." .Position -}}
+{{- end -}}
+{{- $target := .Site.GetPage $page -}}
+{{- if not $target -}}
+  {{- errorf "link (%s): page %q not found." .Position $page -}}
+{{- end -}}
+{{- $href := relref . $page -}}
+{{- $pagetitle := $target.Title -}}
+{{- if $text -}}
+<a href="{{- $href -}}{{- with $anchor -}}#{{- anchorize . -}}{{- end -}}">{{- $text -}}</a>
+{{- else -}}
+{{- with $anchor -}}
+<a href="{{- $href -}}#{{- anchorize . -}}">{{- $pagetitle -}}&nbsp;({{- . -}})</a>
+{{- else -}}
+<a href="{{- $href -}}">{{- $pagetitle -}}</a>
+{{- end -}}
 {{- end -}}
