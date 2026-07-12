@@ -1,0 +1,117 @@
+// Folded in from roadster's assets/css/v2-styles.css (Phase 1 of the theme
+// unification: 559Theme absorbs roadster). Governs the nested (sub)menu —
+// no site currently has submenus, so these rules have no visible effect
+// today; kept byte-for-byte equivalent to roadster's output pending Phase 5
+// dead-code pruning.
+
+// The four custom properties roadster's CSS referenced but never defined
+// itself (they were meant to be supplied by the surrounding theme). Mapped
+// to 559Theme's existing color choices for the same UI role:
+// - --color-menu-bg matches .menu__list's own background (uw-red / #2a2a2a)
+// - --color-menu-border matches the border already used on .menu__list--active
+// - --color-inverse-text matches the white text color used throughout the
+//   menu for text sitting on the colored menu background
+// - --color-overlay-shadow matches the theme's existing dropdown/overlay
+//   shadow value
+:root {
+	@if $theme-style == "old" {
+		--color-menu-bg: #2a2a2a;
+	} @else {
+		--color-menu-bg: #{$uw-red};
+	}
+	--color-menu-border: rgba(255, 255, 255, .1);
+	--color-inverse-text: white;
+	--color-overlay-shadow: rgba(50, 50, 50, .17);
+}
+
+.menu__link svg {
+	fill: currentColor;
+	stroke: currentColor;
+}
+
+/* Nested Menu */
+.menu__item {
+	position: relative;
+}
+
+.menu__item:hover > .submenu {
+	display: block;
+}
+
+.submenu {
+	background: var(--color-menu-bg);
+	box-shadow: 0 2px 5px var(--color-overlay-shadow);
+	display: none;
+	left: 0;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	top: 100%;
+	width: 200px;
+	z-index: 1000;
+}
+
+.submenu__item {
+	border-top: 1px solid var(--color-menu-border);
+	position: relative;
+}
+
+.submenu__link {
+	color: var(--color-inverse-text);
+	display: block;
+	font-weight: 700;
+	padding: 10px 15px;
+	text-decoration: none;
+	text-transform: uppercase;
+	transition: background-color 0.25s ease-out;
+}
+
+.submenu__link:hover {
+	background: $highlight-color;
+	color: var(--color-inverse-text);
+}
+
+.submenu .submenu {
+	display: none;
+	left: 100%;
+	top: 0;
+	width: 200px;
+	z-index: 1001;
+}
+
+.submenu__item:hover > .submenu {
+	display: block;
+}
+
+.has-submenu::after {
+	content: '▼';
+	margin-left: 5px;
+	font-size: 0.6em;
+	transition: transform 0.2s ease;
+}
+
+/* Mobile submenu toggle */
+@media screen and (max-width: 767px) {
+	.submenu {
+		position: static;
+		width: 100%;
+		max-height: 0;
+		overflow: hidden;
+		transition: max-height 0.25s ease;
+	}
+
+	.submenu-open > .submenu {
+		display: block;
+		max-height: 500px;
+	}
+
+	.submenu-open > .has-submenu::after {
+		transform: rotate(180deg);
+	}
+
+	.submenu .submenu {
+		left: 0;
+		padding-left: 15px;
+	}
+}

@@ -32,3 +32,4 @@ $sidebar-link-underline: {{ if eq .Site.Params.themestyle "old" }}{{ .Site.Param
 // Import Partials
 @import "style";
 @import "559";
+@import "v2menu";
