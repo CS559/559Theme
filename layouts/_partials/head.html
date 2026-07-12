@@ -31,9 +31,17 @@ I keep the conditional so the code looks like the modern mainroad code.
 <link rel="dns-prefetch" href="//fonts.gstatic.com">
 <link rel="stylesheet" {{ printf `href="%s"` $googleFontsLink | safeHTMLAttr }}>
 {{- end }}
-{{/* gleicher - add some more fonts manually*/}}
-<link href="https://fonts.googleapis.com/css2?family=Bellota+Text:ital,wght@0,300;0,700;1,300&family=Libre+Baskerville&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+{{/* Preset-driven font loading (Phase 3). Open Sans is loaded above via
+     googleFontsLink — both presets use it in their sans stack. The uw-serif
+     preset additionally uses Poppins (headings / sans stack); mainroad-sans
+     does not, so it loads no extra family. Bellota Text, Libre Baskerville and
+     Lora used to be loaded here unconditionally but are referenced by no
+     preset, layout, or site content, so they are no longer loaded. */}}
+{{- $preset := .Site.Params.style.preset -}}
+{{- if not $preset }}{{ with .Site.Params.themestyle }}{{ $preset = cond (eq . "old") "mainroad-sans" "uw-serif" }}{{ end }}{{ end -}}
+{{- if eq ($preset | default "uw-serif") "uw-serif" }}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+{{- end }}
 
 {{- partial "head/stylesheet.html" . -}}
 
