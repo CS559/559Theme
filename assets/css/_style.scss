@@ -11,7 +11,7 @@ $sidebar-size: 25%;
 $sidebar-gutter-size: 2.5%;     // seems to be right margin
 $content-size: 100% - $sidebar-size - $sidebar-gutter-size;
 
-$fontFamilyPrimary:  $font-mono;
+$fontFamilyPrimary:  $font-body;
 $fontFamilySecondary: $font-sans;
 
 // these rules don't seem to like following Hugo stuff
@@ -60,39 +60,13 @@ html {
 
 body {
 	margin: 0;
-
-	@if $theme-style == "old" {
-		font-family: $fontFamilySecondary;
-	} @else {
-		font-family: $fontFamilyPrimary;
-	}
-
-
-
-	@if $theme-style == "old" {
-		font-size: .875rem;
-	} @else {
-		font-size: $body-font-size;
-	}
-
-
-
-	@if $theme-style == "old" {
-		line-height: 1.6;
-	} @else {
-		line-height: 1.48;
-	}
+	font-family: $body-font-family;
+	font-size: $body-font-size;
+	line-height: $body-line-height;
 	word-wrap: break-word;
 	background: #f7f7f7;
 	-webkit-font-smoothing: antialiased;
-//	color: $midgray;
-
-
-	@if $theme-style == "old" {
-		color: black;
-	} @else {
-		color: $mid-gray;
-	}
+	color: $body-color;
 }
 
 /* Full Width Mode */
@@ -119,11 +93,7 @@ body.fullwidth-mode {
 .container {
 	position: relative;
 	width: 100%;
-	@if $theme-style == "old" {
-		max-width: 1080px;
-	} @else {
-		max-width: 1500px;
-	}
+	max-width: $container-max-width;
 
 	margin: 0 auto;
 }
@@ -241,13 +211,8 @@ h6 {
 	line-height: 1.3;
 	//color: #000;
 
-	@if $theme-style == "old" {
-		color: black;
-		font-variant: normal;
-	} @else {
-		color: $uw-red; // Default to uw-red if headerColor not set (simplification)
-		font-variant: small-caps;
-	}
+	color: $heading-color;
+	font-variant: $heading-font-variant;
 
 	font-family: $fontFamilySecondary;
 	//font-family: 'Luckiest Guy', cursive;
@@ -358,11 +323,7 @@ figcaption {
     font: italic smaller sans-serif;
     padding: 3px;
     text-align: center;
-	@if $theme-style == "old" {
-		color: gray;
-	} @else {
-		color: $mid-gray;
-	}
+	color: $figcaption-color;
 }
 
 figcaption h4 {
@@ -380,17 +341,8 @@ samp {
 
 pre,
 code {
-	@if $theme-style == "old" {
-		background-color: #f5f5f5;
-	} @else {
-		background-color: #f7f7f7; // Default to #f7f7f7 if codeBackground not set
-	}
-
-	@if $theme-style == "old" {
-		border: 1px solid #ebebeb;
-	} @else {
-		border: none;
-	}
+	background-color: $code-bg;
+	border: $code-border;
 }
 
 code {
@@ -405,11 +357,7 @@ pre {
 	margin-bottom: 20px;
 	margin-bottom: 1.25rem;
 	overflow: auto;
-	@if $theme-style == "old" {
-		color: inherit;
-	} @else {
-		color: $uw-red;
-	}
+	color: $pre-color;
 }
 
 pre code {
@@ -515,22 +463,12 @@ select {
 .header {
 	background: #fff;
 
-	@if $theme-style == "old" {
-		padding-bottom: 0px;
-	} @else {
-		padding-bottom: 20px;
-	}
+	padding-bottom: $header-padding-bottom;
 	//padding-top: 30px;
 }
 
 .logo {
-
-	@if $theme-style == "old" {
-		padding: 25px;
-	} @else {
-		padding: 50px;
-	}
-
+	padding: $logo-padding;
 }
 
 .logo__link {
@@ -563,13 +501,8 @@ select {
 
 .logo__title {
 
-	@if $theme-style == "old" {
-		text-transform: normal;
-		color: $uw-red;
-	} @else {
-		text-transform: uppercase;
-		color: $uw-red; // Default to uw-red if logoColor not set
-	}
+	text-transform: $logo-title-transform;
+	color: $uw-red;
 
 	font-size: 32;
 	font-size: 2rem;
@@ -582,23 +515,12 @@ select {
 
 .logo__tagline {
 
-	@if $theme-style == "old" {
-		color: $uw-red;
-	} @else {
-		color: $mid-gray; // Default to mid-gray if taglineColor not set
-	}
+	color: $tagline-color;
 
-	@if $theme-style == "old" {
-		font-weight: 700;
-		font-size: 1rem;
-		padding-top: 10px;
-		border-top: 1px solid #ebebeb;
-	} @else {
-		font-weight: 400;
-		font-size: $tagline-font-size;
-		padding-top: 0;
-		border-top: 0px;
-	}
+	font-weight: $tagline-font-weight;
+	font-size: 1rem;
+	padding-top: $tagline-padding-top;
+	border-top: $tagline-border-top;
 
 	font-family: $fontFamilySecondary;
 }
@@ -674,19 +596,9 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 .submenu__list {
 	list-style: none;
 
-	@if $theme-style == "old" {
-		background: #2a2a2a;
-		font-size: .875rem;
-	} @else {
-		background: $uw-red; // Default to uw-red if menuListColor not set
-		font-size: 15px;
-	}
-
-	@if $theme-style == "old" {
-		padding-left: 0;
-	} @else {
-		padding-left: 80px;
-	}
+	background: $menu-bg;
+	font-size: $menu-font-size;
+	padding-left: $menu-padding-left;
 	font-family: $fontFamilySecondary;
 
 	//padding-top: 10px;
@@ -699,15 +611,9 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item:hover {
-	@if $theme-style == "old" {
-		background: $highlight-color;
-		color: white;
-		text-decoration: normal;
-	} @else {
-		background: $uw-red;
-		color: white; // Default to white if hoverTextColor not set
-		text-decoration: underline;
-	}
+	background: $menu-item-hover-bg;
+	color: white;
+	text-decoration: $menu-item-hover-decoration;
 }
 
 
@@ -716,47 +622,25 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__item--active {
-	@if $theme-style == "old" {
-		background-color: #2a2a2a; // Assuming menuListColor old value
-	} @else {
-		background-color: $uw-red; // Assuming menuListColor new value
-	}
+	background-color: $menu-bg;
 	background: $uw-red;
 
-	@if $theme-style == "old" {
-		text-decoration: none;
-		color: white !important;
-	} @else {
-		text-decoration: underline;
-		color: white !important; // Default to white
-	}
+	text-decoration: $menu-item-active-decoration;
+	color: white !important;
 }
 
 
 .js .menu__btn--active {
-	@if $theme-style == "old" {
-		background-color: $highlight-color;
-		color: white;
-	} @else {
-		background-color: $uw-red;
-		color: white;
-	}
+	background-color: $menu-item-hover-bg;
+	color: white;
 }
 
 .menu__link:hover {
-	@if $theme-style == "old" {
-		color: white;
-	} @else {
-		color: white;
-	}
+	color: white;
 }
 
 .menu__link--active {
-	@if $theme-style == "old" {
-		color: white;
-	} @else {
-		color: white;
-	}
+	color: white;
 }
 
 .menu__link {
@@ -772,15 +656,9 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 
 .menu__list .menu__item .submenu__list {
-	@if $theme-style == "old" {
-		background: #2a2a2a; // menuListColor old
-		color: white;
-		border-top: 5px solid $highlight-color;
-	} @else {
-		background: $uw-red; // menuListColor new
-		color: white;
-		border-top: 5px solid $uw-red; // Default to uw-red if submenuBorderTop not set
-	}
+	background: $menu-bg;
+	color: white;
+	border-top: 5px solid $menu-item-hover-bg;
 
 	visibility: hidden;
 	opacity: 0;
@@ -806,11 +684,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .menu__link:hover {
-	@if $theme-style == "old" {
-		color: white;
-	} @else {
-		color: white; // Default to white if hoverTextColor not set
-	}
+	color: white;
 }
 
 .js .menu__list {
@@ -838,13 +712,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 @media screen and (min-width: 767px) {
 	.menu {
-
-		@if $theme-style == "old" {
-			border-bottom: 5px solid #e22d30;
-		} @else {
-			border-bottom: 0px;
-		}
-
+		border-bottom: $menu-border-bottom;
 	}
 
 	.menu__btn {
@@ -867,14 +735,8 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 }
 
 .main {
-
-	@if $theme-style == "old" {
-		margin-left: 0px;
-		margin-right: 0px;
-	} @else {
-		margin-left: 5%;
-		margin-right: 5%;
-	}
+	margin-left: $main-margin-x;
+	margin-right: $main-margin-x;
 }
 /* Posts/Pages */
 .post__header,
@@ -1106,13 +968,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 .toc__menu ul ul li a {
 	padding-left: 25px;
-	//color: $linkColor;
-	@if $theme-style == "old" {
-		color: #c5050c;
-	} @else {
-		color: $widget-link-color; // Default to widgetLinkColor if tocSubheadingColor not set
-	}
-
+	color: $toc-sub-color;
 }
 
 .toc__menu ul ul li li a {
@@ -1148,13 +1004,8 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	padding: 25px 0;
 	margin-bottom: 25px;
 	line-height: 1.5;
-	@if $theme-style == "old" {
-		border-top: 1px solid #ebebeb;
-		border-bottom: 1px solid #ebebeb;
-	} @else {
-		border-top: 5px solid #c5050c; // Default to 5px solid #c5050c if authorboxBorder not set
-		border-bottom: 5px solid #c5050c;
-	}
+	border-top: $authorbox-border;
+	border-bottom: $authorbox-border;
 }
 
 .authorbox__avatar {
@@ -1197,11 +1048,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 .list__title {
 	font-size: 20px;
-	@if $theme-style == "old" {
-		font-size: 1.25rem;
-	} @else {
-		font-size: 1.5rem;
-	}
+	font-size: $list-title-size;
 }
 
 .list__meta {
@@ -1234,24 +1081,14 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	padding: 10px 15px;
 	font-weight: 700;
 
-	@if $theme-style == "old" {
-		color: #000;
-		background: #f5f5f5;
-	} @else {
-		color: $widget-link-color;
-		background: #fff;
-	}
+	color: $pagination-color;
+	background: $pagination-bg;
 }
 
 .pagination__item:hover,
 .pagination__item--current {
-	@if $theme-style == "old" {
-		color: #fff;
-		background: #e22d30;
-	} @else {
-		color: $mid-gray;
-		background: transparent;
-	}
+	color: $pagination-hover-color;
+	background: $pagination-hover-bg;
 }
 
 // at some point, this changed from "post-nav" to "pager"
@@ -1398,35 +1235,19 @@ textarea {
 }
 
 .widget-archive.widget {
-
-	@if $theme-style == "old" {
-		background: #f7f7f7; // Assuming widgetBackground old value
-		color: black;
-		border-bottom: 0px;
-	} @else {
-		background: $widget-background;
-		color: $mid-gray;
-		border-bottom: 5px solid $uw-red;
-	}
+	background: $widget-background;
+	color: $widget-archive-color;
+	border-bottom: $widget-archive-border-bottom;
 }
 
 .widget-archive.widget h3 {
-	@if $theme-style == "old" {
-		color: black;
-	} @else {
-		color: $mid-gray;
-	}
+	color: $widget-archive-color;
 }
 
 .widget__title {
 	position: relative;
-	@if $theme-style == "old" {
-		color: black;
-		font-weight: 700;
-	} @else {
-		color: $mid-gray;
-		font-weight: 400;
-	}
+	color: $widget-title-color;
+	font-weight: $widget-title-weight;
 
 	padding-bottom: 5px;
 	font-size: 1rem;
@@ -1444,13 +1265,9 @@ textarea {
 	padding-top: 0;
 }
 
-// because the widgets are a different background, we might want a different color for them 
+// because the widgets are a different background, we might want a different color for them
 .widget a {
-	@if $theme-style == "old" {
-		color: black;
-	} @else {
-		color: $widget-link-color;
-	}
+	color: $widget-link-color;
 }
 
 .widget a:hover {

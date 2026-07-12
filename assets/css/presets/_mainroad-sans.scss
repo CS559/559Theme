@@ -1,0 +1,113 @@
+// ============================================================================
+// Preset: mainroad-sans  (formerly themestyle = "old")
+// ----------------------------------------------------------------------------
+// Every token that used to differ between the "old" and "new" theme styles is
+// defined here for the "old" look: Open Sans body, black normal-case headings,
+// charcoal menu, 1080px container. Its sibling presets/_uw-serif.scss defines
+// the exact same token names for the "new" look. The SCSS partials (_style,
+// _559, _v2menu) reference these tokens and contain no @if $theme-style
+// branches. Values reproduce, byte-for-byte, the compiled CSS the old @if
+// branches produced (verified via golden compiled-CSS diff, Phase 3).
+//
+// $uw-red, $highlight-color, $link-color, $dim-color, $widget-background come
+// from the Hugo-param palette in main.scss (loaded before this file), so they
+// may be referenced here.
+// ============================================================================
+
+// --- Fonts ---
+$font-sans: "Open Sans", Helvetica, Arial, sans-serif !default;
+$font-body: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
+
+// --- Grays / secondary link color ---
+$mid-gray: #646569 !default;
+$widget-link-color: black !default;
+
+// --- Body ---
+$body-font-family: $font-sans !default;
+$body-font-size: .875rem !default;
+$body-line-height: 1.6 !default;
+$body-color: black !default;
+
+// --- Layout ---
+$container-max-width: 1080px !default;
+$main-margin-x: 0px !default;
+
+// --- Headings ---
+$heading-color: black !default;
+$heading-font-variant: normal !default;
+
+// --- Figures ---
+$figcaption-color: gray !default;
+
+// --- Code ---
+$code-bg: #f5f5f5 !default;
+$code-border: 1px solid #ebebeb !default;
+$pre-color: inherit !default;
+
+// --- Header / logo / tagline ---
+$header-padding-bottom: 0px !default;
+$logo-padding: 25px !default;
+$logo-title-transform: normal !default;
+$tagline-color: $uw-red !default;
+$tagline-font-weight: 700 !default;
+$tagline-padding-top: 10px !default;
+$tagline-border-top: 1px solid #ebebeb !default;
+
+// --- Menu ---
+$menu-bg: #2a2a2a !default;                     // menu list, active item, submenu, toc title
+$menu-font-size: .875rem !default;
+$menu-padding-left: 0 !default;
+$menu-item-hover-bg: $highlight-color !default; // also menu-btn-active bg + submenu border color
+$menu-item-hover-decoration: normal !default;
+$menu-item-active-decoration: none !default;
+$menu-border-bottom: 5px solid #e22d30 !default;
+
+// --- TOC ---
+$toc-sub-color: $uw-red !default;
+
+// --- Authorbox ---
+$authorbox-border: 1px solid #ebebeb !default;
+
+// --- List ---
+$list-title-size: 1.25rem !default;
+
+// --- Pagination ---
+$pagination-color: #000 !default;
+$pagination-bg: #f5f5f5 !default;
+$pagination-hover-color: #fff !default;
+$pagination-hover-bg: $highlight-color !default;
+
+// --- Widget archive ---
+$widget-archive-color: black !default;
+$widget-archive-border-bottom: 0px !default;
+
+// --- Widget title ---
+$widget-title-color: black !default;
+$widget-title-weight: 700 !default;
+$widget-title-border-bottom: 3px solid $highlight-color !default;
+
+// --- Widget general (from _559) ---
+$widget-padding: 5px !default;
+$widget-border-bottom: 0px !default;
+
+// --- Widget list (from _559) ---
+$widget-list-padding: 5px 0 !default;
+$widget-list-border-bottom: 1px dotted #ebebeb !default;
+$widget-list-font-size: inherit !default;
+$widget-list-hover-decoration: normal !default;
+
+// --- Inline buttons (from _559) ---
+$inline-btn-color: #fff !default;
+$inline-btn-back: darkred !default;
+$inline-btn-color-hover: #fff !default;
+$inline-btn-back-hover: black !default;
+
+// --- Sidebar ---
+$sidebar-link-underline: underline !default;
+
+// --- Dimbox (from _559) ---
+$dimbox-bg: #ffd !default;
+$dimbox-border: 1px solid #bbd !default;
+$dimbox-margin: 10pt !default;
+$dimbox-padding: 6pt !default;
+$dimbox-color: black !default;

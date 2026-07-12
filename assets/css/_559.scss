@@ -50,17 +50,8 @@ ol p {
 .widget {
 	background-color: $widget-background;
 
-	@if $theme-style == "old" {
-		padding: 5px;
-	} @else {
-		padding: 20px 30px;
-	}
-
-	@if $theme-style == "old" {
-		border-bottom: 0px;
-	} @else {
-		border-bottom: 5px solid #c5050c;
-	}
+	padding: $widget-padding;
+	border-bottom: $widget-border-bottom;
 }
 
 /* the padding arond the widgets looks terrible for search */
@@ -93,27 +84,16 @@ ol p {
 	padding-bottom: 0px;
 	margin: 0 0 .5rem;
 
-
-	@if $theme-style == "old" {
-		border-bottom: 3px solid #e22d30;
-	} @else {
-		border-bottom: none;
-	}
+	border-bottom: $widget-title-border-bottom;
 }
 
 /* links come from MD - no easy way to style individually */
 .widget__list li {
 	display: block;
 
-	@if $theme-style == "old" {
-		padding: 5px 0;
-		border-bottom: 1px dotted #ebebeb;
-		font-size: inherit;
-	} @else {
-		padding: 3px 0;
-		border-bottom: 0px;
-		font-size: 14px;
-	}
+	padding: $widget-list-padding;
+	border-bottom: $widget-list-border-bottom;
+	font-size: $widget-list-font-size;
 
 	font-weight: 300;
 
@@ -121,12 +101,7 @@ ol p {
 }
 
 .widget__list li :hover {
-
-	@if $theme-style == "old" {
-		text-decoration: normal;
-	} @else {
-		text-decoration: underline;
-	}
+	text-decoration: $widget-list-hover-decoration;
 }
 
 /* make the logo appear correctly */
@@ -161,11 +136,7 @@ ol p {
 	user-select: none;
 	font-family: $fontFamilySecondary;
 
-	@if $theme-style == "old" {
-		background: #2a2a2a;
-	} @else {
-		background: #c5050c;
-	}
+	background: $menu-bg;
 }
 
 // the sidebar TOC - might be a little different than the real toc
@@ -261,27 +232,15 @@ $border-radius: 0.15rem;
 
   /** from the 2008 class */
   .dimbox {
-	@if $theme-style == "old" {
-		background: #ffd;
-		border: 1px solid #bbd;
-		margin: 10pt;
-		padding: 6pt;
-		color: black;
-	} @else {
-		background: #dee7ff; // Default to dimboxBackground new value
-		border: 0px;
-		margin: 0pt 0pt 40pt;
-		padding: 32pt;
-		color: #4a4a4a;
+	background: $dimbox-bg;
+	border: $dimbox-border;
+	margin: $dimbox-margin;
+	padding: $dimbox-padding;
+	color: $dimbox-color;
 	}
-	}
-	
+
 	.dimbox h2 {
-		@if $theme-style == "old" {
-			color: black;
-		} @else {
-			color: #4a4a4a;
-		}
+		color: $dimbox-color;
 	}
 
 	.dimbox a {

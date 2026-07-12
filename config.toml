@@ -1,14 +1,9 @@
-[Params.style.vars]
-fontMono = "'Georgia', 'Georgia', 'Times New Roman'"
-bodyFontSize = "1.1rem"
-fontSans = "'Poppins', 'Open Sans', 'Helvetica', 'Arial', 'sans-serif'"
-dimboxBackground = "#dee7ff"
-headerColor = "#c5050c"
-logoColor = "#c5050c"
-menuListColor = "#c5050c"
-hoverTextColor = "white"
-taglineColor = "#4a4a4a"
-hoverMenuUnderline = "no"
-
-[Params.style.vars.old]
-sidebarLinkUnderline = "underline"
+# 559Theme theme-level configuration.
+#
+# The style token defaults that used to live here under [Params.style.vars]
+# (Poppins/Georgia/1.1rem, dimbox background, header/logo/menu colors, the old
+# sidebarLinkUnderline, etc.) moved into the style presets in Phase 3 of the
+# theme-unification work — see assets/css/presets/_uw-serif.scss (the former
+# "new" defaults) and assets/css/presets/_mainroad-sans.scss (the former "old"
+# values). A site selects a preset with params.style.preset and can override
+# individual tokens with params.style.vars.* in its own config.

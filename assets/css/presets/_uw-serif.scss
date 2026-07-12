@@ -1,0 +1,112 @@
+// ============================================================================
+// Preset: uw-serif  (formerly themestyle = "new", the theme default)
+// ----------------------------------------------------------------------------
+// The "new" look: Georgia body at 1.1rem, Poppins small-caps UW-red headings,
+// UW-red menu, 1500px container with 5% content side margins. Defines the exact
+// same token names as presets/_mainroad-sans.scss (keep the two in sync). The
+// "new" values that used to live in the theme-level config.toml
+// [Params.style.vars] (Poppins/Georgia/1.1rem/etc.) have moved here. Values
+// reproduce, byte-for-byte, the compiled CSS the old @else branches produced
+// (verified via golden compiled-CSS diff, Phase 3).
+//
+// $uw-red, $highlight-color, $link-color, $dim-color, $widget-background come
+// from the Hugo-param palette in main.scss (loaded before this file).
+// ============================================================================
+
+// --- Fonts (moved from theme config.toml [Params.style.vars]) ---
+$font-sans: 'Poppins', 'Open Sans', 'Helvetica', 'Arial', 'sans-serif' !default;
+$font-body: 'Georgia', 'Georgia', 'Times New Roman' !default;
+
+// --- Grays / secondary link color ---
+$mid-gray: #4a4a4a !default;
+$widget-link-color: #006cae !default;
+
+// --- Body ---
+$body-font-family: $font-body !default;
+$body-font-size: 1.1rem !default;
+$body-line-height: 1.48 !default;
+$body-color: $mid-gray !default;
+
+// --- Layout ---
+$container-max-width: 1500px !default;
+$main-margin-x: 5% !default;
+
+// --- Headings ---
+$heading-color: $uw-red !default;
+$heading-font-variant: small-caps !default;
+
+// --- Figures ---
+$figcaption-color: $mid-gray !default;
+
+// --- Code ---
+$code-bg: #f7f7f7 !default;
+$code-border: none !default;
+$pre-color: $uw-red !default;
+
+// --- Header / logo / tagline ---
+$header-padding-bottom: 20px !default;
+$logo-padding: 50px !default;
+$logo-title-transform: uppercase !default;
+$tagline-color: $mid-gray !default;
+$tagline-font-weight: 400 !default;
+$tagline-padding-top: 0 !default;
+$tagline-border-top: 0px !default;
+
+// --- Menu ---
+$menu-bg: $uw-red !default;                     // menu list, active item, submenu, toc title
+$menu-font-size: 15px !default;
+$menu-padding-left: 80px !default;
+$menu-item-hover-bg: $uw-red !default;          // also menu-btn-active bg + submenu border color
+$menu-item-hover-decoration: underline !default;
+$menu-item-active-decoration: underline !default;
+$menu-border-bottom: 0px !default;
+
+// --- TOC ---
+$toc-sub-color: $widget-link-color !default;
+
+// --- Authorbox ---
+$authorbox-border: 5px solid $uw-red !default;
+
+// --- List ---
+$list-title-size: 1.5rem !default;
+
+// --- Pagination ---
+$pagination-color: $widget-link-color !default;
+$pagination-bg: #fff !default;
+$pagination-hover-color: $mid-gray !default;
+$pagination-hover-bg: transparent !default;
+
+// --- Widget archive ---
+$widget-archive-color: $mid-gray !default;
+$widget-archive-border-bottom: 5px solid $uw-red !default;
+
+// --- Widget title ---
+$widget-title-color: $mid-gray !default;
+$widget-title-weight: 400 !default;
+$widget-title-border-bottom: none !default;
+
+// --- Widget general (from _559) ---
+$widget-padding: 20px 30px !default;
+$widget-border-bottom: 5px solid #c5050c !default;
+
+// --- Widget list (from _559) ---
+$widget-list-padding: 3px 0 !default;
+$widget-list-border-bottom: 0px !default;
+$widget-list-font-size: 14px !default;
+$widget-list-hover-decoration: underline !default;
+
+// --- Inline buttons (from _559) ---
+$inline-btn-color: #006cae !default;
+$inline-btn-back: #fff !default;
+$inline-btn-color-hover: #4a4a4a !default;
+$inline-btn-back-hover: #fff !default;
+
+// --- Sidebar ---
+$sidebar-link-underline: normal !default;
+
+// --- Dimbox (from _559) ---
+$dimbox-bg: #dee7ff !default;
+$dimbox-border: 0px !default;
+$dimbox-margin: 0pt 0pt 40pt !default;
+$dimbox-padding: 32pt !default;
+$dimbox-color: $mid-gray !default;
