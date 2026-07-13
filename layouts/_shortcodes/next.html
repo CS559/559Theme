@@ -1,3 +1,9 @@
+{{- /*
+  next — link to the "next" page in the section (Hugo's .Page.Prev).
+  usage: {{< next >}}            text = "Next: <title>"
+         {{< next "Custom" >}}   custom link text
+  params: 0 = link text (optional). Errors if there is no next page.
+*/ -}}
 {{- $utitle := .Get 0 -}}
 {{- with .Page.Prev -}}
 <a href="{{ .RelPermalink }}" class="Next__Page">{{ with $utitle }}{{ . }}{{else}}Next: {{ .Title | default (.File.BaseFileName ) }} {{end}}</a>

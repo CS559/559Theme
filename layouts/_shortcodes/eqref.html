@@ -1,3 +1,9 @@
+{{- /*
+  eqref — link to a numbered equation by id (numbers are registered by displaymath
+  in .Page.Scratch "eq_refs").
+  usage: {{< eqref "eq:euler" >}}
+  params: 0 = equation id. Renders "Equation N" (or "Equation (See below)" if not yet numbered).
+*/ -}}
 {{- $id := .Get 0 -}}
 {{- $refs := .Page.Scratch.Get "eq_refs" -}}
 {{- $num := index $refs $id -}}

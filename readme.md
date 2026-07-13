@@ -78,41 +78,21 @@ The theme uses a unified SASS compilation pipeline to keep styles clean and main
 
 ### Shortcodes
 
-There are a lot of shortcodes - and they need to be cleaned up, because there is redundancy and incompatibility. 
+The theme provides many shortcodes. Each is documented by a doc-comment header
+at the top of its source in `layouts/_shortcodes/`, and
+**[`docs/shortcodes.md`](docs/shortcodes.md) is the generated reference**
+(index + per-shortcode usage/params). Regenerate it after editing any header:
 
-- allpages (makes a list of all pages)
-- anchorlink
-- assetlink
-- bold-red (makes a span with a `boldred` class)
-- comment (comments out something)
-- content (includes the content of another page inline)
-- content (inserts the content of another page)
-- dimbox (makes a dimbox div)
-- (deprecated) - ~~draft-only (so you can have a stub page - and still have draft only content)~~ no more draft
-- expand (puts text into an expander)
-- figure (improved on the Hugo figure to allow for rsrc parameters)
-- htmllink (shows the HTML of a reference - gives the whole link)
-- includemd (includes a markdown file - which is not a page)
-- inline (includes another page in place - uses a special style template)
-- leftpic (puts a picture to the left of text)
-- link (makes a relref link - and gets the page title)
-- linkit (probably could be deprecated)
-- listtoc (makes a table of contents for a list page)
-- listtoc (puts a table of contents in place in a document, rather than at the top)
-- mailto
-- mikes-notes (basically makes a section of markdown like a comment)
-- mini (like a tease, but puts the whole page content - has its own layout)
-- resource-image.md (warning - prefer rimage!)
-- resource-link.md (makes a link to a page resource)
-- resource-svg (puts an SVG file in place - allows for showing the code)
-- rimage - the new, prefered way to put a figure onto a page (SVG or image)
-- snippet.md (include a markdown snippet from assets/snippets/*.md)
-- static (generates a link to a static object)
-- tableofcontents (does the regular table of contents, inline)
-- teasehtml
-- teaser (put a page summary in place)
-- tooltip (make a rich "markdown" tooltip)
-- url (makes a link to a URL with the URL as the text)
+~~~sh
+conda run -n p314 python tools/shortcode-docs.py
+~~~
+
+Related deep-dives: `link` → [`docs/link-shortcode.md`](docs/link-shortcode.md);
+the course-data shortcodes (`assign-*`, `reading`, `mod*`, `page`) →
+[`docs/data-contracts.md`](docs/data-contracts.md). To see which shortcodes each
+in-workspace site actually uses, see `NOTES-usage.md`
+(`tools/usage-matrix.py`). Deprecation policy and the deprecated-usage checker:
+[`docs/deprecation.md`](docs/deprecation.md).
 
 ## Full Width Mode
 

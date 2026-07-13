@@ -1,3 +1,8 @@
+{{- /*
+  quote — a <blockquote> of the inner markdown, with an optional citation.
+  usage: {{% quote "Author, Source" %}}the quoted text{{% /quote %}}
+  params: 0 = citation (optional, markdown, shown in <cite>); inner = the quote body.
+*/ -}}
 <blockquote>
 {{ .Inner | markdownify }}
 {{- if .Get 0 -}}&nbsp;<cite>{{ .Get 0 | markdownify}}</cite>{{- end -}}

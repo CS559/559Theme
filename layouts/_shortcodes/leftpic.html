@@ -1,3 +1,10 @@
+{{- /*
+  leftpic — float an image to the left of wrapping inner text, in a flex row.
+  usage: {{% leftpic rsrc="pic.jpg" %}}text beside the picture{{% /leftpic %}}
+  params (named): one of rsrc (page-resource glob) | asset (global asset) | url (raw URL) | nopic;
+    width (px, default 200); gutter (px, default 10); alt; title; topmargin/bottommargin (default 1rem).
+    Inner content is the right-hand text column. Errors if none of rsrc/asset/url/nopic is given.
+*/ -}}
 {{- $topmargin := .Get "topmargin" | default "1rem" }}
 {{- $bottommargin := .Get "bottommargin" | default "1rem" }}
 <div style="display: flex; flex-direction: row; flex-wrap:wrap; margin-top:{{$topmargin}}; margin-bottom:{{$bottommargin}}">

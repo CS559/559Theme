@@ -1,3 +1,9 @@
+{{- /*
+  resource-image — a <figure> for an image resource, linking the full image to a fitted copy.
+  usage: {{< resource-image src="photo.jpg" size="300x300" alt="…" >}}
+  params (named): src (required; page resource or global asset); size (default 300x300, uses .Fit);
+    alt; class. Errors if src is not found. Prefer `rimage` for new content.
+*/ -}}
 {{- $page := . }}
 {{- $name := .Get "src" }}
 {{- if $name }}{{- else }}{{errorf "resource-image needs a src argument" }}{{- end}}

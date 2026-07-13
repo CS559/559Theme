@@ -1,3 +1,9 @@
+{{- /*
+  debugurl — DEV helper: a dimbox showing Site.BaseURL and a sample resource's
+  RelPermalink/Permalink, for debugging baseURL / asset-path issues.
+  usage: {{< debugurl >}}
+  params: none.
+*/ -}}
 <div class="dimbox">
 <p>URL Debugging</p>
 Base URL: <code>{{ .Site.BaseURL }}</code><br/>

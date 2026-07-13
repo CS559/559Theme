@@ -1,1 +1,7 @@
+{{- /*
+  anchorlink — link to a heading on the CURRENT page by its text/id.
+  usage: {{< anchorlink "Section Title" >}}       text = the arg
+         {{< anchorlink "section-id" "Label" >}}  custom link text
+  params: 0 = heading text/id (anchorized for the href); 1 = link text (optional, defaults to arg 0).
+*/ -}}
 <a href="#{{- anchorize (.Get 0) -}}">{{- .Get 1 | default (.Get 0) -}}</a>

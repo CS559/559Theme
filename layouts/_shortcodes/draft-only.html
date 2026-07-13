@@ -1,4 +1,6 @@
-{{/* @dead-weight: tombstone — errorf's on any use to force migration off it.
-     Kept intentionally as a tripwire; reconsider full removal once no consumer
-     could still reference it. Left as errorf (not warnf) on purpose. */}}
+{{- /*
+  draft-only — DEAD tombstone: errorf's on ANY use (the drafts feature is gone).
+  @dead-weight: kept as a tripwire to force content off it; left as errorf (not
+    warnf) on purpose. Reconsider full removal once no consumer could reference it.
+*/ -}}
 {{errorf "BuildDrafts Deprecated"}}

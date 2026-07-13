@@ -1,1 +1,6 @@
+{{- /*
+  mailto — an email link whose visible text is the address itself.
+  usage: {{< mailto "someone@example.com" >}}
+  params: 0 = email address (used as both href and text).
+*/ -}}
 <a href="mailto:{{- .Get 0 -}}">{{- .Get 0 -}}</a>

@@ -1,3 +1,8 @@
+{{- /*
+  assetlink — the RelPermalink (URL string) of a global pipeline asset in assets/.
+  usage: <img src="{{< assetlink "img/logo.png" >}}">
+  params: 0 = path under assets/. Emits a URL string, not a tag (cf. resource-image). Errors if not found.
+*/ -}}
 {{- with (resources.Get (.Get 0))  -}}
     {{- .RelPermalink -}}
 {{- else -}}

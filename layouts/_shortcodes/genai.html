@@ -1,3 +1,8 @@
+{{- /*
+  genai — a "GenAI Disclosure" callout box (a dimbox with a heading).
+  usage: {{% genai %}}Describe any generative-AI use here.{{% /genai %}}
+  params: none; takes inner (markdown) content.
+*/ -}}
 <div class="dimbox">
     <h4>GenAI Disclosure:</h4>
     {{ .Inner | markdownify}}

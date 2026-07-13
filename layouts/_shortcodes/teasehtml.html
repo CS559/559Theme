@@ -1,3 +1,8 @@
+{{- /*
+  teasehtml — render another page using its "summary" view, with NO wrapper div.
+  usage: {{< teasehtml "/path/to/page" >}}
+  params: 0 = logical page path. (cf. teaser = same but wrapped in <div class="teaser">.)
+*/ -}}
 {{- $page := .Site.GetPage (.Get 0) -}}
 {{- with $page -}}
 {{ .Render "summary" }}

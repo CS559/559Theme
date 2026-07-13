@@ -1,1 +1,6 @@
+{{- /*
+  static — a root-relative URL (relURL) to a file in static/ (a bare string, not a tag).
+  usage: <img src="{{< static "img/logo.png" >}}">
+  params: 0 = path under static/. (cf. assetlink = for assets/ pipeline resources.)
+*/ -}}
 {{- .Get 0 | relURL -}}

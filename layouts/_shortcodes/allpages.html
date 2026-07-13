@@ -1,3 +1,9 @@
+{{- /*
+  allpages — a nested <ul> of every page in the site (ordered by title),
+  excluding the Tags/Categories trees. Backs the "list of all pages" page.
+  usage: {{< allpages >}}
+  params: none.
+*/ -}}
 <ul>
 {{ range .Site.Pages.ByTitle }}
 {{- if .Title }}

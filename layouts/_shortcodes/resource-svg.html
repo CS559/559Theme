@@ -1,3 +1,11 @@
+{{- /*
+  resource-svg — render an SVG page resource as a figure, inline SVG, highlighted source, or a link.
+  usage: {{< resource-svg src="diagram.svg" >}}            figure (default)
+         {{< resource-svg src="d.svg" inline="true" >}}     inline the SVG markup
+         {{< resource-svg src="d.svg" highlight="true" >}}  show the SVG source (highlighted)
+         {{< resource-svg src="d.svg" link="true" >}}       just a link
+  params (named): src (required); one of inline / highlight / link; alt; class.
+*/ -}}
 {{- $page := . }}
 {{- $name := .Get "src" }}
 {{- $highlight := .Get "highlight" }}

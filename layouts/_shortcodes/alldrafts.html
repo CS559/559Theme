@@ -1,3 +1,9 @@
+{{- /*
+  alldrafts — an <h3> "Drafts" heading followed by a list (title + link) of every
+  draft page in the site, for authoring/review. Empty if there are no drafts.
+  usage: {{< alldrafts >}}
+  params: none.
+*/ -}}
 <h3>Drafts</h3>
 <ul>
 {{ range .Site.Pages.ByTitle }}
