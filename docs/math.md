@@ -30,6 +30,15 @@ The removed `mathjax.html` partial (MathJax 2.x from a CDN, client-side) is gone
   native in Chromium ≥ 109 (Jan 2023), Firefox (always), and Safari ≥ 14.1. A
   build-time-rendered integral shows correct stacked limits and fractions with
   zero stylesheet.
+- **⚠ Known gap — bold does not render bold in Chromium.** `\mathbf{…}` /
+  `\boldsymbol{…}` render at normal weight in Chromium-family browsers (Firefox
+  renders them correctly). KaTeX emits `<mi mathvariant="bold">A</mi>` and
+  Chromium's MathML Core ignores the `mathvariant` attribute. There is **no
+  CSS-only fix** (`font-weight` has no effect on the math font). The planned
+  fix is a build-time transform to real Unicode bold glyphs (𝐀…); the full
+  investigation, evidence, and recommendation are in
+  [`math-bold-research/`](math-bold-research/). **Deferred** — validate on the
+  held-out math-heavy site, likely implement in Workbook first and share.
 - **The one theme CSS math depends on** is the numbered-display-equation layout:
   `.math-display`, `.math-content`, `.math-number` in
   `assets/css/_559.scss`. These position the `(N)` number to the right and let

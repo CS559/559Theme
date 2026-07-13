@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+  table{border-collapse:collapse} td,th{border:1px solid #ccc;padding:6px;vertical-align:middle}
+  .lbl{font-family:monospace;font-size:11px;max-width:220px}
+</style></head><body>
+<h2>MathML (559Theme default) vs HTML output (Workbook) — NO katex.css loaded</h2>
+<table>
+<tr><th>expression</th><th>output=mathml</th><th>output=html</th></tr>
+{{ $exprs := slice
+  "x^2 + y^2 = z^2"
+  "\\mathbf{A}\\mathbf{x} = \\mathbf{b}"
+  "\\boldsymbol{\\alpha} + \\boldsymbol{\\beta}"
+  "\\int_0^\\infty \\frac{\\sin x}{x}\\,dx = \\frac{\\pi}{2}"
+  "\\sum_{i=1}^{n} a_i b_i \\leq \\left(\\sum a_i^2\\right)^{1/2}\\left(\\sum b_i^2\\right)^{1/2}"
+}}
+{{ range $exprs }}
+<tr>
+  <td class="lbl">{{ . }}</td>
+  <td class="ml">{{ transform.ToMath . (dict "output" "mathml" "displayMode" true) }}</td>
+  <td class="ht">{{ transform.ToMath . (dict "output" "html" "displayMode" true) }}</td>
+</tr>
+{{ end }}
+</table>
+</body></html>

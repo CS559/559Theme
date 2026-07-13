@@ -1,0 +1,22 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+  body{font-size:34px}
+  table{border-collapse:collapse} td{border:1px solid #ccc;padding:14px 18px}
+  .cap{font:12px monospace}
+  .w700 math [mathvariant]{font-weight:700}
+  .w900 math [mathvariant]{font-weight:900}
+  .wsyn math [mathvariant]{font-weight:800;font-synthesis:weight;-webkit-font-synthesis:weight}
+  .stroke4 math [mathvariant]{-webkit-text-stroke:0.4px currentColor}
+  .stroke7 math [mathvariant]{-webkit-text-stroke:0.7px currentColor}
+  .shadow math [mathvariant]{text-shadow:0.4px 0 0 currentColor,-0.4px 0 0 currentColor}
+</style></head><body>
+{{ $e := `\mathbf{A}\mathbf{x} = \mathbf{b}, \; \boldsymbol{\theta}` }}
+<table>
+<tr><td class="cap">as-is</td><td class="asis">{{ transform.ToMath $e (dict "output" "mathml") }}</td></tr>
+<tr><td class="cap">font-weight:700</td><td class="w700">{{ transform.ToMath $e (dict "output" "mathml") }}</td></tr>
+<tr><td class="cap">font-weight:900</td><td class="w900">{{ transform.ToMath $e (dict "output" "mathml") }}</td></tr>
+<tr><td class="cap">weight:800+synth</td><td class="wsyn">{{ transform.ToMath $e (dict "output" "mathml") }}</td></tr>
+<tr><td class="cap">text-stroke .4px</td><td class="stroke4">{{ transform.ToMath $e (dict "output" "mathml") }}</td></tr>
+<tr><td class="cap">text-stroke .7px</td><td class="stroke7">{{ transform.ToMath $e (dict "output" "mathml") }}</td></tr>
+<tr><td class="cap">text-shadow</td><td class="shadow">{{ transform.ToMath $e (dict "output" "mathml") }}</td></tr>
+</table>
+</body></html>

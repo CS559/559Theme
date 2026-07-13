@@ -1,0 +1,22 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+  body{font-size:30px}
+  table{border-collapse:collapse} td{border:1px solid #ccc;padding:12px 16px}
+  .c{font:11px monospace;max-width:230px}
+  .fwn [mathvariant]{font-weight:normal}           /* try to neutralize FF via weight */
+  .strip [mathvariant]{font-weight:normal}          /* (same) */
+  .stroke .b{-webkit-text-stroke:0.4px currentColor}
+</style></head><body>
+<table>
+<tr><td class="c">A. as-is mathvariant="bold"</td>
+    <td><math><mi mathvariant="bold">A</mi><mi mathvariant="bold">x</mi><mo>=</mo><mi mathvariant="bold">b</mi></math></td></tr>
+<tr><td class="c">B. mathvariant + CSS font-weight:normal (your "tell FF regular")</td>
+    <td class="fwn"><math><mi mathvariant="bold">A</mi><mi mathvariant="bold">x</mi><mo>=</mo><mi mathvariant="bold">b</mi></math></td></tr>
+<tr><td class="c">C. mathvariant STRIPPED + stroke (your real mechanism)</td>
+    <td class="stroke"><math><mi class="b">A</mi><mi class="b">x</mi><mo>=</mo><mi class="b">b</mi></math></td></tr>
+<tr><td class="c">D. real Unicode bold 𝐀 (Path B, reference)</td>
+    <td><math><mi>&#x1D400;</mi><mi>&#x1D431;</mi><mo>=</mo><mi>&#x1D41B;</mi></math></td></tr>
+<tr><td class="c">E. stroke on tiny subscript (scaling)</td>
+    <td class="stroke"><math><msub><mi class="b">x</mi><mi class="b">i</mi></msub></math>
+        &nbsp;vs&nbsp; <math><msub><mi>&#x1D431;</mi><mi>&#x1D422;</mi></msub></math></td></tr>
+</table>
+</body></html>
