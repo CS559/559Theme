@@ -35,12 +35,9 @@
 {{- if not $page -}}
   {{- errorf "link (%s): missing page — use {{< link \"some/page\" >}} or {{< link page=\"some/page\" >}}." .Position -}}
 {{- end -}}
-{{- $target := .Site.GetPage $page -}}
-{{- if not $target -}}
-  {{- errorf "link (%s): page %q not found." .Position $page -}}
-{{- end -}}
+{{- if .Site.GetPage $page -}}
 {{- $href := relref . $page -}}
-{{- $pagetitle := $target.Title -}}
+{{- $pagetitle := (.Site.GetPage $page).Title -}}
 {{- if $text -}}
 <a href="{{- $href -}}{{- with $anchor -}}#{{- anchorize . -}}{{- end -}}">{{- $text -}}</a>
 {{- else -}}
@@ -49,4 +46,7 @@
 {{- else -}}
 <a href="{{- $href -}}">{{- $pagetitle -}}</a>
 {{- end -}}
+{{- end -}}
+{{- else -}}
+{{- errorf "link (%s): page %q not found." .Position $page -}}
 {{- end -}}
