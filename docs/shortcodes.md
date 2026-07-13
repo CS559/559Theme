@@ -68,7 +68,7 @@ Header convention (top of each shortcode):
 | [`tableofcontents`](#tableofcontents) | `tableofcontents.html` | render the current page's table of contents inline |  |
 | [`teasehtml`](#teasehtml) | `teasehtml.html` | render another page using its "summary" view, with NO wrapper div. |  |
 | [`teaser`](#teaser) | `teaser.md` | embed another page's "summary" view inside <div class="teaser">. |  |
-| [`tooltip`](#tooltip) | `tooltip.html` | An attempt to implement "rich" tooltips |  |
+| [`tooltip`](#tooltip) | `tooltip.html` | an inline trigger that reveals a rich (markdown) tooltip on hover or |  |
 | [`url`](#url) | `url.html` | Make URLS that generate absolute local links |  |
 
 ## Reference
@@ -710,17 +710,18 @@ params: 0 = logical page path. (cf. teasehtml = unwrapped; mini = the "mini" vie
 
 <sup>`layouts/_shortcodes/tooltip.html`</sup>
 
-An attempt to implement "rich" tooltips
+an inline trigger that reveals a rich (markdown) tooltip on hover or
 
 ```text
- An attempt to implement "rich" tooltips
-You can make some text (the element parameter) and put a
-tooltip (written in markdown) inside the shortcode (begin/end)
-
-This uses the "html-hint" CSS library I found, that I had to adapt acordingly.
-The html-hint CSS magic must be loaded - it isn't part of the 559Theme base.
-In the config.toml, you need something like:
-    customCss = ["css/tooltip.scss"]
+keyboard focus. More than a plain title= attribute: the content is markdown.
+usage: {{% tooltip element="term" %}}explanatory *markdown*{{% /tooltip %}}
+       {{% tooltip element="term" title="Heading" width="20em" %}}…{{% /tooltip %}}
+params (named): element (REQUIRED — the trigger text, markdown); title (optional
+  bold heading line); width / maxwidth (optional CSS sizes for the bubble).
+notes: styling is self-contained in assets/css/tooltip.scss (load via a site's
+  customCss). Reveals on :hover AND :focus-within (keyboard/touch accessible).
+  Replaced the old 140KB hint.css dependency — the former `color` param (and any
+  other hint.css option) is no longer supported and will warn if used.
 ```
 
 ### url

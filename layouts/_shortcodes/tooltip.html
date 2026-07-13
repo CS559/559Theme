@@ -1,24 +1,25 @@
-{{/* An attempt to implement "rich" tooltips
-You can make some text (the element parameter) and put a 
-tooltip (written in markdown) inside the shortcode (begin/end)
-
-This uses the "html-hint" CSS library I found, that I had to adapt acordingly.
-The html-hint CSS magic must be loaded - it isn't part of the 559Theme base.
-In the config.toml, you need something like:
-    customCss = ["css/tooltip.scss"]
-   */}}
+{{- /*
+  tooltip — an inline trigger that reveals a rich (markdown) tooltip on hover or
+  keyboard focus. More than a plain title= attribute: the content is markdown.
+  usage: {{% tooltip element="term" %}}explanatory *markdown*{{% /tooltip %}}
+         {{% tooltip element="term" title="Heading" width="20em" %}}…{{% /tooltip %}}
+  params (named): element (REQUIRED — the trigger text, markdown); title (optional
+    bold heading line); width / maxwidth (optional CSS sizes for the bubble).
+  notes: styling is self-contained in assets/css/tooltip.scss (load via a site's
+    customCss). Reveals on :hover AND :focus-within (keyboard/touch accessible).
+    Replaced the old 140KB hint.css dependency — the former `color` param (and any
+    other hint.css option) is no longer supported and will warn if used.
+*/ -}}
 {{- $element := .Get "element" -}}
-{{- if $element }}{{- else }}{{errorf "tooltip needs an element" }}{{- end}}
-{{- $color := .Get "color" | default "blackarrow" -}}
-{{- $width := .Get "width" | default "max-content" -}}
+{{- if not $element -}}{{ errorf "tooltip needs an element (at %s)" .Position }}{{- end -}}
 {{- $title := .Get "title" -}}
+{{- $width := .Get "width" | default "max-content" -}}
 {{- $maxwidth := .Get "maxwidth" | default "300px" -}}
-<span class="hint--html hint--top hint--hoverable {{ $color }}" style="color:blueviolet;">
-    {{- $element | markdownify -}}
-    <span class="hint__content" style="width:{{$width}};max-width:{{$maxwidth}}">
-        {{- with $title -}}
-        <span class="tooltip-title"> {{ . }} </span>
-        {{- end -}}
-            {{- .Inner | markdownify -}}
-    </span>
-</span>
+{{- /* warn on any param the minimal implementation no longer supports (e.g. the old hint.css `color`) */ -}}
+{{- $supported := slice "element" "title" "width" "maxwidth" -}}
+{{- range $k, $v := .Params -}}
+  {{- if not (in $supported $k) -}}
+    {{- warnf "tooltip: unsupported parameter %q ignored (supported: element, title, width, maxwidth) at %s" $k $.Position -}}
+  {{- end -}}
+{{- end -}}
+<span class="tooltip" tabindex="0">{{ $element | markdownify }}<span class="tooltip__content" style="width:{{ $width }};max-width:{{ $maxwidth }}">{{ with $title }}<span class="tooltip-title">{{ . }}</span>{{ end }}{{ .Inner | markdownify }}</span></span>{{- /* no trailing newline: keep following punctuation attached for inline use */ -}}

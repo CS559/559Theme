@@ -1,11 +1,61 @@
-/** SCSS for fancy tooltips
- *  this is required for the tooltips shortcodes
+/** Rich tooltips for the `tooltip` shortcode — minimal & self-contained.
+ *
+ *  Replaces the former vendored hint.css (html-hint) dependency (~140KB) with
+ *  ~30 lines. Reveals the tooltip on BOTH hover and keyboard focus
+ *  (:focus-within), so it is keyboard- and touch-accessible (the old library
+ *  was hover-only). Load via a site's `customCss = ["css/tooltip.scss"]`.
  */
-@import "./html-hint/html-hint.scss";
 
-// The title of a tooltip (if it has one)
-span.tooltip-title {
-    display:block;
-    height:1.2em;
+.tooltip {
+    position: relative;
+    display: inline-block;
+    color: blueviolet;
+    cursor: help;
+}
+
+.tooltip__content {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 8px;
+    z-index: 100;
+
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+
+    background: #3a3a3a;
+    color: #fff;
+    text-align: left;
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    width: max-content;
+    max-width: 300px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* downward-pointing arrow */
+.tooltip__content::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #3a3a3a;
+}
+
+.tooltip:hover .tooltip__content,
+.tooltip:focus-within .tooltip__content {
+    visibility: visible;
+    opacity: 1;
+}
+
+.tooltip-title {
+    display: block;
     font-weight: bold;
+    margin-bottom: 2px;
 }

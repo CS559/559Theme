@@ -1,8 +1,6 @@
 # CSS files for the 559 Theme
 
-Note: the html-hint directory is placed here.
-I didn't want to mess with sub-modules, and it could be that the
-css files will need to be blended together to refer to appropriate
-style variables. 
-
-If tooltips turn into a generally useful thing, it can be moved.
+Tooltips: `tooltip.scss` is now a small, self-contained stylesheet for the
+`tooltip` shortcode (loaded via a site's `customCss`). It replaced the former
+vendored `html-hint` (hint.css) library, which was removed — see
+`docs/shortcodes.md` (the `tooltip` entry) for the shortcode's supported params.
