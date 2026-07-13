@@ -1,0 +1,18 @@
+{{/* emit just the Canvas URL for an assignment key (no anchor tag).
+    Data source: data/assignments.yaml (preferred) or data/assigns.yaml.
+    Provide only one - if both exist it is a build error.
+    */}}
+{{- if and hugo.Data.assignments hugo.Data.assigns -}}
+    {{- errorf "assign-linkonly: both data/assignments.yaml and data/assigns.yaml exist; provide only one (at %s)" .Position -}}
+{{- end -}}
+{{- $assigns := hugo.Data.assignments | default hugo.Data.assigns -}}
+{{- $assign := index $assigns (.Get 0) -}}
+{{- if $assign -}}
+{{- $assign.url -}}
+{{- else -}}
+    {{- if eq (.Get 0) "TBD" }}
+    TBD
+    {{- else }}
+        {{ errorf "can't find assignment '%s' at %s" (.Get 0) .Position }}
+    {{- end -}}
+{{- end -}}

@@ -1,0 +1,12 @@
+{{/* look up a module and give its learning outcomes - provide the module number -*/}}
+{{- $mod := .Get 0 -}}
+{{- $modinfo := index hugo.Data.modules.module $mod -}}
+{{- with $modinfo -}}
+    <ol>
+    {{- range .outcomes -}}
+        <li>{{ . | markdownify }}</li>
+    {{- end -}}
+    </ol>
+{{- else -}}
+    {{- errorf "Module '%d' not found in modules database (for %s at %s)" $mod .Page.File .Position -}}
+{{- end -}}

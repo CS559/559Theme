@@ -1,0 +1,32 @@
+{{/* look up a link to a page/service in the page database.
+
+    Data source (provide exactly one - both is a build error):
+      * assets/pages.csv  (columns: key,name,url[,heading]) - primary
+      * data/pages.yaml   (map of key -> {url, name})       - fallback
+
+    usage:
+      {{< page "regrade-form" >}}            link, text = entry's name
+      {{< page "regrade-form" "alt text" >}} link with custom text
+    */}}
+{{- $key := .Get 0 -}}
+{{- $csv := resources.Get "pages.csv" -}}
+{{- $yaml := hugo.Data.pages -}}
+{{- if and $csv $yaml -}}
+    {{- errorf "page: both assets/pages.csv and data/pages.yaml exist; provide only one (for %s at %s)" .Page.File .Position -}}
+{{- end -}}
+{{- $entry := "" -}}
+{{- if $csv -}}
+    {{- range ($csv | transform.Unmarshal (dict "targetType" "map")) -}}
+        {{- if eq (index . "key") $key -}}{{- $entry = . -}}{{- end -}}
+    {{- end -}}
+{{- else -}}
+    {{- $entry = index $yaml $key -}}
+{{- end -}}
+{{- with $entry -}}
+    {{- $url := index . "url" -}}
+    {{- $name := index . "name" | default $url -}}
+    {{- $text := $.Get 1 | default $name -}}
+    <a href="{{ $url }}" target="_blank">{{- $text -}}</a>
+{{- else -}}
+    {{- errorf "page: key '%s' not found in pages.csv/pages.yaml (for %s at %s)" $key .Page.File .Position -}}
+{{- end -}}

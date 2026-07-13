@@ -1,0 +1,8 @@
+{{/* look up a module and give its name - provide the module number -*/}}
+{{- $mod := .Get 0 -}}
+{{- $modinfo := index hugo.Data.modules.module $mod -}}
+{{- with $modinfo -}}
+    {{- .name | safeHTML -}}
+{{- else -}}
+    {{- errorf "Module '%d' not found in modules database (for %s at %s)" $mod .Page.File .Position -}}
+{{- end -}}
