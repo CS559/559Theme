@@ -6,6 +6,8 @@
 
 **Intended executor:** Claude Code sessions with Sonnet. Every task below has a mechanical verification step; the golden-master discipline (below) is what makes a weaker agent safe. Exception: Phase 3 (the SCSS collapse) involves the most cross-file reasoning — use Opus for that phase, or run it with Sonnet and review the diff yourself before merging. Phases 0–2 and 4–6 are well within Sonnet's reach *if the ground rules are followed*.
 
+> **⚠ Execution status (kept current during the work).** This plan has been partially executed, and **deviated from the text below in several material ways** — most importantly the Phase 5 pruning policy (the "delete zero-usage" premise was abandoned once we established the theme has consumers *outside* this workspace). Do not read the phase text below as current truth. See **[Execution log: deviations and deferred items](#execution-log-deviations-and-deferred-items)** at the end of this file for what was actually done, what changed and why, and what remains deferred. The live per-session status is in the workspace `PROGRESS.md`.
+
 ---
 
 ## Decisions already made (do not relitigate in-session)
@@ -189,3 +191,92 @@ Other conversation-derived facts an executing agent needs: link color both style
 | Theme repo `NOTES-*.md` (created during execution) | Pin differences, roadster file inventory, usage matrix — Phase 0/5 outputs |
 
 Session records: the reviews were produced from a July 2026 Cowork session that also visually inspected all four live sites (desktop + mobile) and verified every factual claim against the repos. Anything not captured in these five documents was judged not needed for execution.
+
+---
+
+## Execution log: deviations and deferred items
+
+Maintained as the plan is executed. The phase text above is the *original*
+intent; where reality diverged, this section is authoritative. Detailed
+per-session status lives in the workspace `PROGRESS.md`.
+
+### Status by phase
+
+- **Phases 0–4: DONE** (with the deviations below). Phase 4 course machinery is
+  promoted; the sp26 mixin overlay dupes are **not yet removed** (deferred).
+- **Phase 5: substantively DONE** (menu.js, expand-old, tooltip, docs +
+  deprecation/usage tooling) with a **major policy change** (below). Orphan-layout
+  pruning deferred.
+- **Phases 5b, 6, 7: NOT STARTED.**
+- All four sites are pinned to theme `unify` HEAD; **nothing is pushed** to any
+  origin (pushing remains unauthorized).
+
+### Deviations from the plan as written
+
+1. **Phase 5 pruning policy — CHANGED (most important).** The plan said "delete
+   everything with zero usage across all four sites." That premise was abandoned:
+   the theme has **consumers outside this workspace** (other course webs, the
+   Workbook site family). "Unused by these four sites" ≠ "dead." New policy:
+   **soft-retire, don't delete** — keep things working, mark deprecated with a
+   `warnf`, and only remove after a checker shows zero use across *all* known
+   consumers. Only *structurally* dead code was actually removed (the dark-mode +
+   submenu JS in `menu.js`; `expand-old`, which is superseded by `expand`).
+   `NOTES-usage.md` is an **information map, not a delete list**.
+2. **Phase 4 `link`/`lnk` — bigger breaking change.** `lnk` was **removed
+   outright** (not kept as a deprecated alias); two-positional-arg usage
+   disallowed; named params required. Migration tool: `tools/migrate-links.py`.
+3. **Phase 4 data resolution — no `warnf` fallback; error-if-both instead.**
+   Decision 3's "read `assignments.yaml`, fall back to `assigns.yaml` with
+   `warnf`" became: **use whichever file is present; build error if BOTH exist;
+   no deprecation warning.** Applied to `assign-*` (`assignments.yaml` |
+   `assigns.yaml`) and to `page`.
+4. **Phase 4 `page` shortcode — CSV primary, YAML fallback.** `page` reads
+   `assets/pages.csv` (primary) **or** `data/pages.yaml` (fallback), error if
+   both. Driven by the shared-data model: Workbook + course-web sites for one
+   semester share a `pages.csv`. (Not anticipated by the plan.)
+5. **Phase 5 tooltip / html-hint — kept the feature, replaced the library.** The
+   plan wanted to drop html-hint and convert the tooltip use to a `title=`
+   attribute (a content edit). Instead the rich `tooltip` shortcode was **kept**
+   and its 140KB `hint.css` dependency replaced with ~30 lines of self-contained
+   CSS (`+:focus-within` a11y). Unsupported params now `warnf`.
+6. **Phase 5 math — the shortcodes are NOT dead.** `math`/`displaymath`/`eqref`
+   already use Hugo's native build-time `transform.ToMath`; they were **kept**.
+   The genuinely obsolete piece — the `mathjax.html` partial (MathJax 2.x from a
+   CDN) — was removed instead.
+7. **Hugo version.** Plan pins 0.163.3; execution standardized on **0.164.0**
+   (CI bumped Phase 0).
+
+### Additions not in the original plan
+
+- **Deprecation infrastructure:** `docs/deprecation.md` + `tools/check-deprecated.py`
+  (soft-retire via `warnf`, retire only after the checker clears all consumers).
+- **Documentation pipeline:** `tools/shortcode-docs.py` → `docs/shortcodes.md`
+  (every shortcode now has a doc-comment header; generated reference).
+- **`docs/data-contracts.md`** (Phase 4 #2) and **`docs/math.md`**.
+- **`docs/math-bold-research/`** — full investigation + evidence + re-runnable
+  rigs for the MathML bold problem (see deferred item below).
+
+### Deferred items (open work)
+
+1. **Retire the sp26 mixin overlay dupes** (`page`/`assign-link`/`assign-linkonly`
+   in the shared `sp26-mixin-theme` submodule). Deploy caveat: those shortcodes
+   are shared across the semester's site family (incl. **Workbook**, a *different*
+   theme not in this workspace). Before removing them, provision equivalents into
+   the other consumers first. → Phase 6 / deploy time.
+2. **MathML bold does not render in Chromium.** `\mathbf`/`\boldsymbol` render
+   normal-weight in Chromium (Firefox is fine). No CSS-only fix exists. Planned
+   fix: build-time transform to real Unicode bold glyphs (Path B) + strip/stroke
+   fallback; **likely built in Workbook first and shared**; validate on the
+   held-out math-heavy 5th site. Full record: `docs/math-bold-research/`.
+3. **Goldmark passthrough (`$…$`) for math** — investigated, deferred (no current
+   need; use `\(…\)` not `$…$` if adopted). Notes in `docs/math.md`.
+4. **Phase 5 orphan layouts** (`staff/`, `talks/`, `video/`, `visual_sum`,
+   `mini`, `inline`) — examine usage before removing; opportunistic during Phase 6.
+5. **tooltip base-bundling** — could load `tooltip.scss` from the theme base to
+   drop the per-site `customCss` opt-in; optional Phase 6 simplification.
+6. **Push to GitHub** — all work is local; not yet authorized.
+
+### Workspace `TO-DO.md` extras (beyond this plan)
+
+- Verify thumbnails produce actually-smaller images (`thumbnail`/`rimage`/etc.).
+- Standardize on one image shortcode.
