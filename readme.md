@@ -25,7 +25,9 @@ and make sure that spxx, mainroad and 559Theme are in the themes directory. The 
 Changes (not exhaustive):
 
 - Add Section summaries to page list summaries (default/list.html)
-- Add lunr search (content/lunr-search, widgets/lunr, index.json)
+- Add lunr search (content/lunr-search, widgets/lunr, index.json) — since
+  replaced by MiniSearch, see docs/search.md (`widgets/lunr` kept as a
+  deprecated alias for `widgets/search`)
 - A taglist for post_meta
 - Put the logo in the header (assets/svg, partials/header)
 - New widgets

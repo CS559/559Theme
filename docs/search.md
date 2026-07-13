@@ -1,0 +1,64 @@
+# Search (MiniSearch)
+
+Phase 5b replaced Lunr with [MiniSearch](https://github.com/lucaong/minisearch).
+Lunr's actual problems were the unpinned `unpkg.com/lunr/lunr.js` dependency,
+rebuilding the whole index in the browser on every search, and a 140-line
+renderer living in `content/` (Go-templated content pages can't use Hugo
+Pipes). None of that required a post-build indexing step, so a client-side
+library stayed the right fit — site scale here is small (~165–300KB raw text
+per site, ~100KB gzipped indexed).
+
+## How it's wired
+
+- **`layouts/index.json`** (Hugo's `JSON` home output, `outputs.home` must
+  include `"JSON"`) — one object per page: `uri` (`Permalink`), `title`,
+  `section`, `tags`, `description`, and the **full** `plainify`-ed `content`
+  (not truncated — a cap would exclude long module pages, exactly what needs
+  to be searchable, and would regress recall vs. the old Lunr setup).
+- **`assets/js/minisearch.js`** — the official MiniSearch UMD build, vendored
+  (not loaded from a CDN). See the header comment in the file for the exact
+  version/source. It's unminified as shipped by the npm package (recent
+  MiniSearch releases don't ship a prebuilt `.min.js`); `layouts/search.html`
+  runs it through `resources.Minify` + `resources.Fingerprint` at build time,
+  so the compiled output is minified and cache-busted even though the vendored
+  source isn't.
+- **`assets/js/search.js`** — the results renderer (this theme's code, not
+  vendored). Reads `window.MiniSearch` (set by the UMD script) and
+  `window.SEARCH_INDEX_URL` (set inline by `layouts/search.html` from
+  `relURL "index.json"` — never hard-coded, so it works under any site's
+  subpath baseURL). Builds every result node via `createElement`/
+  `createTextNode`, never `innerHTML`, so neither page content nor the user's
+  `?q=` string can be interpreted as markup.
+- **`layouts/search.html`** — the results page template (`content/search.html`
+  sets `layout: "search"` to select it). Replaces the old
+  `content/lunr-search.html`, which embedded the whole renderer as an inline
+  `<script>` in a markdown content file (the only way to get Hugo Pipes
+  treatment for the vendored library is a real template, not content).
+- **`layouts/_partials/widgets/search.html`** — the sidebar search box widget.
+  `layouts/_partials/widgets/lunr.html` is kept as a **deprecated alias**
+  (`warnf`, then delegates to `widgets/search.html`) so existing sites'
+  `params.widgets = [...,"lunr",...]` keep working with a one-line build
+  warning; rename to `"search"` at your convenience.
+
+## Site setup
+
+A site needs, same as before:
+
+```toml
+[outputs]
+home = ["HTML", "RSS", "JSON"]
+```
+
+and `"search"` (or the deprecated `"lunr"` alias) somewhere in
+`params.widgets` / `params.sidebar.widgets`. No other per-site content is
+needed — `content/search.html` ships from the theme itself, the same way
+`content/lunr-search.html` did.
+
+## Future option: Pagefind
+
+If a site's index ever exceeds ~1MB gzipped, or full-text relevance ranking
+becomes the bottleneck, the recorded upgrade path is
+[Pagefind](https://pagefind.app/) — rejected for now because it needs a
+post-build indexing step Hugo can't run itself, and `hugo server` renders to
+memory so dev search would break under it. The widget/page boundary here
+(`widgets/search.html` + `layouts/search.html`) is the seam to swap.

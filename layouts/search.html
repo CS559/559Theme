@@ -1,0 +1,18 @@
+{{/* Search results page (content/search.html sets layout: "search").
+     Renders the results UI as a real template — not embedded in content —
+     so the vendored MiniSearch library and our own renderer can go through
+     Hugo Pipes (fingerprinted + minified) instead of an unpkg <script src>.
+     See docs/search.md. */}}
+{{ define "main" }}
+<main class="main" role="main">
+	<article class="post">
+		<h2>Search Results</h2>
+		<div id="app">Waiting for search script to run...</div>
+	</article>
+</main>
+{{ $lib := resources.Get "js/minisearch.js" | resources.Minify | resources.Fingerprint }}
+<script src="{{ $lib.RelPermalink }}" integrity="{{ $lib.Data.Integrity }}"></script>
+<script>window.SEARCH_INDEX_URL = {{ "index.json" | relURL }};</script>
+{{ $search := resources.Get "js/search.js" | resources.Minify | resources.Fingerprint }}
+<script type="module" src="{{ $search.RelPermalink }}" integrity="{{ $search.Data.Integrity }}"></script>
+{{ end }}

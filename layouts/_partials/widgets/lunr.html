@@ -1,8 +1,3 @@
-<!-- this requires the search.html page to be set up -->
-<div class="widget-search widget">
-	<form class="widget-search__form" role="search" method="get" action="{{- relref . "lunr-search" -}}">
-		<label>
-			<input class="widget-search__field" type="search" placeholder="lunr search ..." value="" name="q" aria-label="lunr search" />
-		</label>
-	</form>
-</div>
+{{/* @deprecated: widget name "lunr" -> rename to "search" in params.widgets / params.sidebar.widgets (MiniSearch replaced Lunr, Phase 5b) */}}
+{{- warnf "559Theme: widget name %q is deprecated; rename to %q in params.widgets / params.sidebar.widgets." "lunr" "search" -}}
+{{- partial "widgets/search.html" . -}}
