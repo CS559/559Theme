@@ -1,1 +1,4 @@
+{{/* @dead-weight: tombstone — errorf's on any use to force migration off it.
+     Kept intentionally as a tripwire; reconsider full removal once no consumer
+     could still reference it. Left as errorf (not warnf) on purpose. */}}
 {{errorf "BuildDrafts Deprecated"}}

@@ -1,4 +1,7 @@
-{{- /* Mike's first attempt to make a Hugo Template
+{{- /* @dead-weight: graveyard copy (this dir is not callable by Hugo) — the
+     original `pages` implementation, kept for reference. Reconsider deleting.
+
+     Mike's first attempt to make a Hugo Template
      * the first param is the page
      * the second param (optional) is the anchor
      *
