@@ -90,7 +90,8 @@ def main():
     out.append(f"{len(items)} shortcodes: {len(active)} active, {len(retired)} "
                f"deprecated/dead-weight. Deep-dives: `link` → `docs/link-shortcode.md`; "
                "course-data shortcodes (`assign-*`, `reading`, `mod*`, `page`) → "
-               "`docs/data-contracts.md`.\n")
+               "`docs/data-contracts.md`; math (`math`, `displaymath`, `eqref`) → "
+               "`docs/math.md`.\n")
     if undoc:
         out.append("> **Undocumented (no header comment):** "
                    + ", ".join(f"`{i['name']}`" for i in undoc) + "\n")

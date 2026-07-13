@@ -13,7 +13,7 @@ Header convention (top of each shortcode):
 */ -}}
 ```
 
-51 shortcodes: 49 active, 2 deprecated/dead-weight. Deep-dives: `link` → `docs/link-shortcode.md`; course-data shortcodes (`assign-*`, `reading`, `mod*`, `page`) → `docs/data-contracts.md`.
+51 shortcodes: 49 active, 2 deprecated/dead-weight. Deep-dives: `link` → `docs/link-shortcode.md`; course-data shortcodes (`assign-*`, `reading`, `mod*`, `page`) → `docs/data-contracts.md`; math (`math`, `displaymath`, `eqref`) → `docs/math.md`.
 
 ## Index
 
