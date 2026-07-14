@@ -209,7 +209,12 @@ per-session status lives in the workspace `PROGRESS.md`.
   pruning deferred.
 - **Phase 5b: DONE** (theme `18173b2`). Lunr replaced by MiniSearch; all four
   sites bumped.
-- **Phases 6, 7: NOT STARTED.**
+- **Phase 6: DONE** (theme `c1c5005` on all four sites). `themestyle` ->
+  `params.style.preset`, `lunr` -> `search` widget, `[params]` lowercased,
+  confirmed-dead config keys removed, `gleicher.github.io`'s `config.toml`
+  renamed to `hugo.toml`. 765-25 tagged `frozen` (permanent pin per decision
+  5). See deviations below for what Phase 6 turned out to need vs. not.
+- **Phase 7: NOT STARTED** (separate follow-on efforts; see plan text).
 - All four sites are pinned to theme `unify` HEAD; **nothing is pushed** to any
   origin (pushing remains unauthorized).
 
@@ -265,6 +270,29 @@ per-session status lives in the workspace `PROGRESS.md`.
 10. **Phase 5b — `layouts/index.json` gains a `section` field**, per the plan's
     own field list ("title, tags, section, permalink, ... content"), which the
     pre-existing template omitted.
+11. **Phase 6 — less config-filename work than the plan implied.** The plan's
+    step 3 reads as if all sites might need a `config.toml`→`hugo.toml` rename;
+    in fact three of four (VisSnacks, 559-sp26, 765-25) were already on
+    `hugo.toml`. Only `gleicher.github.io` still had the legacy filename.
+12. **Phase 6 — the `lunr`→`search` widget rename was low-stakes, not a real
+    migration.** Because Phase 5b kept `widgets/lunr.html` as a `warnf` alias,
+    all four sites already worked correctly with `"lunr"` in their `widgets`
+    param before Phase 6 touched them — confirmed by an HTML-identical
+    rebuild both before and after the rename on every site. Phase 6 just
+    removed the now-unnecessary deprecation warning.
+13. **Phase 6 — additional dead config keys found beyond the plan's named
+    example.** The plan named 765-25's `weeks-in-vis`/`assigns` as dead; the
+    same pattern (a `mainSections`/`recentSections` entry with no matching
+    `content/` directory) was also found and removed in **559-sp26**
+    (`week-in-559`, `assignments` — assignments are shortcode/data-driven, not
+    a content section). Both removals were verified inert by an
+    HTML-identical rebuild before touching them further.
+14. **Phase 6 — CLAUDE.md pin-bump documentation only added where a CLAUDE.md
+    already existed.** Only `gleicher.github.io` had one (updated: hugo.toml
+    filename, `style.preset` instead of `themestyle`, `search` widget, plus a
+    new theme-bump-routine section). VisSnacks, 559-sp26, and 765-25 have no
+    CLAUDE.md at all — none was created; that's a separate scope decision
+    left for the user.
 
 ### Additions not in the original plan
 
@@ -285,7 +313,9 @@ per-session status lives in the workspace `PROGRESS.md`.
    in the shared `sp26-mixin-theme` submodule). Deploy caveat: those shortcodes
    are shared across the semester's site family (incl. **Workbook**, a *different*
    theme not in this workspace). Before removing them, provision equivalents into
-   the other consumers first. → Phase 6 / deploy time.
+   the other consumers first. **Not touched in Phase 6** (Phase 6 as executed was
+   config-only per-site migration; this needs a separate cross-repo effort) →
+   deploy time / whenever that coordination happens.
 2. **MathML bold does not render in Chromium.** `\mathbf`/`\boldsymbol` render
    normal-weight in Chromium (Firefox is fine). No CSS-only fix exists. Planned
    fix: build-time transform to real Unicode bold glyphs (Path B) + strip/stroke
@@ -293,10 +323,11 @@ per-session status lives in the workspace `PROGRESS.md`.
    held-out math-heavy 5th site. Full record: `docs/math-bold-research/`.
 3. **Goldmark passthrough (`$…$`) for math** — investigated, deferred (no current
    need; use `\(…\)` not `$…$` if adopted). Notes in `docs/math.md`.
-4. **Phase 5 orphan layouts** (`staff/`, `talks/`, `video/`, `visual_sum`,
-   `mini`, `inline`) — examine usage before removing; opportunistic during Phase 6.
+4. **Orphan layouts** (`staff/`, `talks/`, `video/`, `visual_sum`, `mini`,
+   `inline`) — examine usage before removing. **Still not examined** — Phase 6
+   did per-site config migration only, not a layout-usage audit.
 5. **tooltip base-bundling** — could load `tooltip.scss` from the theme base to
-   drop the per-site `customCss` opt-in; optional Phase 6 simplification.
+   drop the per-site `customCss` opt-in. **Still open**, optional simplification.
 6. **Push to GitHub** — all work is local; not yet authorized.
 
 ### Workspace `TO-DO.md` extras (beyond this plan)
