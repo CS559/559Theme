@@ -207,7 +207,9 @@ per-session status lives in the workspace `PROGRESS.md`.
 - **Phase 5: substantively DONE** (menu.js, expand-old, tooltip, docs +
   deprecation/usage tooling) with a **major policy change** (below). Orphan-layout
   pruning deferred.
-- **Phases 5b, 6, 7: NOT STARTED.**
+- **Phase 5b: DONE** (theme `18173b2`). Lunr replaced by MiniSearch; all four
+  sites bumped.
+- **Phases 6, 7: NOT STARTED.**
 - All four sites are pinned to theme `unify` HEAD; **nothing is pushed** to any
   origin (pushing remains unauthorized).
 
@@ -245,6 +247,24 @@ per-session status lives in the workspace `PROGRESS.md`.
    CDN) — was removed instead.
 7. **Hugo version.** Plan pins 0.163.3; execution standardized on **0.164.0**
    (CI bumped Phase 0).
+8. **Phase 5b — no prebuilt minified MiniSearch to vendor.** The plan assumed
+   "a single minified file from the official release"; as of MiniSearch 7.x the
+   npm package ships only an unminified UMD bundle (`dist/umd/index.js`, no
+   `.min.js`). Vendored that file as-is (`assets/js/minisearch.js`, header
+   comment records version/source) and run it through `resources.Minify` +
+   `resources.Fingerprint` in `layouts/search.html` at Hugo build time instead —
+   same end result (minified, fingerprinted, no CDN), different starting file.
+9. **Phase 5b — MiniSearch `combineWith: "AND"`, not the plan's literal
+   `{prefix:true, fuzzy:0.2}` call.** Measured on VisSnacks: MiniSearch's
+   default OR-combination plus prefix+fuzzy made a 2-word test query
+   ("Dis-Aggregating") match 38 of 45 pages — short/common word-fragments
+   fuzzy/prefix-expand to match nearly anything. `combineWith: "AND"` (require
+   every query word to match somewhere in the doc) brought that down to 1–3,
+   with the true match ranked first by a wide score margin, while keeping
+   prefix/fuzzy for typo tolerance. See `docs/search.md`.
+10. **Phase 5b — `layouts/index.json` gains a `section` field**, per the plan's
+    own field list ("title, tags, section, permalink, ... content"), which the
+    pre-existing template omitted.
 
 ### Additions not in the original plan
 
