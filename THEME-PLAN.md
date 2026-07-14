@@ -275,6 +275,9 @@ per-session status lives in the workspace `PROGRESS.md`.
 - **`docs/data-contracts.md`** (Phase 4 #2) and **`docs/math.md`**.
 - **`docs/math-bold-research/`** — full investigation + evidence + re-runnable
   rigs for the MathML bold problem (see deferred item below).
+- **`docs/search.md`** (Phase 5b) — MiniSearch architecture, the vendoring/
+  Pipes deviation, the `combineWith` tuning finding, site setup, and the
+  recorded Pagefind upgrade path.
 
 ### Deferred items (open work)
 

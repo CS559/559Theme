@@ -40,6 +40,22 @@ per site, ~100KB gzipped indexed).
   `params.widgets = [...,"lunr",...]` keep working with a one-line build
   warning; rename to `"search"` at your convenience.
 
+## Search tuning: why `combineWith: "AND"`
+
+`assets/js/search.js` configures MiniSearch with `prefix: true`, `fuzzy: 0.2`,
+and **`combineWith: "AND"`** (MiniSearch's default is `"OR"`). This isn't
+cosmetic — measured on VisSnacks, a two-word test query ("Dis-Aggregating",
+which tokenizes to `dis` + `aggregating`) matched **38 of 45 pages** under the
+`OR` default: `prefix`/`fuzzy` expand a short, common fragment like `dis` to
+match almost any page, and `OR` only needs one query word to hit. Switching to
+`AND` (every query word must match somewhere in the document) brought the
+same query down to 1–3 results with the true match ranked first by a wide
+score margin, while still tolerating typos via `fuzzy`/`prefix` on each
+individual word. If you ever revisit this config, re-run a real multi-word
+query against real content and look at the result *count*, not just whether
+the top hit is right — the looseness doesn't show up in a build or an
+HTML-diff, only in actually using the search box.
+
 ## Site setup
 
 A site needs, same as before:
