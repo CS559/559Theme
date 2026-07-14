@@ -393,10 +393,15 @@ site-facing version: what you need to *do* when crossing each point, not why.
   trailing letter glued onto a closing quote, e.g. `{{< link
   "genai-policy"s >}}` — not an intentional second argument, and the fix is
   to delete the stray character. After running `migrate-links.py`, also
-  grep directly for the shape it can't see:
+  grep directly for the shape it can't see — anchored to right after
+  `link`/`lnk` so it only matches a *positional* first argument, not a
+  legitimate `name="value"` pair (an unanchored `[^}]*` before the quote
+  false-positives on any ordinary multi-attribute named call, e.g. `page="x"
+  text="y"`, which is the common case once you've applied the renames
+  above):
 
   ```sh
-  grep -rnE '\{\{[<%]\s*(link|lnk)\b[^}]*"[^"]*"[A-Za-z0-9_]' content/ assets/snippets/
+  grep -rnE '\{\{[<%]\s*(link|lnk)\b\s+"[^"]*"[A-Za-z0-9_]' content/ assets/snippets/
   ```
 
 - **Lunr search replaced by MiniSearch** (`docs/search.md`). Rename the
