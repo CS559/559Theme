@@ -6,6 +6,11 @@ new site for the first time. If you're working *on the theme itself*, see
 `THEME-PLAN.md`'s Execution log instead — that's the internal history of how
 the theme got to its current state, not a per-site upgrade checklist.
 
+**Read this whole guide once, start to finish, before running anything.**
+The steps below are ordered and reference each other (e.g. step 2 needs tools
+that live in the version you're about to check out) — working through them
+without knowing what's coming is how a step gets done out of order or skipped.
+
 **This is a verification exercise, not a fix-it exercise.** If a diff or a
 build error doesn't match anything in the changelog below, stop and report it
 rather than patching around it — especially if you're working in a fresh
@@ -89,39 +94,49 @@ session with no other context on this project. Don't push or deploy anything
      content-casing inconsistencies now so the golden-master diff in step 4
      isn't spent chasing a ghost.
 
-2. **Update the submodule, pinned to a specific tag** (not a floating branch
-   tip) for a reproducible comparison. Before you check it out: `tools/baseline.sh` /
-   `tools/compare.sh` — the scripts step 4 uses to snapshot your site's
+2. **Update the submodule, tracking `origin/master`** rather than pinning to
+   a specific historical tag — sites should stay current, not frozen at a
+   past release. The tradeoff: master can carry commits beyond the newest
+   changelog entry below, so if you hit a diff or build error nothing here
+   explains, don't assume it's already covered — stop and report it (per the
+   top of this guide), and add an entry to the changelog once it's resolved
+   so the next site doesn't hit the same surprise.
+
+   Before you move the pointer, get set up: `tools/baseline.sh` /
+   `tools/compare.sh` — the scripts you'll use below to snapshot your site's
    rendered output and diff before vs. after — ship inside the *new* theme
    version's own `tools/` directory. You need a "before" snapshot of your
-   site taken **before** the submodule pointer moves, so fetch (but don't yet
-   check out) the new version first, grab the tools out of it, and capture
-   your baseline (step 4a) before coming back to finish this step:
+   site taken **before** the submodule pointer moves, so do these in order,
+   all within this one step:
 
    ```sh
    cd themes/559Theme
    git checkout -q -- . && git clean -fdq   # discard any local test edits
    git fetch origin --tags
-   git tag -l                                 # see what versions exist
    ```
 
    If your site doesn't already have local copies of the tools, pull them out
    of the target version now, without checking it out yet (so your working
-   tree is still on the old commit when you snapshot it in step 4a):
+   tree is still on the old commit for the snapshot below):
 
    ```sh
-   git show origin/master:tools/baseline.sh > ../../tools/baseline.sh  # or the target tag
+   git show origin/master:tools/baseline.sh > ../../tools/baseline.sh
    git show origin/master:tools/compare.sh  > ../../tools/compare.sh
    chmod +x ../../tools/baseline.sh ../../tools/compare.sh
    cd ../..
    ```
 
-   → **Now go do step 4a** (capture the baseline) before continuing. Once
-   that's done, come back and move the pointer:
+   **Now capture the baseline** — you're still on the old commit:
+
+   ```sh
+   ./tools/baseline.sh pre-bump
+   ```
+
+   **Only now move the pointer:**
 
    ```sh
    cd themes/559Theme
-   git checkout v1-unification              # or a later tag; `git tag -l` to see what exists
+   git checkout origin/master
    cd ../..
    ```
 
@@ -130,18 +145,11 @@ session with no other context on this project. Don't push or deploy anything
    theme cleanup" in the changelog below for the exact commands (`roadster`
    and/or `mainroad`). Skip this step if you're already past that point.
 
-4. **Golden-master verify: capture, build, iterate.** Three phases, done in
-   order relative to step 2's checkout above — the first happens *before* it,
-   the other two *after*.
+4. **Golden-master verify: build, then iterate.** Two phases, both *after*
+   step 2's checkout — the baseline itself was already captured in step 2,
+   before the pointer moved.
 
-   **a. Capture the baseline** — before the submodule pointer moves (i.e.
-   before the final `git checkout` in step 2):
-
-   ```sh
-   ./tools/baseline.sh pre-bump
-   ```
-
-   **b. Get it to build.** After step 2's checkout (and step 3's fallback-theme
+   **a. Get it to build.** After step 2's checkout (and step 3's fallback-theme
    cleanup, if applicable), rebuild:
 
    ```sh
@@ -154,7 +162,7 @@ session with no other context on this project. Don't push or deploy anything
    tool (e.g. `tools/migrate-links.py`) before treating a build error as a
    bug. Keep fixing and rebuilding until `hugo --baseURL /` completes clean.
 
-   **c. Iterate until it matches well enough.** Rebuild and diff against your
+   **b. Iterate until it matches well enough.** Rebuild and diff against your
    baseline:
 
    ```sh
@@ -179,7 +187,7 @@ session with no other context on this project. Don't push or deploy anything
      `<head>` — its rules are compiled into the theme's own CSS bundle
      instead.
 
-   Loop between (b) and (c) — fix, rebuild, re-compare — until every
+   Loop between (a) and (b) — fix, rebuild, re-compare — until every
    remaining diff is either `HTML: IDENTICAL` or explained by the changelog
    below.
 
