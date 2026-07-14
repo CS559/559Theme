@@ -215,8 +215,16 @@ per-session status lives in the workspace `PROGRESS.md`.
   renamed to `hugo.toml`. 765-25 tagged `frozen` (permanent pin per decision
   5). See deviations below for what Phase 6 turned out to need vs. not.
 - **Phase 7: NOT STARTED** (separate follow-on efforts; see plan text).
-- All four sites are pinned to theme `unify` HEAD; **nothing is pushed** to any
-  origin (pushing remains unauthorized).
+- **The theme IS pushed.** `master` on `origin` (`github.com/CS559/559Theme`)
+  was fast-forwarded from `63f35e4` to `7721c59` (`unify`'s tip, now
+  including `docs/upgrading.md`) and pushed, along with two tags: `pre-unification`
+  (the old `63f35e4` state — rollback point) and `v1-unification` (this
+  rollout, `7721c59`). Rationale + the real (non-`local-unify`) consumer
+  workflow: `docs/upgrading.md`.
+- **The four consumer sites are still local-only** (unpushed to their own
+  origins) and still track the theme via the temporary `local-unify` git
+  remote rather than `origin` directly — switching them over is optional
+  future cleanup, not required (see workspace `PROGRESS.md`).
 
 ### Deviations from the plan as written
 
@@ -306,6 +314,11 @@ per-session status lives in the workspace `PROGRESS.md`.
 - **`docs/search.md`** (Phase 5b) — MiniSearch architecture, the vendoring/
   Pipes deviation, the `combineWith` tuning finding, site setup, and the
   recorded Pagefind upgrade path.
+- **`docs/upgrading.md`** — the site-maintainer-facing guide for the *real*
+  (post-push, no `local-unify`) workflow: routine bump procedure, first-time
+  setup for a new site, and a changelog of breaking/notable changes across
+  the unification. Written when the theme was pushed to `origin/master`
+  (`v1-unification`) so a fresh consumer could actually use it.
 
 ### Deferred items (open work)
 
@@ -328,7 +341,9 @@ per-session status lives in the workspace `PROGRESS.md`.
    did per-site config migration only, not a layout-usage audit.
 5. **tooltip base-bundling** — could load `tooltip.scss` from the theme base to
    drop the per-site `customCss` opt-in. **Still open**, optional simplification.
-6. **Push to GitHub** — all work is local; not yet authorized.
+6. **Push to GitHub** — **the theme is now pushed** (`master` @ `7721c59`,
+   tags `pre-unification`/`v1-unification`). The four **consumer sites**
+   remain local-only and unpushed; still not authorized.
 
 ### Workspace `TO-DO.md` extras (beyond this plan)
 
