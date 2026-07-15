@@ -276,16 +276,23 @@ session with no other context on this project. Don't push or deploy anything
      features your site actually calls, so a clean build with no warnings
      means nothing here needs attention yet.
    - For a fuller check (not just what one build's shortcode calls happen to
-     hit), run the theme's checker against your site:
+     hit), run the theme's checker against your site — **pass an absolute
+     path**, not `.`: the script resolves any relative argument against its
+     own location (the directory containing `themes/559Theme`), not your
+     current directory, so a bare `.` silently scans the wrong tree and
+     reports "no call sites" even when your site's `content/` has one:
 
      ```sh
-     conda run -n p314 python themes/559Theme/tools/check-deprecated.py .
+     conda run -n p314 python themes/559Theme/tools/check-deprecated.py "$(pwd)"
      ```
 
-     This only covers **shortcodes** (see `docs/deprecation.md`) — it does
-     not know about deprecated `hugo.toml` params or widget names (like
-     `themestyle`/`lunr`, retired in the changelog below). For those, grep
-     your own config as a starting point, e.g.:
+     This only covers **shortcodes** in `content/`, `assets/`, and
+     `layouts/`, per repo passed in (see `docs/deprecation.md`) — it does not
+     scan the theme's own `layouts/_partials/widgets/` for deprecated
+     *widgets* (the `lunr` widget alias, for instance, is invisible to this
+     tool), and it does not know about deprecated `hugo.toml` params or
+     widget names (like `themestyle`/`lunr`, retired in the changelog below).
+     For those, grep your own config as a starting point, e.g.:
 
      ```sh
      grep -n "themestyle\|\"lunr\"" hugo.toml config.toml 2>/dev/null
@@ -327,6 +334,11 @@ preset = "uw-serif"               # or "mainroad-sans" — see docs/search.md's 
 [params.sidebar]
 widgets = ["search", "important", "links", "recents", "categories", "taglist"]
 ```
+
+You also need to either set `baseURL` in `hugo.toml` or build with
+`hugo --baseURL /` even if everything else on the site uses relative paths —
+`layouts/index.json` (the search index) emits absolute permalinks and needs
+one or the other, or search silently breaks.
 
 Then set up `tools/baseline.sh`/`tools/compare.sh` (copy from
 `themes/559Theme/tools/`) before making any further changes, so you have a
@@ -405,27 +417,36 @@ site-facing version: what you need to *do* when crossing each point, not why.
   ```
 
 - **Lunr search replaced by MiniSearch** (`docs/search.md`). Rename the
-  widget `lunr` → `search` in `params.sidebar.widgets` (or `params.widgets`).
-  The old name still works via a deprecation `warnf`. No more CDN dependency
-  (`unpkg.com`) — if your site allowlisted that domain anywhere (CSP, etc.),
-  it can be removed.
+  widget `lunr` → `search` wherever your widget list names it: the
+  site-wide `params.sidebar.widgets`, or a per-page `widgets:` front-matter
+  override (a page's own `widgets:` wins over the site-wide list — see
+  `layouts/_partials/sidebar.html`). The old name still works via a
+  deprecation `warnf`. No more CDN dependency (`unpkg.com`) — if your site
+  allowlisted that domain anywhere (CSP, etc.), it can be removed.
+
+  Note: a top-level site `params.widgets.<name>.cached` is a **different**,
+  unrelated setting (a per-widget `partialCached` flag) — it is not an
+  alternate place to put the widget *list*, despite the similar name. Don't
+  confuse the two when renaming.
 - **`menu.js` trimmed to a toggle-only script.** No site action needed unless
   you had custom JS depending on the old submenu handler or the dark-theme
   toggle — both were dead code (no site used them) and are gone.
-- **`hint.css`/tooltip rewritten.** No site action needed; the `tooltip`
-  shortcode's public behavior is unchanged, just lighter (a `title=` fallback
-  attribute pattern isn't required).
-
-## Known non-fixed issues (not new, not caused by upgrading)
-
-- **MathML bold does not render bold in Chromium** (`\mathbf`/`\boldsymbol`
-  show at normal weight; Firefox is fine). This is a Chromium MathML-Core
-  limitation, not a theme bug, and it's true on *both* sides of any version
-  comparison — the theme's math shortcodes render via Hugo's native
-  `transform.ToMath` on every version covered by this guide, so upgrading
-  neither introduces nor fixes it. If your site has math-heavy content,
-  expect it, and see `docs/math-bold-research/` for the full investigation
-  and the planned (not yet implemented) fix.
+- **`hint.css`/tooltip rewritten.** The vendored `html-hint` (`hint.css`)
+  library is gone, replaced by a small self-contained `assets/css/tooltip.scss`
+  (loaded via a site's `customCss`, e.g. `customCss = ["css/tooltip.scss"]` —
+  check your site sets this if it uses the `tooltip` shortcode and expects it
+  styled). One real behavior change: the old `color` param (and any other
+  hint.css option) is **no longer supported** — the shortcode now warns
+  (doesn't silently ignore) if you pass it. Grep your content for
+  `{{< tooltip` / `{{% tooltip` calls with a `color=` param and drop it.
+- **Bold math now renders correctly in Chromium.** `\mathbf{…}`/`\boldsymbol{…}`
+  previously rendered at normal weight in Chromium-family browsers (a Chromium
+  MathML-Core limitation — it ignores the `mathvariant="bold"` attribute
+  KaTeX emits; Firefox was always fine). The `math`/`displaymath` shortcodes
+  now rewrite those glyphs to real Unicode bold characters at build time, so
+  bold math is correct in every browser. No site action needed — this is
+  automatic once you bump past the fix. See `docs/math.md` and
+  `docs/math-bold-research/README.md` for the mechanism and validation.
 
 ## What this guide doesn't cover yet
 

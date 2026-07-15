@@ -1,5 +1,16 @@
 # 559Theme Code Critique and Improvement Plan
 
+> **Historical document (Dec 2025), largely superseded.** This predates the
+> 2026 unification project (see `THEME-PLAN.md`'s Execution log and
+> `docs/upgrading.md`'s changelog). In particular, the "Modernization &
+> Synchronization with Roadster" section below proposes syncing structure
+> with Roadster as *future* work — Roadster has since been **fully absorbed
+> and removed** as a theme dependency, so that proposal is moot; don't read
+> it as an open task. The Phase 1 SASS-unification work described here did
+> happen, and the wrapper-structure history/decision (header-wrapper /
+> sidebar-wrapper / footer-wrapper, kept for Full Width Mode) is still
+> accurate and useful context — kept for that reason.
+
 ## Overview
 The `559Theme` has evolved organically, leading to a mix of coding styles, duplicated logic, and tight coupling between Hugo templating and SASS styles. This makes maintenance difficult and increases the risk of regressions when changing styles.
 

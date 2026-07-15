@@ -39,17 +39,31 @@ known consumers.
 ## Checking who still uses deprecated features
 
 ```sh
-# scan the four in-workspace sites
+# scan the four in-workspace sites (bare names, resolved against the
+# workspace directory that contains 559Theme — NOT your current directory)
 conda run -n p314 python tools/check-deprecated.py
 
-# widen to other consumers (recommended before any real removal)
+# widen to other consumers (recommended before any real removal) — pass
+# bare sibling names the same way, or ABSOLUTE paths for anything outside
+# that workspace directory; a relative path like "../foo" is resolved
+# against the tool's own location, not cwd, so it silently means something
+# other than what it looks like
 conda run -n p314 python tools/check-deprecated.py \
-    ../765-25 ../559-sp26 /path/to/other-course-web /path/to/a-workbook
+    765-25 559-sp26 /path/to/other-course-web /path/to/a-workbook
 ```
 
 The tool lists every `@deprecated`-marked shortcode and its call sites in each
 repo, and exits non-zero if any are still in use. Run it against **all** known
 consumers — not just this workspace — before retiring anything.
+
+**Scope gap: shortcodes only.** The checker scans `layouts/_shortcodes/` for
+the marker comment — it does not look at `layouts/_partials/` at all. A
+deprecated *partial* (e.g. the `lunr` sidebar widget, `warnf`-deprecated in
+favor of `search` — see `docs/search.md`) is invisible to it: running the
+tool reports "No shortcodes are marked @deprecated" even while a real
+deprecation warning is live. Track partial/widget deprecations by grepping
+consumers directly (e.g. `grep -rn '"lunr"' content/ hugo.toml config.toml`)
+until the tool grows a second scan mode for partials.
 
 ## Retirement lifecycle
 

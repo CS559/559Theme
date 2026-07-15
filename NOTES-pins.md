@@ -1,5 +1,11 @@
 # Site theme pins vs. `master` (Phase 0 task 2)
 
+> **Historical, one-off audit — not a living doc.** This was a single Phase 0
+> pre-check; the question it answers (were all four sites converged on the
+> same theme commit before the unification work started) no longer applies
+> now that Phases 0–6 are done and the sites have moved on. Kept for the
+> record, not maintained going forward.
+
 Recorded 2026-07-12, from the `unify` branch (currently identical to `master` plus `THEME-PLAN.md`).
 
 | Site | Pin (at start of session) | Status |

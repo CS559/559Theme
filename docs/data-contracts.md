@@ -59,14 +59,18 @@ design-exercise-1-1:
   lock_string: # short human form
 ```
 
-**Consumers.** `assign-link` and `assign-linkonly`:
+**Consumers.** `assign-link` (full-featured) and `assign-linkonly` (bare URL,
+no anchor tag — takes only the key, no modifiers or page-path arg):
 
 - `{{< assign-link "design-exercise-1-1" >}}` → link to the Canvas assignment,
   text = `name`.
-- Second positional arg is a space-separated set of modifier words:
-  `short` (use `shortname`), `due` (append `(due <due_string>)`).
-- Third positional arg (optional) is a page path: the link then points at that
-  page, and a separate "Canvas" link is emitted for the assignment.
+- `assign-link`'s second positional arg is a space-separated set of modifier
+  words: `short` (use `shortname`), `due` (append `(due <due_string>)`).
+- `assign-link`'s third positional arg (optional) is a page path: the link
+  then points at that page **instead of** Canvas. A separate "Canvas" link is
+  only emitted alongside it when the `due` modifier is *also* present in the
+  second arg — a page path given without `due` just repoints the single link,
+  with no second "Canvas" link at all.
 - Unknown key → build error, **except** the sentinel key `TBD`, which renders
   the literal text `TBD` (used for not-yet-created assignments).
 

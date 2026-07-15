@@ -6,7 +6,11 @@ Math is rendered at **build time** (not in the browser) by Hugo's native
 `transform.ToMath` function (KaTeX, embedded in Hugo ≥ 0.144). There is **no
 client-side JavaScript** — no MathJax, no KaTeX JS, no CDN. This was a
 deliberate goal (compile-time, not page-view-time); as of Hugo 0.144 the native
-function achieves it, so the theme's math shortcodes are thin wrappers over it.
+function achieves it, so the theme's math shortcodes are thin wrappers over it
+— with one addition: the MathML `transform.ToMath` returns is then piped
+through a second, theme-owned build-time pass (`partial
+"math/variant-fix.html"`) that rewrites bold/script/etc. glyphs for
+cross-browser correctness. See "Bold math" below.
 
 Entry points (see `docs/shortcodes.md` for full usage):
 
@@ -30,23 +34,34 @@ The removed `mathjax.html` partial (MathJax 2.x from a CDN, client-side) is gone
   native in Chromium ≥ 109 (Jan 2023), Firefox (always), and Safari ≥ 14.1. A
   build-time-rendered integral shows correct stacked limits and fractions with
   zero stylesheet.
-- **⚠ Known gap — bold does not render bold in Chromium.** `\mathbf{…}` /
-  `\boldsymbol{…}` render at normal weight in Chromium-family browsers (Firefox
-  renders them correctly). KaTeX emits `<mi mathvariant="bold">A</mi>` and
-  Chromium's MathML Core ignores the `mathvariant` attribute. There is **no
-  CSS-only fix** (`font-weight` has no effect on the math font). The planned
-  fix is a build-time transform to real Unicode bold glyphs (𝐀…); the full
-  investigation, evidence, and recommendation are in
-  [`math-bold-research/`](math-bold-research/). **Deferred** — validate on the
-  held-out math-heavy site, likely implement in Workbook first and share.
-- **The one theme CSS math depends on** is the numbered-display-equation layout:
+- **Bold math (fixed).** `\mathbf{…}` / `\boldsymbol{…}` render at normal
+  weight in Chromium-family browsers if left alone — KaTeX emits `<mi
+  mathvariant="bold">A</mi>` and Chromium's MathML Core ignores the
+  `mathvariant` attribute (Firefox honors it and needs no fix). There is **no
+  CSS-only fix** (`font-weight` has no effect on the math font). The theme
+  fixes this at build time: `math.html` and `displaymath.html` pipe
+  `transform.ToMath`'s output through `partial "math/variant-fix.html"`,
+  which rewrites every `mathvariant`-carrying character to the real Unicode
+  Mathematical-Alphanumeric glyph (𝐀, 𝐱, 𝛉…) using the generated mapping in
+  `data/mathvariants.yaml` — so it's genuinely bold in every browser, no CSS
+  involved. A build-time canary (`partial "math/variant-canary.html"`) probes
+  `\mathbf{A}` once per build and `warnf`s if a future Hugo/KaTeX bump changes
+  the MathML shape this relies on. Full investigation, evidence, and
+  validation results are in
+  [`math-bold-research/`](math-bold-research/README.md); **not yet ported to
+  Workbook** (a separate theme also affected — see that doc for status).
+- **The theme CSS math depends on**: the numbered-display-equation layout —
   `.math-display`, `.math-content`, `.math-number` in
   `assets/css/_559.scss`. These position the `(N)` number to the right and let
-  long equations scroll. They are compiled into every site's CSS
-  unconditionally (via `main.scss` → `_559.scss`). **Keep them** — without them
-  numbered equations lose their layout (the number won't sit beside the
-  equation, no horizontal scroll for wide equations). Inline math and un-numbered
-  display math need no theme CSS.
+  long equations scroll. There's also `.mv-pseudobold`, the fallback rule
+  `variant-fix.html` applies on the rare total miss (a character with no
+  Unicode bold mapping) — a `-webkit-text-stroke` pseudo-bold, strictly
+  worse-but-present rather than silently plain. All of these are compiled into
+  every site's CSS unconditionally (via `main.scss` → `_559.scss`). **Keep
+  them** — without `.math-display`/etc. numbered equations lose their layout
+  (the number won't sit beside the equation, no horizontal scroll for wide
+  equations). Inline math and un-numbered display math need no theme CSS
+  beyond the pseudo-bold fallback.
 
 ### The gotcha (why "compile-time math still needs CSS")
 

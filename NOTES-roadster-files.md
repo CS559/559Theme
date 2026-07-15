@@ -1,5 +1,12 @@
 # Roadster file usage inventory (Phase 0 task 4)
 
+> **Historical, one-off audit — not a living doc.** Roadster has since been
+> fully absorbed into 559Theme and removed as a dependency for all four sites
+> (see `docs/upgrading.md`'s "legacy fallback theme cleanup" changelog entry
+> and `THEME-PLAN.md`'s Execution log). This inventory was input to that
+> absorption work and has no ongoing purpose now that it's done — kept for
+> the record, not maintained going forward.
+
 Recorded 2026-07-12. Empirically verified per site by temporarily dropping `roadster`
 from each site's `theme = [...]` list, rebuilding, and tracing every resulting error
 back to its source, then restoring. Roadster is pinned at the same commit (`cf57f17`)

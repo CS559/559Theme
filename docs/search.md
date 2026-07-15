@@ -27,8 +27,10 @@ per site, ~100KB gzipped indexed).
   `window.SEARCH_INDEX_URL` (set inline by `layouts/search.html` from
   `relURL "index.json"` — never hard-coded, so it works under any site's
   subpath baseURL). Builds every result node via `createElement`/
-  `createTextNode`, never `innerHTML`, so neither page content nor the user's
-  `?q=` string can be interpreted as markup.
+  `createTextNode`, never `innerHTML` for content, so neither page content nor
+  the user's `?q=` string can be interpreted as markup. (`innerHTML = ""` is
+  used once, to clear the results container between searches — no untrusted
+  string ever passes through it.)
 - **`layouts/search.html`** — the results page template (`content/search.html`
   sets `layout: "search"` to select it). Replaces the old
   `content/lunr-search.html`, which embedded the whole renderer as an inline
@@ -56,6 +58,26 @@ query against real content and look at the result *count*, not just whether
 the top hit is right — the looseness doesn't show up in a build or an
 HTML-diff, only in actually using the search box.
 
+## Ranking: title matches are prioritized
+
+`assets/js/search.js` indexes three fields per page — `title`, `tags`,
+`content` — and configures MiniSearch with `boost: { title: 15, tags: 10,
+content: 5 }`. A query word found in the title counts far more toward a
+page's relevance score than the same word found in body content, so a page
+whose *title* matches the query ranks above pages that merely mention it in
+passing. This was the "does it check page titles" question left open by the
+old Lunr renderer (which never indexed title at all) — MiniSearch does, and
+weights it highest.
+
+**Verified** (2026-07-15) on a real build of VisSnacks: querying `comparison`
+returns the page titled "Considerations for Visualizing Comparison" first,
+ahead of four other pages that only mention "comparison" in body text
+(`critiques/240830-yeping-axis`, `snacks/app-time-graphs`,
+`critiques/250517-college-line-chart`, and the auto-generated `allpages`
+listing). If you ever change the boost weights or field list, re-verify with
+a query like this — a title-vs-content ranking regression won't show up in a
+build or an HTML-diff, only in the actual result order.
+
 ## Site setup
 
 A site needs, same as before:
@@ -65,10 +87,11 @@ A site needs, same as before:
 home = ["HTML", "RSS", "JSON"]
 ```
 
-and `"search"` (or the deprecated `"lunr"` alias) somewhere in
-`params.widgets` / `params.sidebar.widgets`. No other per-site content is
-needed — `content/search.html` ships from the theme itself, the same way
-`content/lunr-search.html` did.
+and `"search"` (or the deprecated `"lunr"` alias) somewhere in the widget
+list — a site-wide `params.sidebar.widgets`, or a page's own `widgets:`
+front-matter override (see `layouts/_partials/sidebar.html`). No other
+per-site content is needed — `content/search.html` ships from the theme
+itself, the same way `content/lunr-search.html` did.
 
 ## Future option: Pagefind
 

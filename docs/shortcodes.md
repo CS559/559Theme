@@ -440,6 +440,8 @@ manual math - explicitly request processing
 ```text
 manual math - explicitly request processing
 clunkier than the more automated things - but happens at compile time
+The variant-fix partial rewrites KaTeX's mathvariant attrs to real Unicode
+glyphs so bold/script/etc. render in Chromium (see docs/math-bold-research/).
 ```
 
 ### mikes-notes

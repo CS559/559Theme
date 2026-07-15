@@ -2,27 +2,29 @@
 
 A theme created by Michael Gleicher to make a class web page. Over time, it evolved to also do my home page, so there is a lot of stuff specific to that.
 
-This builds on the ~~"MainRoad"~~ "Roadster" theme - it needs to be "mixed in" to that theme.in the config.toml file, have the line. (we switched from Mainroad to Roadster in 2025). In December of 2025, Gemini cleaned up the code a bunch.
+The theme was originally an overlay on top of an existing Hugo theme (MainRoad,
+then Roadster after MainRoad was abandoned). In December 2025, a cleanup pass
+unified the SASS compilation pipeline. In summer 2026, a larger "unification"
+project (see `THEME-PLAN.md`) absorbed Roadster entirely, promoted several
+per-site/per-course shortcodes into the core theme, replaced Lunr search with
+MiniSearch, and introduced style presets. **559Theme is now self-contained —
+it no longer depends on Roadster or MainRoad at build time.** If you're
+bumping an existing site's theme submodule, `docs/upgrading.md` is the guide
+to follow (routine bump, first-time setup, and a changelog of breaking
+changes); this readme is the general reference.
 
-Since mainroad seems to be abandoned, this will switch to the "roadster" theme.
-https://discourse.gohugo.io/t/roadster-a-modern-fork-of-mainroad-theme/53102
-git@github.com:mansoorbarri/roadster.git
+A course site can still layer its own overlay theme on top (e.g. a
+per-semester repo with course-specific content and config), but that overlay
+is no longer required — a bare `theme = ["559Theme"]` is enough for a working
+site.
 
-Note: usually, we will also have a "semester theme" that has information common between the workbook and the semester class. For spring 22, this is "sp22".
-
-~~~toml
-theme = ["spxx","559Theme","roadster"]
-~~~
-
-and make sure that spxx, mainroad and 559Theme are in the themes directory. The "spxx" is a specific thing for a particular 559 semester, and isn't always used.
-
-**Warning:** this documentation isn't up to date.
-
-- New variables for tuning:
+- Variables for tuning:
   - noheader - set to true on a page to skip the header (default/baseof.html) - this was meant to allow the home page to look different
   - myreadmore - true (by default) for a less obnoxious read me in a summary (and a link if the summary is the whole page)
 
-Changes (not exhaustive):
+Changes (not exhaustive; this list predates the 2026 unification project —
+see `THEME-PLAN.md`'s Execution log and `docs/upgrading.md`'s changelog for
+everything since):
 
 - Add Section summaries to page list summaries (default/list.html)
 - Add lunr search (content/lunr-search, widgets/lunr, index.json) — since
@@ -30,21 +32,24 @@ Changes (not exhaustive):
   deprecated alias for `widgets/search`)
 - A taglist for post_meta
 - Put the logo in the header (assets/svg, partials/header)
-- New widgets
-  - lunr (search box - sends things to the lunr page where the work happens)
-  - toc (puts a toc in the sidebar)
-  - links (puts a link list page - must be content/widgetlinks - be sure to create **widgetlinks**)
+- Sidebar widgets (`layouts/_partials/widgets/`) — see `params.sidebar.widgets`
+  (or `params.widgets`) to pick which ones a site shows, in what order:
+  - search (search box; `lunr` kept as a deprecated alias)
+  - toc (puts a table of contents in the sidebar)
+  - links / blogroll (a link list page - must be `content/widgetlinks` - be sure to create **widgetlinks**)
+  - sectionlinks (a hand-curated link list page - must be `content/sectionlinks`)
+  - sections (auto-generated list of the site's top-level sections)
   - allpages (makes a list of all pages in a site - not sure how to scope it correctly, probably not that valuable)
-  - archive (puts a message that this is an archived class - be sure to set Site.Params.Archive and Site.Params.Archivenote)
-  - recents (useful thing from other blog-like themes) - mainroad has this built in, but we use a separate list of sections to pull from
-  - toc (puts the toc in a widget - which can be a useful place for it)
-  - important - makes a list of important pages (uses a site parameter "ImportantPages")
-  - thisweek - puts a "this week" page in the sidebar
+  - categories / taglist (auto-generated from the site's taxonomies)
+  - archive (puts a message that this is an archived class - be sure to set `Site.Params.archive`/`archivenote`, optionally `archivenexturl`/`archivenextname`)
+  - recents (useful thing from other blog-like themes) - uses `Site.Params.recentSections` to pick which sections count as "recent"
+  - important - makes a list of important pages (uses a site parameter "ImportantPages", optionally "ImportantPagesTitle")
+  - thisweek - puts a "this week" page in the sidebar (set `Site.Params.thisweek` to the page, optionally `thishead` for the title)
 - change the footer credits (i18n/en)
 - SASS friendly CSS loading (baseof)
 - multiple built in CSS files (baseof)
 - less obnoxious read more (summary.html) (set myreadmore to true)
-- shortcodes (*note that mainroad doesn't provide any!*) - see the list below
+- shortcodes - see the list below
 - pagination of sections is improved
   - pagination controls has first/last
   - section pages can control paginate and top_pagination (this is per section)
@@ -56,29 +61,27 @@ Changes (not exhaustive):
 - sections for talks and videos (and other collection of objects)
   - some attempts for unification
   - put "visual_summary" as a page parameter (to true) to get it
-- the header (logo.html) is different than mainroad - to get the spacing right (vertical alignment)
-- some colors and stylings are changed in styles.css - done since styles.css got converted to scss
+- some colors and stylings are changed - done since styles.css got converted to scss
 - copyrightdate
 
+## CSS Architecture
 
-### CSS Architecture (Updated Dec 2025)
+The theme uses a unified SASS compilation pipeline to keep styles clean and maintainable (originally unified in Dec 2025; a style-preset layer was added on top in the 2026 unification — see "Style presets" below).
 
-The theme uses a unified SASS compilation pipeline to keep styles clean and maintainable.
+*   **`assets/css/main.scss`**: The entry point, and the *only* file run through Hugo's template engine. It turns Hugo params (`config.toml`, `params.style.*`) into SASS variables, picks a style preset, then imports the pure-SASS partials below.
+*   **`assets/css/presets/_uw-serif.scss`** & **`assets/css/presets/_mainroad-sans.scss`**: The two style presets (see "Style presets"). Each defines the same set of `!default` SASS variables (fonts, colors, layout widths, etc.) so the partials below don't need to branch on which preset is active.
+*   **`assets/css/_style.scss`**, **`assets/css/_559.scss`** & **`assets/css/_v2menu.scss`**: Pure SASS partials containing the actual styles, consuming the variables the preset defined. These files contain **no** Hugo templating syntax (`{{ ... }}`), making them valid SASS files that standard SASS tooling can lint.
 
-*   **`assets/css/main.scss`**: The entry point. It bridges Hugo configuration with SASS. It defines SASS variables based on `config.toml` parameters and imports the style partials.
-*   **`assets/css/_style.scss`** & **`assets/css/_559.scss`**: Pure SASS partials containing the actual styles. These files contain **no** Hugo templating syntax (`{{ ... }}`), making them valid SASS files.
-*   **Configuration**: Styles are configured via `config.toml` params (e.g., `themestyle = "old"`), which are injected into `main.scss` as SASS variables (e.g., `$theme-style`).
-
-### New Section Variables
+## New Section Variables
 
 - visual_summary - uses a format for talks/videos where everything has a place for a thumbnail and links to the various assets are shown
 
-### New Page Variables
+## New Page Variables
 
 - redirect - give a URL that directs to a newer version of the page (for next year) - useful for tutorials and things where pages are updated and we want to go to the newer version
 - resourcethumb - allows you to give a thumbnail that is a page resource/ this is resized (based on videosize)
 
-### Shortcodes
+## Shortcodes
 
 The theme provides many shortcodes. Each is documented by a doc-comment header
 at the top of its source in `layouts/_shortcodes/`, and
@@ -96,6 +99,23 @@ in-workspace site actually uses, see `NOTES-usage.md`
 (`tools/usage-matrix.py`). Deprecation policy and the deprecated-usage checker:
 [`docs/deprecation.md`](docs/deprecation.md).
 
+## Math
+
+`math` (inline) and `displaymath` (numbered display equations, with `eqref`
+for cross-references) render math via Hugo's native `transform.ToMath`
+(KaTeX) at **build time** — there is no client-side JS, CSS, fonts, or CDN.
+The output is MathML, which every current browser lays out natively.
+
+The one wrinkle: Chromium ignores the `mathvariant="bold"` attribute KaTeX
+emits for `\mathbf{…}`/`\boldsymbol{…}`, so bold math would otherwise render
+at normal weight there (Firefox honors the attribute and is unaffected). The
+theme fixes this at build time by rewriting those characters to the actual
+Unicode Mathematical-Alphanumeric bold glyphs (𝐀, 𝐱, 𝛉…) instead of relying on
+the attribute — real bold characters render bold in every browser, no CSS
+needed. See `layouts/_partials/math/variant-fix.html` (the rewrite) and
+`docs/math-bold-research/README.md` (the investigation, evidence, and
+validation results) for the full story.
+
 ## Full Width Mode
 
 The site supports a "Full Width Mode" which displays only the main content area, hiding the header, sidebar, and footer. This is useful for embedding pages or taking screenshots where only the content is desired.
@@ -110,101 +130,128 @@ Example: `http://localhost:1313/some-page/?fullwidth`
 
 The feature is implemented entirely on the client-side using JavaScript and CSS, avoiding the need for separate Hugo layouts or complex build configurations.
 
-1.  **Structure Changes**: In `themes/559Theme/layouts/_default/baseof.html`, the header, sidebar, and footer partials were wrapped in `<div>` elements with classes `header-wrapper`, `sidebar-wrapper`, and `footer-wrapper`. This allows them to be easily targeted by CSS.
+1.  **Structure Changes**: In `themes/559Theme/layouts/baseof.html`, the header, sidebar, and footer partials were wrapped in `<div>` elements with classes `header-wrapper`, `sidebar-wrapper`, and `footer-wrapper`. This allows them to be easily targeted by CSS.
 2.  **CSS**: A `fullwidth-mode` class is defined for the `<body>` element. When this class is present:
     *   `.header-wrapper`, `.sidebar-wrapper`, and `.footer-wrapper` are set to `display: none !important`.
     *   The main content containers (`.container`, `.wrapper`, `.primary`) are forced to `width: 100%` and `max-width: none`.
 3.  **JavaScript**: A small script at the end of `baseof.html` checks `window.location.search` for the `fullwidth` parameter. If found, it adds the `fullwidth-mode` class to the `document.body`.
-4.  **Style Adjustments**: `themes/559Theme/assets/css/style.scss` was updated to ensure the new `.sidebar-wrapper` behaves correctly within the flexbox layout (inheriting the order and size properties of the original sidebar).
+4.  **Style Adjustments**: `themes/559Theme/assets/css/_style.scss` was updated to ensure the new `.sidebar-wrapper` behaves correctly within the flexbox layout (inheriting the order and size properties of the original sidebar).
 
 
 ## Using Links
 
-The **link** short code makes a link to a page - looking the page up and getting its title. The (optional) second parameter is the *anchor* on the page. If you want to give a page title (rather than looking it up), it is better to just use the regular markdown notation.
+The **link** shortcode makes a link to a page in the site, looked up by its
+logical path, and gets its title for free. It takes **named parameters**
+rather than ambiguous positional ones:
 
-Link uses `.Site.GetPage` to find the page - so the string parameter is the "page name" the file name *should* work. But, often it will say that things are ambiguous if the path isn't in the same directory. It never hurts to give a full path "/foo/bar" (with the leading slash). This confuses me all the time. I have no idea why sometimes it works, and other times it does not.
+~~~text
+{{< link "some/page" >}}                          one bare positional arg = the page
+{{< link page="some/page" >}}                     named form (page is required)
+{{< link page="some/page" anchor="Section" >}}    link to a heading on that page
+{{< link page="some/page" text="click me" >}}     custom link text
+~~~
 
-One thing to beware of (it drives me nuts): if a tag or category has the same name as a page, there can be the potential for name ambiguities. Beware.
+If you want to give an arbitrary page title rather than looking it up, it's
+simpler to just use regular markdown link notation instead.
 
-## New UW Theme Based Design
+Full details, parameter list, and the migration story from the old
+two-positional-argument `link`/`lnk` shortcodes are in
+[`docs/link-shortcode.md`](docs/link-shortcode.md) (and
+`tools/migrate-links.py` if you're migrating a site's content).
 
-- change between old and new by using themestyle = "new" or "old" in config.toml
-- update miscellaneous parameters to the website such as color, headers, backgrounds, using config.toml in the 559Theme directory
-- config.toml theme parameters:
-  - highlightColor: color that lights up on hovers and other miscellaneous places on website
-  - uwred: basic dark red color for UW
-  - fontSans: sans font used in secondaryFontFamily, used in headings and sidebar
-  - fontMono: font used in primaryFontFamily, used for body text
-  - bodyFontSize: size of body text
-  - containerWidth: width of container for website
-  - headerColor: color for headers
-  - figColor: color of figure caption text
-  - codeBackground: color of background on code
-  - codeBorder: style of border around code
-  - codeColor: text color for pre
-  - logoColor: color of logo text
-  - taglineColor: color of tagline text
-  - menuListColor: background color of menu and submenu
-  - hoverTextColor: color of menu text upon hover
-  - submenuBorderTop: color for border on top of submenu
-  - tocSubheadingColor: color for table of contents subheading
-  - authorboxBorder: styling for authorbox border
-  - nextBtnColor: text color for next pagination button
-  - nextBtnBack: background color for next pagination button
-  - paginItemColor: text color for pagination items
-  - paginItemBack: background color for pagination items
-  - sidebarLinkUnderline: toggle between having underline when hovering on sidebar items for the "old" style
-  
+One thing to still beware of: if a tag or category has the same name as a page, there can be the potential for name ambiguities.
+
+## Style presets
+
+Pick a look with `params.style.preset` in your site's `hugo.toml`:
+
+~~~toml
+[params.style]
+preset = "uw-serif"      # or "mainroad-sans"
+~~~
+
+- **uw-serif** — the current default look: Georgia body text, Poppins
+  small-caps UW-red headings, UW-red menu.
+- **mainroad-sans** — the older Roadster/MainRoad-derived look (was
+  `themestyle = "old"`).
+
+The old `themestyle = "old"|"new"` config still works via a deprecation
+warning (`old` → `mainroad-sans`, `new` → `uw-serif`); rename it when
+convenient.
+
+A handful of individual tokens can be overridden per-site without forking a
+preset, via `params.style.vars` in `hugo.toml`:
+
+~~~toml
+[params.style.vars]
+highlightColor = "#e22d30"   # hover/accent color
+uwred = "#c5050c"             # base UW dark red
+fontSans = "'Poppins', sans-serif"
+fontBody = "'Georgia', serif"   # fontMono is a deprecated alias for this
+bodyFontSize = "1.1rem"
+~~~
+
+(`linkColor`, `dimColor`, and `widgetBackground` are also settable, as
+top-level `params.*` rather than `params.style.vars.*` — see
+`assets/css/main.scss`.)
+
+Everything else (container width, code block colors, pagination button
+colors, sidebar link underlines, and so on) lives as a `!default` SASS
+variable in the two preset files themselves —
+[`assets/css/presets/_uw-serif.scss`](assets/css/presets/_uw-serif.scss) and
+[`assets/css/presets/_mainroad-sans.scss`](assets/css/presets/_mainroad-sans.scss).
+Each variable has a doc comment; to change one of these for every site, edit
+it there (keep both preset files defining the same variable names, in sync);
+to change it for just one site's build, that variable would need to be added
+to the `params.style.vars` wiring in `main.scss` first.
+
 ## Known bugs / missing features
 
 - it might be better to make this separate / different from my home page, since they have different uses/needs
 - pagination is set per page, but top_paginate is global
-- I don't know why the section thing works now (the way mainroad does it does not seem different)
-- make an integrated css (using sass)
-- mainroad doesn't seem to work if the root page is `index.md` - it has to be `_index.md`
-  - workaround: use `_index.md` but make the `mainSections` in config.toml not have any posts
-- lunr search doesn't check page titles (which would be really useful) - although the code seems to say that it does
-- this is still heavily dependent on mainroad - it would be nice to remove that dependence
 - paginator could use better icons
 - menu active tabs seems to not completely work
 - base URLs are still required for the search to work
 
 ## startup process
 
+For adding the theme to a new site, or bumping an existing site's theme
+version, follow [`docs/upgrading.md`](docs/upgrading.md) — it's the
+maintained, step-by-step guide (first-time setup section, plus a routine-bump
+checklist and changelog for existing sites). The short version for a brand
+new site:
+
 - hugo new site
 - git init
-- git ~~submodule add git@github.com:Vimux/Mainroad.git themes/mainroad~~
-- get submodule add git@github.com:mansoorbarri/roadster.git themes/roadster
-- git submodule add git@github.com:CS559/559Theme.git themes/559Theme
+- `git submodule add https://github.com/CS559/559Theme themes/559Theme`
 - git submodule init
 - git submodule update
-- create a hugo.toml file (~~config.toml~~ was the old way in hugo)
-- create a content/widgetlinks.md  - width headless:true
+- create a `hugo.toml` file (`config.toml` was the old way in Hugo)
+- create a `content/widgetlinks.md` - with `headless: true` - if you're using the `links`/`blogroll` sidebar widget
 
 These GIT incantations help keep the subrepos on track if you care about that:
 
 - git submodule foreach --recursive git checkout master
 
-### things for the config.toml file
+### things for the hugo.toml file
 
-Use both themes: look in 559Theme first
+Minimum config to make the theme work (see `docs/upgrading.md` for the full
+first-time-setup listing, including sidebar widget selection):
 
 ~~~toml
-theme = ["559Theme","mainroad"]
-~~~
+theme = ["559Theme"]          # or ["your-overlay","559Theme"] for a course-site overlay
 
-Generate multiple outputs so we can use Lunr:
+[security]
+  allowContent = ["^text/markdown$", "^text/html$"]   # theme ships .html content pages (e.g. search)
 
-~~~
 [outputs]
-home = [ "HTML", "RSS", "JSON"]
-~~~
+home = ["HTML", "RSS", "JSON"]   # JSON is the search index, needed for the search widget
 
-This is important so that we render HTML in the markdown:
-
-~~~
 [markup.goldmark.renderer]
-unsafe= true
+unsafe = true                     # theme partials/shortcodes emit raw HTML
+
+[params.style]
+preset = "uw-serif"               # or "mainroad-sans" - see "Style presets" above
 ~~~
 
 You do need to either set `baseURL` or use `hugo --baseURL` even if everything uses relative paths, as the `index.json` (used for text search) does not.
@@ -218,10 +265,10 @@ In general, assets get linked automatically if they are page resources.
 
 However: you might want to put assets in an external directory. Use the `extpdfs` (or similar) page properties to give the link.
 
-- the the link doesn't have "http" in it, it is assumed that it is in the assetStore link (directory) from Site.Params
+- if the link doesn't have "http" in it, it is assumed that it is in the assetStore link (directory) from Site.Params
 
 ## Acknowledgement
 
-This is based heavily on mainroad, including using some pieces as a base to hack on.
+This theme originated as an overlay on MainRoad, then Roadster, using pieces of each as a base to hack on. As of the 2026 unification, 559Theme is self-contained and no longer depends on either at build time, but it still carries code and structure descended from them.
 
-To comply with the mainroad license, this theme is also released GPL.
+To comply with the MainRoad/Roadster license, this theme is also released GPL (see `LICENSE`).

@@ -9,7 +9,8 @@
  *
  * Builds all result markup via createElement/createTextNode rather than
  * innerHTML, so neither page content nor the user's search string can ever
- * be interpreted as markup.
+ * be interpreted as markup. (innerHTML="" is used once, to clear the results
+ * container between searches — no untrusted string passes through it.)
  */
 (function () {
   function onWindowOnload(newFunction) {
