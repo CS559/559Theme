@@ -1,0 +1,18 @@
+{{- /*
+  Build-time canary for the mathvariant bold fix (see variant-fix.html and
+  docs/math-bold-research/). KaTeX's MathML output structure is NOT a documented
+  contract, and KaTeX intends (eventually) to stop emitting the deprecated
+  `mathvariant` attribute. This asserts our assumption still holds and warns
+  loudly at build time if a Hugo/KaTeX bump changed it -- so a silent
+  bold-in-Chromium regression can't slip through unnoticed.
+
+  Call via `partialCached` so it runs once per build, not per equation.
+*/ -}}
+{{- $probe := transform.ToMath "\\mathbf{A}" | string -}}
+{{- if not (strings.Contains $probe `mathvariant="bold"`) -}}
+  {{- if strings.Contains $probe "𝐀" -}}
+    {{- warnf "mathvariant-fix: KaTeX now emits Unicode math glyphs directly (bold already correct); the mathvariant transform is redundant and can be retired -- see themes/559Theme/docs/math-bold-research/." -}}
+  {{- else -}}
+    {{- warnf "mathvariant-fix: KaTeX MathML output changed shape (no mathvariant=\"bold\" for \\mathbf{A}); the bold-in-Chromium fix may no longer apply. Review themes/559Theme/docs/math-bold-research/." -}}
+  {{- end -}}
+{{- end -}}

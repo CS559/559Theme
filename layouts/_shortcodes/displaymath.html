@@ -13,8 +13,11 @@
 <div class="math-display" {{ with $id }}id="{{ . }}"{{ end }}>
     <div class="math-content">
         {{- /* Fix: Pass "displayMode" true to allow environments like 'align' */ -}}
+        {{- /* variant-fix rewrites mathvariant attrs to real Unicode glyphs so
+               bold/script render in Chromium (see docs/math-bold-research/). */ -}}
         {{- $opts := dict "displayMode" true -}}
-        {{- transform.ToMath .Inner $opts | safeHTML -}}
+        {{- $mml := transform.ToMath .Inner $opts | string -}}
+        {{- partial "math/variant-fix.html" (dict "html" $mml) -}}
     </div>
     <div class="math-number">
         ({{ $count }})

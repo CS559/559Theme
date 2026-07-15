@@ -1,16 +1,13 @@
 # Bold math in MathML — research & recommendation
 
-**Status: investigated, implementation deferred.** No code has been changed for
-this. The current theme still renders math via `transform.ToMath`'s default
-(MathML) output, which renders correctly **except that bold does not appear
-bold in Chromium** (details below). This document records what was tried, what
-the evidence showed, and the recommended fix, so a future agent can implement it
-without re-deriving everything.
-
-Why deferred: (1) the in-workspace test sites have essentially no math to
-validate against — the real validation set is a **held-out 5th site** with heavy
-math; (2) the fix should probably be built in the **Workbook** theme first and
-shared, since Workbook is the math-heavy consumer. See "Recommendation".
+**Status: implemented in 559Theme, validated on 559Tutorials (2026-07-14).**
+Path B (Unicode substitution) is built and passing in both Chromium and Firefox.
+The decisions and rationale are in
+"[Implementation decisions & rationale](#implementation-decisions--rationale-2026-07-14)";
+the concrete files and validation results are in
+"[What was built](#what-was-built--validation-results)". Not yet ported to
+Workbook (a later pass). This document records what was tried, what the evidence
+showed, and why the chosen fix is safe, so the reasoning survives the code.
 
 Related: [`../math.md`](../math.md) (how math works in the theme + the
 `katex.css`/output-mode gotcha). Re-runnable test rigs: [`rigs/`](rigs/).
@@ -220,6 +217,160 @@ acceptance set. Check in **Chromium and Firefox** (both drivable locally; see
 - Do **not** apply an unconditional `-webkit-text-stroke` (double-bolds Firefox).
 - Do **not** switch to `output:"html"` without **self-hosted** `katex.css`+fonts
   (never a CDN).
+
+---
+
+## Implementation decisions & rationale (2026-07-14)
+
+This section records the decisions made when we moved from "deferred" to
+"implementing," and *why* — so the reasoning survives even after the code lands.
+
+### Decision: build in 559Theme first (revises "Workbook first" above)
+
+The recommendation above leaned toward Workbook-first. We chose **559Theme
+first** instead, because 559Theme is *already* on the clean MathML path — the
+transform slots straight into its existing `math.html`/`displaymath.html`,
+whereas Workbook would first have to switch **off** its `output:"html"`+CDN
+approach back to MathML *and then* add the transform. 559Theme is also where the
+bug is confirmed (validated on 559Tutorials — see
+`559Tutorials/docs/math-bold-validation/`), so it's the fastest path to a
+validated fix. Workbook gets the shared transform in a later pass (and can then
+drop its jsDelivr `katex.css` CDN dependency, as noted above).
+
+### What KaTeX's MathML actually looks like (verified, not assumed)
+
+Probed against Hugo 0.164's bundled KaTeX (`transform.ToMath`). The structure
+determines whether a regex rewrite is safe — it is, but with nuance:
+
+- **Letter runs are split into one element per character.** `\mathbf{abc}` →
+  `<mi mathvariant="bold">a</mi><mi mathvariant="bold">b</mi>…`, and
+  `\boldsymbol{\alpha\beta}` likewise (each Greek letter its own `<mi>`, variant
+  `bold-italic`). So most "multiple characters in sequence" are already separate
+  single-char elements — trivially handled.
+- **Two cases keep a run inside one element**, so the transform must iterate over
+  the element's characters, not do a single blind lookup:
+  - **Multi-digit numbers:** `\mathbf{123}` → `<mn mathvariant="bold">123</mn>`
+    (and `12.5` stays one `<mn>`).
+  - **Text runs:** `\textbf{Hello}` → `<mtext mathvariant="bold">Hello</mtext>`
+    (note: `mtext` is a **4th** tag beyond `mi|mn|mo`).
+- **Bold operators effectively don't occur.** `\mathbf{a+b}` leaves `+` as a
+  plain `<mo>+</mo>` (no variant); `<` renders as `<mo>&lt;</mo>` (no variant).
+  So the HTML-entity-in-content hazard never coincides with an element we
+  rewrite. We still defensively skip any matched content containing `&`.
+- **Target elements contain only text**, no nested tags — the one nesting seen
+  (`<mi><mrow>…</mrow></mi>` wrapping a `\boldsymbol` group) was on the *outer,
+  variant-less* wrapper, which our pattern ignores. So a `<`-free content capture
+  is unambiguous.
+
+**Why regex is acceptable here** (it would not be for arbitrary MathML): this
+MathML is machine-generated, narrow, well-formed, and `<`-free in the target
+elements. We target `mi|mn|mo|mtext` carrying `mathvariant`, per-tag (Hugo's RE2
+has no backreferences, so we can't match `</\1>`).
+
+### KaTeX-stability analysis — is this a documented contract? (the key risk)
+
+**No — and that shapes the design.** Findings:
+
+- **`mathvariant` is a standard, documented MathML 3 attribute** — KaTeX emitting
+  it is the conventional representation, not a private hack. But **KaTeX does not
+  document its exact output structure as a stable API.** Maintainers state KaTeX's
+  MathML "was written before MathML Core existed" and was designed for
+  accessibility/screen-readers, not visual display
+  ([discussion #3893](https://github.com/KaTeX/KaTeX/discussions/3893)).
+- **There is a live intent to remove `mathvariant`**
+  ([issue #4043](https://github.com/KaTeX/KaTeX/issues/4043), opened Apr 2025) —
+  but it's open, unassigned, no PR, no milestone. No imminent change. KaTeX's own
+  answer for MathML-Core-correct output is "use **Temml**" (a KaTeX fork), not
+  "we'll change KaTeX" — so KaTeX itself is unlikely to move soon.
+- **The version is pinned to Hugo** (bundled as a WASM blob via `warpc`). Output
+  changes only when *we* bump Hugo — a deliberate, gated step (the theme has an
+  upgrade process), never spontaneous.
+
+### Failure-mode analysis (why this is safe to ship)
+
+If a future Hugo/KaTeX bump changes the MathML output, the two directions are
+**asymmetric**:
+
+1. **Likely — KaTeX starts emitting real Unicode glyphs** (per #4043 / MathML
+   Core). Our regex keys on `mathvariant="…"`, matches nothing → **no-op**, and
+   bold is already correct because KaTeX now emits the bold glyph itself.
+   **Fails safe;** our transform just becomes redundant.
+2. **Dangerous — KaTeX keeps attribute-style styling but renames/restructures
+   it.** Then our regex silently misses and bold silently regresses to
+   broken-in-Chromium. Low probability (why swap one deprecated approach for
+   another?), but the failure would be **silent**.
+
+### Decision: build-time canary (kills the silent-failure case)
+
+To convert case 2 from "silent Chromium regression discovered months later" into
+"loud warning at the next build after a Hugo bump," the transform partial renders
+a canary (`\mathbf{A}`) once per build and asserts the output still contains
+`mathvariant="bold"`. On mismatch it `warnf`s — distinguishing "KaTeX went
+Unicode (transform now redundant, safe)" from "KaTeX restructured (review the
+transform)." Cheap; removes the only quiet failure mode.
+
+**Bottom line:** this fix is a deliberate **workaround for a KaTeX limitation
+that KaTeX itself intends to remove** — so it has a natural, graceful expiry, and
+the canary ensures a version bump can't break it quietly.
+
+---
+
+## What was built & validation results
+
+### Files (all in 559Theme)
+
+- **`data/mathvariants.yaml`** — the generated mapping (13 variants, 971 glyph
+  entries: Latin, digits, Greek). **Generated, do not hand-edit.**
+- **`docs/math-bold-research/gen_mathvariants.py`** — the generator (stdlib
+  `unicodedata`; `conda run -n p314 python gen_mathvariants.py`). Encodes the
+  hole exceptions and self-checks counts so a bad generation fails loudly.
+- **`layouts/_partials/math/variant-fix.html`** — the transform (input
+  `dict "html" <MathML>`, returns rewritten MathML). Per-character substitution;
+  keeps unmapped chars (e.g. the `.` in `12.5`) literal; pseudo-bold fallback
+  only on a total miss.
+- **`layouts/_partials/math/variant-canary.html`** — the build-time canary
+  (`partialCached`, runs once/build).
+- **`layouts/_shortcodes/math.html`, `displaymath.html`** — now pipe
+  `transform.ToMath … | string` through `variant-fix`.
+- **`assets/css/_559.scss`** — `.mv-pseudobold` fallback rule.
+
+Gotcha for the next editor: inside a partial `$` is the passed-in dict, **not**
+the page — use `hugo.Data` (not `.Site.Data`, which is also deprecated) to reach
+the mapping.
+
+### Validation (2026-07-14)
+
+On 559Tutorials `content/splines/1/`, equation (2) `x,y=\mathbf{f}(t)`: built the
+site against this theme and measured the rendered page. Result: **0
+`mathvariant="bold"` left** (15 `mathvariant="normal"` correctly untouched), 28
+real bold glyphs on the page.
+
+- **Chromium** (DOM/canvas measurement via Playwright `browser_evaluate`, plus a
+  direct headless-Chrome screenshot — the Playwright *screenshot* tool hangs
+  because this MCP attaches to the user's shared real Chrome, not fonts; see the
+  validation doc's tooling note): the old `<mi mathvariant="bold">A</mi>`
+  measured *byte-identical* to plain (23.16px = 23.16px — the bug), while the
+  substituted Unicode bold glyphs carry **30–40 % more ink** (canvas pixel count:
+  A 1.34×, B 1.38×, x 1.30×, R 1.40×). Ink, not advance width, is the right
+  metric — bold upright `𝐟` is narrower than *italic* plain `f`, so a width test
+  misleads. Genuinely bold.
+- **Firefox** (headless `--screenshot`): the new Unicode form renders bold and is
+  **pixel-identical** to the old `mathvariant` form Firefox already bolded — no
+  regression, no double-bold (we apply no stroke to substituted glyphs). Evidence:
+  `559Tutorials/docs/math-bold-validation/img/after-fix-eq2-compare-firefox.png`.
+
+### Deploying to sites
+
+Changes live in this theme repo. Each consuming site picks them up by bumping its
+`themes/559Theme` submodule pointer after the theme is committed/pushed (the
+standard upgrade flow). During validation the files were copied into
+559Tutorials' submodule working tree, then reverted — no site is committed yet.
+
+### Not done
+
+- **Port to Workbook** — switch it off `output:"html"`+CDN `katex.css` back to
+  MathML and share this transform; then drop the jsDelivr dependency.
+- **Safari** spot-check (expected to behave like Chromium → fixed).
 
 ---
 

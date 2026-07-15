@@ -278,3 +278,16 @@ table {
     font-weight: bold;
     color: #555;
 }
+
+/* Pseudo-bold fallback for the mathvariant fix (layouts/_partials/math/
+   variant-fix.html). Only emitted for a "total miss" -- a styled glyph with no
+   real Unicode counterpart -- which is essentially unreachable with the
+   generated mapping table (data/mathvariants.yaml). The real fix substitutes
+   true bold Unicode glyphs and needs no CSS; this is the documented safety net
+   for mapping gaps only. -webkit-text-stroke thickens the outline because
+   font-weight has no effect on the math font in Chromium (see
+   docs/math-bold-research/). Firefox never reaches this branch for glyphs it
+   already bolds, so there is no double-bold risk here. */
+.mv-pseudobold {
+    -webkit-text-stroke: 0.4px currentColor;
+}

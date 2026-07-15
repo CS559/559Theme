@@ -1,5 +1,8 @@
-{{/* manual math - explicitly request processing 
+{{/* manual math - explicitly request processing
  clunkier than the more automated things - but happens at compile time
+ The variant-fix partial rewrites KaTeX's mathvariant attrs to real Unicode
+ glyphs so bold/script/etc. render in Chromium (see docs/math-bold-research/).
  */}}
 {{- $opts := dict "displayMode" (in .Params "display")}}
-{{- transform.ToMath (.Get 0) $opts -}}
+{{- $mml := transform.ToMath (.Get 0) $opts | string -}}
+{{- partial "math/variant-fix.html" (dict "html" $mml) -}}
