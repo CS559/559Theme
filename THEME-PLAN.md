@@ -212,8 +212,10 @@ per-session status lives in the workspace `PROGRESS.md`.
 - **Phase 6: DONE** (theme `c1c5005` on all four sites). `themestyle` ->
   `params.style.preset`, `lunr` -> `search` widget, `[params]` lowercased,
   confirmed-dead config keys removed, `gleicher.github.io`'s `config.toml`
-  renamed to `hugo.toml`. 765-25 tagged `frozen` (permanent pin per decision
-  5). See deviations below for what Phase 6 turned out to need vs. not.
+  renamed to `hugo.toml`. Phase 6 intended to tag 765-25 `frozen` (permanent
+  pin per decision 5) — **that tag was never actually created, and the
+  freeze was never maintained** (see deviation 15). See deviations below for
+  what Phase 6 turned out to need vs. not.
 - **Phase 7: NOT STARTED** (separate follow-on efforts; see plan text).
 - **The theme IS pushed.** `master` on `origin` (`github.com/CS559/559Theme`)
   was fast-forwarded from `63f35e4` to `7721c59` (`unify`'s tip, now
@@ -301,6 +303,18 @@ per-session status lives in the workspace `PROGRESS.md`.
     new theme-bump-routine section). VisSnacks, 559-sp26, and 765-25 have no
     CLAUDE.md at all — none was created; that's a separate scope decision
     left for the user.
+15. **Decision 5 ("archived course sites freeze at their pin forever") —
+    never actually implemented, then overridden by later practice.** No
+    `frozen` tag was ever created (checked 2026-07-15: absent from both the
+    theme repo's tags and 765-25's submodule, local or remote). Without a
+    tag to signal "stop here," 765-25 kept getting included in ordinary
+    all-four-sites bump sweeps — Phase 5b (Lunr→MiniSearch), the
+    math-bold-in-Chromium fix, and a subsequent docs-only update all landed
+    on 765-25 same as the three live sites. Confirmed with the user
+    (2026-07-15) that this is fine going forward: **765-25 is treated as a
+    normal tracking consumer, not a frozen one**, absent a deliberate
+    decision to actually freeze it (tag the pin, exclude it from future bump
+    sweeps). See `765-25/REVIEW.md`'s update note for the site-side record.
 
 ### Additions not in the original plan
 
