@@ -344,6 +344,25 @@ per-session status lives in the workspace `PROGRESS.md`.
   `@deprecated:` marker from the doc-header comment (it previously only matched
   a dedicated `{{/* … */}}` comment, which no real deprecation used), and
   documented the header-marker convention in `docs/deprecation.md`.
+- **Unify all image display on `rimage`** (follow-through on the rimage fix).
+  Fixed the two remaining non-resizing paths: `post_thumbnail.html` and
+  `summary.html`'s `thumbnail` branch shipped the full-size original — both now
+  resolve the path to a page/global resource and `.Fit` it (235px list /
+  1030px post), falling back to the raw URL for static files, external URLs,
+  and SVG. (The heavily-used `resourcethumb` summary path already resized to
+  180x120.) Deprecated `figure` too — a REQUIRED migration (`docs/upgrading.md`)
+  since it's a Hugo built-in override that adds `rsrc` + captions but never
+  resizes; kept functional (deleting it reverts to Hugo's built-in `figure`,
+  which drops `rsrc`) until `check-deprecated` clears all consumers. Migrated
+  every deprecated call in the workspace: VisSnacks (13 `resource-image` + 4
+  `figure`) and 559Tutorials (23 `resource-image`) → `rimage`; the other three
+  sites had none. `resource-svg` deliberately kept (its `inline`/`highlight`/
+  `link` modes have no `rimage` equivalent). Added **559Tutorials** as a 5th
+  tracked consumer in `tools/usage-matrix.py` + `tools/check-deprecated.py` (it
+  uses `resource-svg` 72x and was mislabeled "DEAD"), and made the usage-matrix
+  shortcode table generate its site columns dynamically. All five sites bumped
+  to the new theme with their `themes/559Theme` submodule now set to track the
+  `master` branch (`branch = master`) rather than a pinned detached SHA.
 
 ### Deferred items (open work)
 
