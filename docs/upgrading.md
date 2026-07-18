@@ -266,6 +266,22 @@ session with no other context on this project. Don't push or deploy anything
         -o -name page.html -o -name snippet.html \)
    ```
 
+   **Two adjacent habits worth keeping, from experience doing this kind of
+   cleanup:**
+
+   - **Before deleting what looks like a "dead" config key** (e.g. a
+     `mainSections`/`recentSections` entry with no matching `content/`
+     directory), don't just trust a changelog's named example — confirm with
+     `find content -maxdepth 1 -type d` (or grep) that the referenced section
+     genuinely has no directory, then verify with an identical rebuild before
+     removing it. A changelog's example list is illustrative, not exhaustive;
+     the same dead-key pattern has shown up in a second, unnamed spot on more
+     than one site.
+   - **Before renaming a config file** (e.g. `config.toml` → `hugo.toml`),
+     grep your CI workflows/scripts for the literal old filename first. Hugo
+     auto-detects either name, so a stale hardcoded reference elsewhere
+     wouldn't fail an obvious local build — it'd only surface in CI, later.
+
 6. **Check for deprecated features you're still using**, both ways — do this
    *before* making any config changes, so you actually watch the deprecation
    warning fire and confirm the old alias currently works, rather than
