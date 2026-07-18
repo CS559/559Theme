@@ -13,7 +13,7 @@ Header convention (top of each shortcode):
 */ -}}
 ```
 
-51 shortcodes: 48 active, 3 deprecated/dead-weight. Deep-dives: `link` → `docs/link-shortcode.md`; course-data shortcodes (`assign-*`, `reading`, `mod*`, `page`) → `docs/data-contracts.md`; math (`math`, `displaymath`, `eqref`) → `docs/math.md`.
+51 shortcodes: 47 active, 4 deprecated/dead-weight. Deep-dives: `link` → `docs/link-shortcode.md`; course-data shortcodes (`assign-*`, `reading`, `mod*`, `page`) → `docs/data-contracts.md`; math (`math`, `displaymath`, `eqref`) → `docs/math.md`.
 
 ## Index
 
@@ -36,7 +36,7 @@ Header convention (top of each shortcode):
 | [`expand-boxed`](#expand-boxed) | `expand-boxed.html` | Inspired by the "details" shortcode from the hugo book theme |  |
 | [`expand`](#expand) | `expand.html` | Inspired by the "details" shortcode from the hugo book theme |  |
 | [`expandinline`](#expandinline) | `expandinline.md` | include the CONTENT from another PAGE |  |
-| [`figure`](#figure) | `figure.html` | modified version of Hugo's figure shortcode - I copied the text |  |
+| [`figure`](#figure) | `figure.html` | modified version of Hugo's figure shortcode - I copied the text | deprecated |
 | [`genai`](#genai) | `genai.html` | a "GenAI Disclosure" callout box (a dimbox with a heading). |  |
 | [`htmllink`](#htmllink) | `htmllink.md` | show an internal page's absolute URL as the visible, clickable link text. |  |
 | [`includemd`](#includemd) | `includemd.md` | This includes a markdown file (without frontmatter) inline |  |
@@ -290,29 +290,31 @@ include the CONTENT from another PAGE
    which talks about how to access resources from page bundles
 ```
 
-### figure
+### figure ⚠️ deprecated
 
 <sup>`layouts/_shortcodes/figure.html`</sup>
+
+> **deprecated:** REQUIRED migration — use rimage instead; unifying all image display on rimage. This theme override adds rsrc/resource lookup and captions but does NOT resize (ships the full-size original); rimage does both. Migrate figure rsrc="X" ... to rimage src="X" ... (caption/attr/attrlink carry over; add width to size it). rimage has no raw external src="URL" mode — those few, if any, must stay on Hugo's built-in figure. -> rimage
 
 modified version of Hugo's figure shortcode - I copied the text
 
 ```text
-modified version of Hugo's figure shortcode - I copied the text
-    from https://raw.githubusercontent.com/gohugoio/hugo/master/tpl/tplimpl/embedded/templates/shortcodes/figure.html
-    or https://github.com/gohugoio/hugo/blob/master/tpl/tplimpl/embedded/templates/shortcodes/figure.html
-    on 8/24/2020
+ modified version of Hugo's figure shortcode - I copied the text
+ from https://raw.githubusercontent.com/gohugoio/hugo/master/tpl/tplimpl/embedded/templates/shortcodes/figure.html
+ or https://github.com/gohugoio/hugo/blob/master/tpl/tplimpl/embedded/templates/shortcodes/figure.html
+ on 8/24/2020
 
-    if Hugo updates this, it will need to be updated
+ if Hugo updates this, it will need to be updated
 
-    additions:
-    a new "rsrc" parameter that looks up the name as a page resource
-       see https://discourse.gohugo.io/t/figure-shortcode-should-use-page-resources/12989/2
-   but it will also search site resources
+ additions:
+ a new "rsrc" parameter that looks up the name as a page resource
+    see https://discourse.gohugo.io/t/figure-shortcode-should-use-page-resources/12989/2
+but it will also search site resources
 
-   note: the hack to skip extensions was not implemented because site resource search
-   does not do matching
+note: the hack to skip extensions was not implemented because site resource search
+does not do matching
 
-   you can put wildcards in the name string for rsrc (if you know its a page resource)
+you can put wildcards in the name string for rsrc (if you know its a page resource)
 ```
 
 ### genai

@@ -483,6 +483,21 @@ site-facing version: what you need to *do* when crossing each point, not why.
   `conda run -n p314 python 559Theme/tools/check-deprecated.py`. `resource-svg`
   is unchanged and deliberately kept — its `inline`/`highlight`/`link` modes
   have no rimage equivalent.
+- **`figure` deprecated — REQUIRED migration to `rimage`.** The theme's `figure`
+  is a modified copy of Hugo's built-in that adds `rsrc` (page/site resource
+  lookup) and captions, but it does **not** resize — it ships the full-size
+  original. We are unifying all image display on `rimage`, so the theme's
+  `figure` override is going away. Migrate now: `{{< figure rsrc="X" caption="…"
+  attr="…" attrlink="…" >}}` becomes `{{< rimage src="X" caption="…" attr="…"
+  attrlink="…" >}}` (add a `width` to size it; `rsrc` globs work as `src`). It
+  still builds today but prints a deprecation `warnf` per call; find call sites
+  with `conda run -n p314 python 559Theme/tools/check-deprecated.py`. **Why
+  required, not optional:** once the theme's `figure.html` is removed, `{{<
+  figure >}}` falls back to Hugo's *built-in* figure, which has no `rsrc`
+  parameter — so any un-migrated `rsrc` figure will silently stop finding its
+  image. One caveat: `rimage` has no raw external `src="https://…"` mode; the
+  rare figure that points at an external URL (none in the course sites) should
+  stay on Hugo's built-in `figure` with `src=`.
 
 ## What this guide doesn't cover yet
 

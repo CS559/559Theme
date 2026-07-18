@@ -10,9 +10,17 @@
 */}}
 <article class="list__item post">
 	{{- if .Params.thumbnail }}
+		{{- /* resolve to a resource and .Fit it; fall back to the raw URL for
+		     static files / external URLs / SVG (see post_thumbnail.html) */ -}}
+		{{- $page := . }}
+		{{- $src := .Params.thumbnail | relURL }}
+		{{- $isSvg := or (hasSuffix .Params.thumbnail ".svg") (hasSuffix .Params.thumbnail ".SVG") }}
+		{{- with (or ($page.Resources.GetMatch $page.Params.thumbnail) (resources.GetMatch $page.Params.thumbnail)) }}
+			{{- if $isSvg }}{{ $src = .RelPermalink }}{{ else }}{{ $src = (.Fit "235x5000").RelPermalink }}{{ end }}
+		{{- end }}
 	<figure class="list__thumbnail">
 		<a href="{{ .Permalink }}">
-			<img src="{{ .Params.thumbnail | relURL }}" alt="{{ .Title }}" />
+			<img src="{{ $src }}" alt="{{ .Title }}" />
 		</a>
 	</figure>
     {{- end }}

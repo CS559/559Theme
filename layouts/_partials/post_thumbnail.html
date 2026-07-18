@@ -1,5 +1,6 @@
 {{- if $thumbnail := .page.Params.thumbnail }}
 	{{- $class := .class }}
+	{{- $page := .page }}
 	{{- $visibility := .page.Site.Params.thumbnail.visibility | default (slice "list" "post") }}
 
 	{{- $valueType := printf "%T" $thumbnail -}}
@@ -10,9 +11,22 @@
 	{{- end }}
 
 	{{- if in $visibility $class }}
+	{{- /* Serve a resized copy: resolve the path to a page/global resource and
+	     .Fit it to the display size for this class (list vs post). Fall back to
+	     the raw URL for static files, external URLs, and SVG (not processable). */ -}}
+	{{- $src := $thumbnail | relURL -}}
+	{{- $isSvg := or (hasSuffix $thumbnail ".svg") (hasSuffix $thumbnail ".SVG") -}}
+	{{- with (or ($page.Resources.GetMatch $thumbnail) (resources.GetMatch $thumbnail)) -}}
+		{{- if $isSvg -}}
+			{{- $src = .RelPermalink -}}
+		{{- else -}}
+			{{- $box := cond (eq $class "list") "235x5000" "1030x5000" -}}
+			{{- $src = (.Fit $box).RelPermalink -}}
+		{{- end -}}
+	{{- end -}}
 	<figure class="{{ with $class }}{{ . }}__thumbnail {{ end }}thumbnail">
-		{{ if eq $class "list" }}<a class="thumbnail__link" href="{{ .page.RelPermalink }}">{{ end }}
-		<img class="thumbnail__image" src="{{ $thumbnail | relURL }}" alt="{{ .page.Title }}">
+		{{ if eq $class "list" }}<a class="thumbnail__link" href="{{ $page.RelPermalink }}">{{ end }}
+		<img class="thumbnail__image" src="{{ $src }}" alt="{{ $page.Title }}">
 		{{ if eq $class "list" }}</a>{{ end }}
 	</figure>
 	{{- end }}

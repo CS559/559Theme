@@ -13,9 +13,9 @@ still uses each one before eventually retiring it for real.
 Usage:
     conda run -n p314 python 559Theme/tools/check-deprecated.py [REPO ...]
 
-REPO defaults to the four in-workspace sites. Pass other consumer repos
+REPO defaults to the in-workspace sites. Pass other consumer repos
 (e.g. workbook sites, other course webs) as arguments to widen the scan --
-"unused in these four sites" is NOT "safe to delete"; the theme has consumers
+"unused in these sites" is NOT "safe to delete"; the theme has consumers
 outside this workspace.
 
 Exit status: 0 if no deprecated shortcode is used by any scanned repo (safe to
@@ -29,7 +29,7 @@ from pathlib import Path
 
 THEME = Path(__file__).resolve().parents[1]
 WORKSPACE = THEME.parent
-DEFAULT_REPOS = ["765-25", "559-sp26", "VisSnacks", "gleicher.github.io"]
+DEFAULT_REPOS = ["765-25", "559-sp26", "VisSnacks", "559Tutorials", "gleicher.github.io"]
 
 # Match the `@deprecated:` marker line wherever it sits — a dedicated
 # `{{/* @deprecated: … */}}` comment or (the usual case) the doc-header

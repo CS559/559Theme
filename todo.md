@@ -34,9 +34,18 @@ independent of each other.
       rimage fixed (scoping bug dropped the .Fit result → served full-size);
       now emits a downsized copy + links the original, plus width="45%" and
       width="native" modes. resource-image deprecated in favor of rimage.
-      STILL OPEN: post_thumbnail.html serves full-size images as thumbnails
-      (no .Fit) — list-page perf; and figure.html doesn't resize.
-- [ ] standardize on one image shortcode
+      post_thumbnail.html + summary.html thumbnail branch now resolve the
+      path to a resource and .Fit it (fallback to raw URL for static/URL/SVG).
+      Note: the heavily-used list thumbnails (resourcethumb -> summary.html)
+      already resized to 180x120; the thumbnail:/post_thumbnail paths were the
+      unresized (and near-unused) ones.
+      figure.html now deprecated too (REQUIRED migration in upgrading.md):
+      the 4 VisSnacks figure uses migrated to rimage; figure warns + is badged.
+      Removal of figure.html deferred (it's a Hugo built-in override; deleting
+      reverts to built-in which drops rsrc) until check-deprecated clears all
+      external consumers. Now unified on rimage: resource-image, figure both
+      deprecated; resource-svg kept for inline/highlight/link.
+- [x] standardize on one image shortcode
 - [ ] proper footer, colophon
 - [ ] get rid of i18n (?)
 - [ ] look at social media stuff (does removing it simplify)

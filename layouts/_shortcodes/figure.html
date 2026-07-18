@@ -1,4 +1,5 @@
-{{/* modified version of Hugo's figure shortcode - I copied the text
+{{/* @deprecated: REQUIRED migration — use rimage instead; unifying all image display on rimage. This theme override adds rsrc/resource lookup and captions but does NOT resize (ships the full-size original); rimage does both. Migrate figure rsrc="X" ... to rimage src="X" ... (caption/attr/attrlink carry over; add width to size it). rimage has no raw external src="URL" mode — those few, if any, must stay on Hugo's built-in figure. -> rimage
+     modified version of Hugo's figure shortcode - I copied the text
      from https://raw.githubusercontent.com/gohugoio/hugo/master/tpl/tplimpl/embedded/templates/shortcodes/figure.html
      or https://github.com/gohugoio/hugo/blob/master/tpl/tplimpl/embedded/templates/shortcodes/figure.html
      on 8/24/2020
@@ -15,6 +16,7 @@
 
     you can put wildcards in the name string for rsrc (if you know its a page resource)
   */}}
+{{- warnf "559Theme: shortcode %q is deprecated (called from %s) — use rimage (rsrc=\"X\" -> src=\"X\"; add width to size it)" "figure" .Position -}}
 {{- $code := . }}
 <figure{{ with .Get "class" }} class="{{ . }}"{{ end }}>
     {{- if .Get "link" -}}

@@ -50,7 +50,7 @@ known consumers.
 ## Checking who still uses deprecated features
 
 ```sh
-# scan the four in-workspace sites (bare names, resolved against the
+# scan the in-workspace sites (bare names, resolved against the
 # workspace directory that contains 559Theme — NOT your current directory)
 conda run -n p314 python tools/check-deprecated.py
 
