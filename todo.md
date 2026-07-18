@@ -47,7 +47,7 @@ independent of each other.
       deprecated; resource-svg kept for inline/highlight/link.
 - [x] standardize on one image shortcode
 - [ ] proper footer, colophon
-- [ ] get rid of i18n (?)
+- [~] get rid of i18n (keep - even if we don't use it)
 - [ ] look at social media stuff (does removing it simplify)
 - [x] auto checks (make sure that roadster isn't included anymore) —
       roadster *is* structurally gone (no submodule, no references, verified
