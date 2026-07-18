@@ -5,6 +5,9 @@
          {{< resource-svg src="d.svg" highlight="true" >}}  show the SVG source (highlighted)
          {{< resource-svg src="d.svg" link="true" >}}       just a link
   params (named): src (required); one of inline / highlight / link; alt; class.
+  notes: kept (not folded into rimage) because inline / highlight / link have no rimage
+    equivalent — and its plain-figure default is kept alongside them for symmetry, so all
+    four SVG presentations live under one shortcode rather than being split across two.
 */ -}}
 {{- $page := . }}
 {{- $name := .Get "src" }}

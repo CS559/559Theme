@@ -13,7 +13,7 @@ Header convention (top of each shortcode):
 */ -}}
 ```
 
-51 shortcodes: 49 active, 2 deprecated/dead-weight. Deep-dives: `link` → `docs/link-shortcode.md`; course-data shortcodes (`assign-*`, `reading`, `mod*`, `page`) → `docs/data-contracts.md`; math (`math`, `displaymath`, `eqref`) → `docs/math.md`.
+51 shortcodes: 48 active, 3 deprecated/dead-weight. Deep-dives: `link` → `docs/link-shortcode.md`; course-data shortcodes (`assign-*`, `reading`, `mod*`, `page`) → `docs/data-contracts.md`; math (`math`, `displaymath`, `eqref`) → `docs/math.md`.
 
 ## Index
 
@@ -59,10 +59,10 @@ Header convention (top of each shortcode):
 | [`quote`](#quote) | `quote.html` | a <blockquote> of the inner markdown, with an optional citation. |  |
 | [`reading`](#reading) | `reading.html` | look up a reading and put the html in the page |  |
 | [`resource-file`](#resource-file) | `resource-file.html` | just returns a link to a page resource - actually makes a line, using the name |  |
-| [`resource-image`](#resource-image) | `resource-image.html` | a <figure> for an image resource, linking the full image to a fitted copy. |  |
+| [`resource-image`](#resource-image) | `resource-image.html` | a <figure> for an image resource, linking the full image to a fitted copy. | deprecated |
 | [`resource-link`](#resource-link) | `resource-link.html` | just returns a link to a page resource |  |
 | [`resource-svg`](#resource-svg) | `resource-svg.html` | render an SVG page resource as a figure, inline SVG, highlighted source, or a link. |  |
-| [`rimage`](#rimage) | `rimage.html` | This is the preferred way to include images. It supports captions, attributions, and resizing. It should work for SVG and for PNG/JPG/GIF. |  |
+| [`rimage`](#rimage) | `rimage.html` | the preferred way to include an image. Supports captions, attributions, and REAL resizing. |  |
 | [`snippet`](#snippet) | `snippet.html` | inserts a markdown snippet from assets |  |
 | [`static`](#static) | `static.html` | a root-relative URL (relURL) to a file in static/ (a bare string, not a tag). |  |
 | [`tableofcontents`](#tableofcontents) | `tableofcontents.html` | render the current page's table of contents inline |  |
@@ -584,9 +584,11 @@ just returns a link to a page resource - actually makes a line, using the name
 just returns a link to a page resource - actually makes a line, using the name
 ```
 
-### resource-image
+### resource-image ⚠️ deprecated
 
 <sup>`layouts/_shortcodes/resource-image.html`</sup>
+
+> **deprecated:** superseded by rimage, which also resizes rasters and adds captions, attributions, percent/native widths, and links the reduced copy to the original; migrate size="WxH" to width="W" (rimage fits width only, height auto) -> rimage
 
 a <figure> for an image resource, linking the full image to a fitted copy.
 
@@ -618,33 +620,46 @@ usage: {{< resource-svg src="diagram.svg" >}}            figure (default)
        {{< resource-svg src="d.svg" highlight="true" >}}  show the SVG source (highlighted)
        {{< resource-svg src="d.svg" link="true" >}}       just a link
 params (named): src (required); one of inline / highlight / link; alt; class.
+notes: kept (not folded into rimage) because inline / highlight / link have no rimage
+  equivalent — and its plain-figure default is kept alongside them for symmetry, so all
+  four SVG presentations live under one shortcode rather than being split across two.
 ```
 
 ### rimage
 
 <sup>`layouts/_shortcodes/rimage.html`</sup>
 
-This is the preferred way to include images. It supports captions, attributions, and resizing. It should work for SVG and for PNG/JPG/GIF.
+the preferred way to include an image. Supports captions, attributions, and REAL resizing.
 
 ```text
- This is the preferred way to include images. It supports captions, attributions, and resizing. It should work for SVG and for PNG/JPG/GIF.
+Works for SVG and for PNG/JPG/GIF. This takes the place of both resource-image (resource lookup + resizing)
+and figure (captions), so the caption is sized to the width of the image (captions look wrong otherwise).
 
-this is meant to take the place of resource-image
-it is not a drop-in for resrouce image, because it uses WIDTH not SIZE
-we need to use WIDTH since we need it for the caption
+Unlike resource-image it uses WIDTH, not SIZE — we need the width for the figure/caption sizing.
 
-it takes the place of figure (in that it allows for a caption), but allows for the resource finding and re-sizing of resource-image (it doesn't resize SVGs - it just sets the width)
+Resizing behaviour (raster only; SVGs are vector and are never re-encoded, width just sets CSS):
+  - width is a number (px)  -> a copy Fit to that width is generated and shown; the figure links to the original.
+  - width is a percent      -> the file is Fit to (percent x an assumed content-column width, default 800px,
+                               set params.imageColumnWidth to tune) and a build warning notes it is approximate;
+                               the figure CSS still uses the literal % so layout stays fluid.
+  - width="native"          -> no resizing; the image is shown at its native pixel size and the figure is sized
+                               to match (raster only — it is an error on an SVG). Use for small images you do
+                               not want stretched, or when you deliberately want full resolution inline.
+  - .Fit never upscales, and we skip generating a copy entirely when the target is >= the image's native width,
+    so small images are never blown up and never get a pointless "full size" link.
 
-this whole thing was caused by the need to have the caption sized to the width of the image (since the captions look stupid otherwise)
+The <figure> links to the ORIGINAL file only when a smaller copy is actually shown (so the link is a real
+"see it bigger", never a no-op self-link).
 
-the argugements are:
-src - the reource name
-width - target width (default 300) - height is auto
-alt - alt text (default is the resource name)
-class - class for the figure (default is "")
-caption - caption for the image (default is "")
-attr - attribution for the image (default is "")
-attrlink - link for the attribution (default is "")
+arguments:
+  src      - the resource name (required)
+  width    - target width: number (px), a percent, or "native" (default 300 for raster, 80% for SVG)
+  alt      - alt text (default is the resource name)
+  class    - class for the figure (default "")
+  styles   - extra inline CSS for the figure (default "")
+  caption  - caption for the image (default "")
+  attr     - attribution for the image (default "")
+  attrlink - link for the attribution (default "")
 ```
 
 ### snippet

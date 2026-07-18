@@ -1,9 +1,11 @@
 {{- /*
+  @deprecated: superseded by rimage, which also resizes rasters and adds captions, attributions, percent/native widths, and links the reduced copy to the original; migrate size="WxH" to width="W" (rimage fits width only, height auto) -> rimage
   resource-image — a <figure> for an image resource, linking the full image to a fitted copy.
   usage: {{< resource-image src="photo.jpg" size="300x300" alt="…" >}}
   params (named): src (required; page resource or global asset); size (default 300x300, uses .Fit);
     alt; class. Errors if src is not found. Prefer `rimage` for new content.
 */ -}}
+{{- warnf "559Theme: shortcode %q is deprecated (called from %s) — use rimage (size=\"WxH\" -> width=\"W\")" "resource-image" .Position -}}
 {{- $page := . }}
 {{- $name := .Get "src" }}
 {{- if $name }}{{- else }}{{errorf "resource-image needs a src argument" }}{{- end}}

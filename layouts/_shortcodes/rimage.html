@@ -1,28 +1,41 @@
-{{/* This is the preferred way to include images. It supports captions, attributions, and resizing. It should work for SVG and for PNG/JPG/GIF. 
+{{/* rimage — the preferred way to include an image. Supports captions, attributions, and REAL resizing.
+Works for SVG and for PNG/JPG/GIF. This takes the place of both resource-image (resource lookup + resizing)
+and figure (captions), so the caption is sized to the width of the image (captions look wrong otherwise).
 
-this is meant to take the place of resource-image 
-it is not a drop-in for resrouce image, because it uses WIDTH not SIZE
-we need to use WIDTH since we need it for the caption
+Unlike resource-image it uses WIDTH, not SIZE — we need the width for the figure/caption sizing.
 
-it takes the place of figure (in that it allows for a caption), but allows for the resource finding and re-sizing of resource-image (it doesn't resize SVGs - it just sets the width)
+Resizing behaviour (raster only; SVGs are vector and are never re-encoded, width just sets CSS):
+  - width is a number (px)  -> a copy Fit to that width is generated and shown; the figure links to the original.
+  - width is a percent      -> the file is Fit to (percent x an assumed content-column width, default 800px,
+                               set params.imageColumnWidth to tune) and a build warning notes it is approximate;
+                               the figure CSS still uses the literal % so layout stays fluid.
+  - width="native"          -> no resizing; the image is shown at its native pixel size and the figure is sized
+                               to match (raster only — it is an error on an SVG). Use for small images you do
+                               not want stretched, or when you deliberately want full resolution inline.
+  - .Fit never upscales, and we skip generating a copy entirely when the target is >= the image's native width,
+    so small images are never blown up and never get a pointless "full size" link.
 
-this whole thing was caused by the need to have the caption sized to the width of the image (since the captions look stupid otherwise)
+The <figure> links to the ORIGINAL file only when a smaller copy is actually shown (so the link is a real
+"see it bigger", never a no-op self-link).
 
-the argugements are:
-src - the reource name
-width - target width (default 300) - height is auto
-alt - alt text (default is the resource name)
-class - class for the figure (default is "")
-caption - caption for the image (default is "")
-attr - attribution for the image (default is "")
-attrlink - link for the attribution (default is "")
-
+arguments:
+  src      - the resource name (required)
+  width    - target width: number (px), a percent, or "native" (default 300 for raster, 80% for SVG)
+  alt      - alt text (default is the resource name)
+  class    - class for the figure (default "")
+  styles   - extra inline CSS for the figure (default "")
+  caption  - caption for the image (default "")
+  attr     - attribution for the image (default "")
+  attrlink - link for the attribution (default "")
 */}}
 {{- $page := . }}
 {{- $name := .Get "src" }}
 {{- if $name }}{{- else }}{{errorf "rimage needs a src argument" }}{{- end}}
-{{- $width := .Get "width" | default (cond (or (hasSuffix $name ".svg") (hasSuffix $name ".SVG")) "80%" "300") -}}
-{{- $size := (printf "%vx%v" $width 5000) }}
+{{- if (.Get "size") }}{{ errorf "rimage does not allow size - use width"}}{{end -}}
+{{- $isSvg := or (hasSuffix $name ".svg") (hasSuffix $name ".SVG") -}}
+{{- $width := .Get "width" | default (cond $isSvg "80%" "300") -}}
+{{- $native := eq $width "native" -}}
+{{- if and $native $isSvg }}{{ errorf "rimage: width=\"native\" is for raster images; %q is an SVG (vector) — omit width or use a percent" $name }}{{ end -}}
 {{- $alt := .Get "alt" | default $name }}
 {{- $class := .Get "class" | default "" }}
 {{- $styles := .Get "styles" | default "" }}
@@ -32,18 +45,31 @@ attrlink - link for the attribution (default is "")
 {{- $caption := .Get "caption" | default "" }}
 {{- $attr := .Get "attr" | default "" }}
 {{- $attrlink := .Get "attrlink" | default "" }}
-{{- if (.Get "size") }}{{ errorf "rimage does not allow size - use width"}}{{end -}}
 {{- with $img }}
-{{- if (not (or (hasSuffix $name ".svg") (hasSuffix $name ".SVG"))) -}}
-{{- $img := .Fit $size -}}
+{{- $orig := . -}}
+{{- $src := . -}}
+{{- if and (not $isSvg) (not $native) -}}
+    {{- $fitw := 0 -}}
+    {{- if hasSuffix $width "%" -}}
+        {{- $colw := $page.Site.Params.imageColumnWidth | default 800 -}}
+        {{- $fitw = int (math.Round (mul (div (float (strings.TrimSuffix "%" $width)) 100.0) $colw)) -}}
+        {{- warnf "rimage: percent width (%s) on raster %q is approximate (assumes %dpx content column; set params.imageColumnWidth to tune)" $width $name $colw -}}
+    {{- else -}}
+        {{- $fitw = int $width -}}
+    {{- end -}}
+    {{- if lt $fitw $orig.Width -}}
+        {{- $src = .Fit (printf "%dx5000" $fitw) -}}
+    {{- end -}}
 {{- end -}}
+{{- if $native -}}{{- $width = printf "%d" $orig.Width -}}{{- end -}}
 {{- $pct := "%" -}}
 {{- $px := "px" -}}
 {{- $ns := "" -}}
+{{- $reduced := ne $src.RelPermalink $orig.RelPermalink -}}
 <figure class="{{ $class }}" style="width: {{ $width }}{{ cond (hasSuffix $width $pct) $ns $px }}; {{ $styles | safeCSS}}">
-    <a href="{{ .RelPermalink }}">
-        <img src="{{ $img.RelPermalink }}" alt="{{ $alt }}" />
-    </a>
+    {{- if $reduced }}<a href="{{ $orig.RelPermalink }}">{{ end }}
+        <img src="{{ $src.RelPermalink }}" alt="{{ $alt }}" />
+    {{- if $reduced }}</a>{{ end }}
     {{- if or $caption $attr -}}<figcaption><p>
         {{- $caption | markdownify -}}
         {{- with $attrlink }}

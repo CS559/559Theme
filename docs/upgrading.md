@@ -463,6 +463,26 @@ site-facing version: what you need to *do* when crossing each point, not why.
   bold math is correct in every browser. No site action needed — this is
   automatic once you bump past the fix. See `docs/math.md` and
   `docs/math-bold-research/README.md` for the mechanism and validation.
+- **`rimage` now truly resizes raster images; `resource-image` deprecated.**
+  rimage previously shipped the full-resolution original scaled down with CSS
+  (a Go-template scoping bug discarded the `.Fit` result), so pages downloaded
+  full-size images. It now generates a properly downsized copy for the `<img>`
+  and links that copy to the original — clicking an image now means "see it
+  bigger." **No content change is required**; existing `{{< rimage >}}` calls
+  simply start emitting smaller images (and real full-size links) on the next
+  build. Two new `width` modes: a percent (e.g. `width="45%"`) sizes the *file*
+  to that fraction of an assumed content-column width (default 800px; set
+  `params.imageColumnWidth` to tune) and prints a "percent width is
+  approximate" warning while keeping the CSS width fluid; `width="native"`
+  shows a raster at its native pixel size with no resizing (raster only — it is
+  a build error on an SVG). Small images are never upscaled and never get a
+  pointless self-link. **`resource-image` is now deprecated** — it still works
+  (it also resizes correctly, so nothing breaks, workbook sites included) but
+  prints a build `warnf` per call. Migrate to rimage: `size="WxH"` becomes
+  `width="W"` (rimage fits width only, height auto). List call sites with
+  `conda run -n p314 python 559Theme/tools/check-deprecated.py`. `resource-svg`
+  is unchanged and deliberately kept — its `inline`/`highlight`/`link` modes
+  have no rimage equivalent.
 
 ## What this guide doesn't cover yet
 

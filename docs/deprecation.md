@@ -13,11 +13,22 @@ we retire it for real.
 
 Keep the shortcode functional and add two things near the top of its source:
 
-1. A machine-readable marker comment (this is what the checker keys on):
+1. A machine-readable `@deprecated:` marker line (this is what the checker keys
+   on). Put it on its own line **inside the shortcode's doc-header comment** —
+   the same `{{- /* … */ -}}` block `tools/shortcode-docs.py` reads, so one
+   marker drives both the docs `⚠️ deprecated` badge and the checker:
 
    ```text
-   {{/* @deprecated: <one-line reason> [-> <replacement>] */}}
+   {{- /*
+     @deprecated: <one-line reason> [-> <replacement>]
+     <name> — <normal doc-header summary/usage/params…>
+   */ -}}
    ```
+
+   A standalone `{{/* @deprecated: <reason> [-> <replacement>] */}}` comment also
+   works (the checker matches both forms), but the header form is preferred
+   because it also badges the generated docs. See `resource-image.html` for a
+   worked example.
 
 2. A build-time warning that fires only when the shortcode is actually used:
 

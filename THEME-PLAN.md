@@ -333,6 +333,17 @@ per-session status lives in the workspace `PROGRESS.md`.
   setup for a new site, and a changelog of breaking/notable changes across
   the unification. Written when the theme was pushed to `origin/master`
   (`v1-unification`) so a fresh consumer could actually use it.
+- **`rimage` resize fix + `resource-image` deprecation** (image-shortcode
+  cleanup). Fixed a Go-template scoping bug in `rimage` that discarded the
+  `.Fit` result, so rasters were served full-size and scaled by CSS; rimage now
+  emits a real downsized copy and links it to the original. Added `width="45%"`
+  (fits the file to `params.imageColumnWidth` × percent, with an approximate
+  warning — Hugo cannot see the CSS column width) and `width="native"` (no
+  resize, raster only). Soft-deprecated `resource-image` (marker + `warnf`;
+  still functional). Also aligned `tools/check-deprecated.py` to read the
+  `@deprecated:` marker from the doc-header comment (it previously only matched
+  a dedicated `{{/* … */}}` comment, which no real deprecation used), and
+  documented the header-marker convention in `docs/deprecation.md`.
 
 ### Deferred items (open work)
 

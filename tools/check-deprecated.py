@@ -31,7 +31,12 @@ THEME = Path(__file__).resolve().parents[1]
 WORKSPACE = THEME.parent
 DEFAULT_REPOS = ["765-25", "559-sp26", "VisSnacks", "gleicher.github.io"]
 
-DEPRECATED = re.compile(r"\{\{/\*\s*@deprecated:\s*(.*?)\s*\*/\}\}", re.DOTALL)
+# Match the `@deprecated:` marker line wherever it sits — a dedicated
+# `{{/* @deprecated: … */}}` comment or (the usual case) the doc-header
+# `{{- /* … @deprecated: … */ -}}` that shortcode-docs.py also reads. Capture
+# the rest of that line; strip a same-line comment close if the tight form is used.
+DEPRECATED = re.compile(r"@deprecated:\s*(.*)")
+_CLOSE = re.compile(r"\s*\*/\s*-?\}\}.*$")
 
 def deprecated_shortcodes() -> dict[str, str]:
     """name -> reason, for every shortcode carrying an @deprecated marker."""
@@ -42,7 +47,8 @@ def deprecated_shortcodes() -> dict[str, str]:
             continue
         m = DEPRECATED.search(p.read_text(encoding="utf-8", errors="replace"))
         if m:
-            out[p.stem] = " ".join(m.group(1).split())
+            reason = _CLOSE.sub("", m.group(1))
+            out[p.stem] = " ".join(reason.split())
     return out
 
 def call_sites(name: str, repo: Path) -> list[str]:

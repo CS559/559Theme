@@ -28,14 +28,19 @@ independent of each other.
       only if a specific gap is found.
 - [ ] try out better permalink structure for tags/taxonomies — this seemed
       to come around Hugo 1.115 and 1.118
-- [ ] Make sure that thumbnails really produce smaller images, not just
+- [x] Make sure that thumbnails really produce smaller images, not just
       showing big images at large size. This should also work for rimage
       and whatever other image display code there is.
+      rimage fixed (scoping bug dropped the .Fit result → served full-size);
+      now emits a downsized copy + links the original, plus width="45%" and
+      width="native" modes. resource-image deprecated in favor of rimage.
+      STILL OPEN: post_thumbnail.html serves full-size images as thumbnails
+      (no .Fit) — list-page perf; and figure.html doesn't resize.
 - [ ] standardize on one image shortcode
 - [ ] proper footer, colophon
 - [ ] get rid of i18n (?)
 - [ ] look at social media stuff (does removing it simplify)
-- [ ] auto checks (make sure that roadster isn't included anymore) —
+- [x] auto checks (make sure that roadster isn't included anymore) —
       roadster *is* structurally gone (no submodule, no references, verified
       repeatedly), but no automated CI check asserts this; still open if you
       want a guard against it creeping back in.
