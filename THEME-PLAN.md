@@ -342,12 +342,19 @@ per-session status lives in the workspace `PROGRESS.md`.
    theme not in this workspace). Before removing them, provision equivalents into
    the other consumers first. **Not touched in Phase 6** (Phase 6 as executed was
    config-only per-site migration; this needs a separate cross-repo effort) →
-   deploy time / whenever that coordination happens.
-2. **MathML bold does not render in Chromium.** `\mathbf`/`\boldsymbol` render
-   normal-weight in Chromium (Firefox is fine). No CSS-only fix exists. Planned
-   fix: build-time transform to real Unicode bold glyphs (Path B) + strip/stroke
-   fallback; **likely built in Workbook first and shared**; validate on the
-   held-out math-heavy 5th site. Full record: `docs/math-bold-research/`.
+   deploy time / whenever that coordination happens. **Still open** — this is
+   the one genuinely blocked deferred item; everything else below is either
+   done or open for unrelated reasons.
+2. **MathML bold does not render in Chromium — DONE (2026-07-14).** Built in
+   559Theme itself (not Workbook-first as originally planned — see
+   `docs/math-bold-research/README.md`'s "Decision: build in 559Theme first"
+   for why). Unicode-glyph substitution (`layouts/_partials/math/variant-fix.html`
+   plus `data/mathvariants.yaml`) with a build-time canary; validated on
+   559Tutorials (the held-out math-heavy site) in Chromium and Firefox.
+   Deployed to all four workspace sites via their normal theme-bump sweeps.
+   **Still open:** porting the same transform to the separate **Workbook**
+   theme, which currently works around the bug differently (`output:"html"`
+   plus a CDN `katex.css`) — not started.
 3. **Goldmark passthrough (`$…$`) for math** — investigated, deferred (no current
    need; use `\(…\)` not `$…$` if adopted). Notes in `docs/math.md`.
 4. **Orphan layouts** (`staff/`, `talks/`, `video/`, `visual_sum`, `mini`,
@@ -355,9 +362,48 @@ per-session status lives in the workspace `PROGRESS.md`.
    did per-site config migration only, not a layout-usage audit.
 5. **tooltip base-bundling** — could load `tooltip.scss` from the theme base to
    drop the per-site `customCss` opt-in. **Still open**, optional simplification.
-6. **Push to GitHub** — **the theme is now pushed** (`master` @ `7721c59`,
-   tags `pre-unification`/`v1-unification`). The four **consumer sites**
-   remain local-only and unpushed; still not authorized.
+6. **Push to GitHub — DONE for the theme AND all four sites (2026-07-15).**
+   The theme has been on `origin/master` since `v1-unification`; as of
+   2026-07-15 all four consumer sites are also pushed to their own real
+   origins (`uwgraphics/VisSnacks`, `uwgraphics/765-25`, `uwgraphics/559-sp26`,
+   `gleicher/gleicher.github.io`), each tracking `origin/master` directly
+   (the `local-unify` remote described elsewhere in this plan is now
+   historical/obsolete) and deployed to production via GitHub Actions CI on
+   push to `main`. **The unification project's core work is complete** — see
+   the new section below for what's genuinely still open vs. what's now
+   ordinary site-level maintenance.
+
+### External-consumer constraints (why some things are deferred, not forgotten)
+
+The user asked (2026-07-15) to compile every place a decision was "don't do
+X because other theme consumers depend on it" — these are scattered through
+the deviations/deferred-items above; collected here in one place:
+
+- **Phase 5 pruning policy itself (deviation 1).** The plan's original
+  premise — "delete anything with zero usage across these four sites" — was
+  abandoned wholesale for this reason. The theme has real consumers outside
+  this workspace (other course webs, the Workbook site family), so "unused
+  here" is not "dead." This is the umbrella policy; `NOTES-usage.md` is an
+  information map, not a delete list (`docs/deprecation.md` has the
+  soft-retire/checker mechanics).
+- **The sp26 mixin overlay dupes (deferred item 1, above).** Can't retire
+  `page`/`assign-link`/`assign-linkonly` from `sp26-mixin-theme` until
+  equivalent copies exist in its *other* consumers — principally the
+  Workbook theme family, which is not in this workspace and shares the same
+  semester data (e.g. `pages.csv`).
+- **`files.yaml` is kept/documented even though none of the four workspace
+  sites' shortcodes consume it directly.** It's the build input to
+  `readings.yaml` generation, but it's *also* read at runtime by a
+  Canvas-file link shortcode that lives in other course repos outside this
+  workspace (see `docs/data-contracts.md`'s `files.yaml` section) — so it's
+  a live data contract to preserve, not dead weight to prune.
+- **Math bold was built in 559Theme, not Workbook, despite Workbook being
+  the more math-heavy consumer** — a sequencing choice, not a "don't do
+  this" one (item 2, above): 559Theme was already on the clean MathML path,
+  so it was the faster route to a validated fix; Workbook needs a bigger
+  prerequisite change (switching off `output:"html"`+CDN) before it can
+  receive the same transform. Full reasoning:
+  `docs/math-bold-research/README.md`.
 
 ### Workspace `TO-DO.md` extras (beyond this plan)
 
