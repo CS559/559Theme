@@ -1,4 +1,4 @@
-# Upgrading a site to a new 559Theme version
+# Updating — and upgrading — a site's 559Theme
 
 This is the guide for a **site maintainer** (human or agent) who already has
 `559Theme` as a submodule and wants to move it forward, or is adding it to a
@@ -6,149 +6,251 @@ new site for the first time. If you're working *on the theme itself*, see
 `THEME-PLAN.md`'s Execution log instead — that's the internal history of how
 the theme got to its current state, not a per-site upgrade checklist.
 
-**Read this whole guide once, start to finish, before running anything.**
-The steps below are ordered and reference each other (e.g. step 2 needs tools
-that live in the version you're about to check out) — working through them
-without knowing what's coming is how a step gets done out of order or skipped.
+## Two different operations wear the same command
+
+`git checkout origin/master` in the submodule is one command, but it can mean
+two very different things:
+
+- **An update.** Your site is already post-unification and you're moving it
+  forward a few commits. This is the overwhelmingly common case. Most such
+  moves are documentation-only or a one-line string fix, and they deserve
+  proportionate effort — minutes, not a session. The **Update path** below
+  has three verification levels so you can pick one.
+- **An upgrade.** Your site is at or before the `pre-unification` tag. This
+  is **not a version bump — it is adopting a different theme.** The template
+  layout, the CSS pipeline, the style system, the search implementation, the
+  shortcode inventory, and the number of themes in your `theme = [...]` list
+  all change at once. Budget a working session, expect to make content and
+  config edits, and do it as its own commit series. The **Upgrade path**
+  below covers it, and it has no light option.
+
+Getting this distinction wrong is expensive in both directions: running the
+full migration checklist on a docs-only update is wasted work, and treating
+the unification crossing as a casual bump means discovering the scope of it
+one build error at a time.
+
+**Read this whole guide once, start to finish, before running anything** —
+including the path you don't think you're on, so you'd recognize it if you
+were. The steps are ordered and reference each other (e.g. the update path's
+step 2 needs tools that live in the version you're about to check out).
+Reading is cheap; verifying is expensive. The level you choose governs how
+much you *verify*, never how much you *read*.
 
 **This is a verification exercise, not a fix-it exercise.** If a diff or a
 build error doesn't match anything in the changelog below, stop and report it
 rather than patching around it — especially if you're working in a fresh
-session with no other context on this project. Don't push or deploy anything
+session with no other context on this project. This holds at every
+verification level: a lighter level means checking fewer things, never
+lowering the bar for an anomaly you do find. Don't push or deploy anything
 (this site, or changes to 559Theme itself) without explicit sign-off.
 
-## Routine bump (already using the theme)
+---
 
-1. **Pre-flight: check what you're starting from, and that the site is
-   healthy, before touching anything.** Skipping this means every anomaly
-   you find later has multiple possible causes — pre-existing, a Hugo-version
-   mismatch, or bump-introduced — with no way to tell them apart short of
-   redoing this check retroactively.
+## First: which operation is this?
 
-   - **Check your current pin against the theme's tags:**
-     `git -C themes/559Theme log -1 --oneline` vs.
-     `git -C themes/559Theme tag -l`. If you're at or before
-     `pre-unification`, everything in the changelog below applies; if you're
-     already past it, only the entries after your current point do. If
-     you're not just "at or before" but many commits before it, expect the
-     golden-master diff in step 4 to be unusually large — see the note
-     there before treating diff volume alone as a red flag.
-   - **Build clean.** `hugo --baseURL /` (or `hugo server`) should complete
-     with no `ERROR` and no `WARN` lines. Fix anything you find now (or
-     consciously decide to ignore it, and note why) — don't carry a
-     pre-existing warning into the bump where it'll look like something the
-     new theme caused.
-   - **Build with your current, locally installed Hugo** (`hugo version`),
-     not just whatever version this site's CI pins (check
-     `.github/workflows/*.yml` if present). A Hugo-version mismatch produces
-     its own diffs, independent of the theme — match versions before
-     comparing. **Check the size of that gap first**: if CI's pin and your
-     local Hugo are many minor versions apart (e.g. CI stuck on `0.147.3`
-     while local Hugo is `0.164.0+`), expect *more* than the fixes below —
-     every site that has hit a large gap has surfaced additional
-     Hugo-level breakage that predates the theme entirely and has nothing
-     to do with it. If you're crossing onto **Hugo 0.164.0** (or anything
-     since, or anything that crosses the same deprecation boundaries) for
-     the first time, all of the following fixes have already been needed on
-     other 559Theme sites:
-     - **Content-security policy (Hugo v0.162+, CVE-2026-50133 fix).** Hugo
-       tightened its default content-type policy and now blocks the theme's
-       `text/html` content pages (`content/search.html`, or the legacy
-       `content/lunr-search.html`) unless explicitly allowed:
+Gather the facts before moving any pointer. This costs seconds and replaces
+guesswork:
 
-       ```toml
-       [security]
-         allowContent = ["^text/markdown$", "^text/html$"]
-       ```
+```sh
+cd themes/559Theme
+git fetch origin --tags
+git log --oneline HEAD..origin/master              # how many commits, and what
+git diff --stat HEAD..origin/master                # which files changed
+git tag -l --contains HEAD                         # where this pin sits vs. tags
 
-     - **`languageCode` deprecated (Hugo v0.158+).** Rename it to `locale`
-       in your site config:
+# The decisive question — is this pin still pre-unification?
+# (argument order matters: this asks "is HEAD at or before the tag?", and the
+#  tag is the last commit BEFORE unification, so sitting ON it means upgrade)
+git merge-base --is-ancestor HEAD pre-unification \
+  && echo "AT/BEFORE pre-unification -> UPGRADE path (theme migration)" \
+  || echo "POST-unification -> Update path"
 
-       ```diff
-       -languageCode = "en-us"
-       +locale = "en-us"
-       ```
+# For the Update path: does anything in range affect rendered output?
+git diff --name-only HEAD..origin/master \
+  | grep -vE '\.md$|^(docs|tools|archetypes)/|^(\.gitignore|\.gitattributes|LICENSE)$' \
+  || echo "NO OUTPUT-AFFECTING CHANGES"
 
-       (The theme itself already moved from `.Site.LanguageCode` to
-       `.Site.Language.Locale` internally — this site-config rename is the
-       only action needed on your end.)
-     - **`_build` front matter key removed, not just deprecated (Hugo
-       v0.145+).** Any page using the underscore-prefixed key fails with a
-       hard `ERROR`, not a warning. Course sites commonly use this on
-       per-week/per-module index pages to hide them from section lists
-       (e.g. `content/this-weeks/*.md` with `list: never`):
+git diff --name-only HEAD..origin/master | grep -E '^tools/'   # verification scripts moved?
+cd ../..
+```
 
-       ```diff
-       -_build:
-       +build:
-           render: false
-           list: never
-       ```
+### Reading the output-affecting filter
 
-       This is a general Hugo change, unrelated to 559Theme itself, but
-       common enough on course sites to check for up front:
-       `grep -rl '^_build:$' content/`.
-     - **Markdown-format shortcode templates now enforce their call
-       delimiter.** A shortcode whose *template file* is `.md` (e.g.
-       `layouts/shortcodes/dimbox.md`) must be invoked with `{{% %}}`, not
-       `{{< >}}` — older Hugo tolerated the mismatch silently; newer Hugo
-       hard-errors (`no compatible template found for shortcode "x" in
-       [...]; note that to use plain text template shortcodes in HTML you
-       need to use the shortcode {{% delimiter`). This can surface on *any*
-       shortcode call in the site's content, not just ones the theme
-       changed — it's exposing a pre-existing mismatch, not introducing
-       one. If you hit it, check how every other call to the same
-       shortcode in the site is delimited
-       (`grep -rn '{{[<%]\s*shortcodename' content/`) — if the rest of the
-       site already uses `{{% %}}`, the offending call is almost certainly
-       a stray typo, not a real incompatibility, and the fix is to match
-       the delimiter, not to touch the template.
-     - **If your local Hugo surfaces anything else** — any build error or
-       warning beyond these known ones — **stop and confirm with
-       whoever's directing the bump before working around it.** Hugo-version
-       drift is open-ended in a way the theme changelog below isn't; don't
-       silently patch around unfamiliar breakage. (This list only grows
-       because someone hit an "anything else" case, resolved it, and added
-       it here — if you resolve a new one, do the same.)
-   - **Bring CI's Hugo version in line with what you just verified.** Check
-     your CI config (e.g. `.github/workflows/*.yml`) for a pinned
-     `HUGO_VERSION` or Hugo-install step, and update it to match your local
-     `hugo version` — CI should build with the same Hugo you just tested
-     against, not a stale pin.
-   - **Pre-emptively check for the other common known issue: `lnk` shortcode
-     usage** (course sites only — see the changelog's "`link`/`lnk` unified"
-     entry). This one's a hard build error with no deprecated alias, so
-     finding it now means it's an expected chore in step 4 below, not a
-     surprise failure:
+Get its categories right, because the whole point is to avoid both false
+alarms and false comfort:
 
-     ```sh
-     grep -rn '{{<\s*lnk\b\|{{%\s*lnk\b' content/
-     ```
+- **Cannot** affect built output: `*.md` anywhere (`readme`, `CRITIQUE`,
+  `NOTES-usage`, `THEME-PLAN`, `todo`), `docs/`, `tools/` (dev scripts),
+  `archetypes/` (only used by `hugo new`), `.gitignore`, `LICENSE`.
+- **Can** affect built output: `layouts/`, `assets/`, `i18n/`, `data/`,
+  `static/`, `content/`, and the theme's own top-level `config.toml`.
 
-   - **Rebuild 2-3 times with no changes at all and diff the output.** Any
-     difference between two builds of the *identical* commit is site/Hugo
-     non-determinism, not something the bump will introduce or fix. Hugo's
-     auto-generated taxonomy term titles are a known source of this: if your
-     content spells the same tag/category with inconsistent casing across
-     pages (`"javascript"` in one file, `"JavaScript"` in another), Hugo's
-     map-iteration tie-break picks a winner **at random per build**. Fix
-     content-casing inconsistencies now so the golden-master diff in step 4
-     isn't spent chasing a ghost.
+Two that are easy to miscategorize. `i18n/*.yaml` looks like config but
+holds the UI strings — a one-line edit there changes every page on the site
+(this is exactly what the footer-credit fix did). The theme's top-level
+`config.toml` carries theme param defaults, so it is output-affecting too.
+Conversely, a `tools/` change never alters output, but it does mean your
+local `baseline.sh`/`compare.sh` copies are stale — refresh them from the
+new version if you're verifying at level B or C.
 
-2. **Update the submodule, tracking `origin/master`** rather than pinning to
-   a specific historical tag — sites should stay current, not frozen at a
-   past release. The tradeoff: master can carry commits beyond the newest
-   changelog entry below, so if you hit a diff or build error nothing here
-   explains, don't assume it's already covered — stop and report it (per the
-   top of this guide), and add an entry to the changelog once it's resolved
-   so the next site doesn't hit the same surprise.
+If nothing survives the filter, the update is documentation-only and cannot
+alter a single byte of the built site.
 
-   Before you move the pointer, get set up: `tools/baseline.sh` /
-   `tools/compare.sh` — the scripts you'll use below to snapshot your site's
-   rendered output and diff before vs. after — ship inside the *new* theme
-   version's own `tools/` directory. You need a "before" snapshot of your
-   site taken **before** the submodule pointer moves, so do these in order,
-   all within this one step:
+---
+
+## Hugo-version drift is a separate axis
+
+**Check this on either path, before anything else.** A Hugo-version change
+produces its own diffs and its own build failures, completely independently
+of the theme. If you bump both at once without knowing it, every anomaly has
+two possible causes and you can't tell them apart.
+
+```sh
+hugo version
+grep -rn "HUGO_VERSION" .github/workflows/ 2>/dev/null
+```
+
+Build with your **local** Hugo, and make sure that's the version you're
+actually targeting. **Check the size of the gap:** if CI's pin and your local
+Hugo are many minor versions apart (e.g. CI stuck on `0.147.3` while local
+Hugo is `0.164.0+`), expect *more* than the fixes below — every site that has
+hit a large gap has surfaced additional Hugo-level breakage that predates the
+theme entirely.
+
+If you're crossing **Hugo 0.164.0** (or anything since, or anything that
+crosses the same deprecation boundaries) for the first time, all of the
+following have already been needed on other 559Theme sites:
+
+- **Content-security policy (Hugo v0.162+, CVE-2026-50133 fix).** Hugo
+  tightened its default content-type policy and now blocks the theme's
+  `text/html` content pages (`content/search.html`, or the legacy
+  `content/lunr-search.html`) unless explicitly allowed:
+
+  ```toml
+  [security]
+    allowContent = ["^text/markdown$", "^text/html$"]
+  ```
+
+- **`languageCode` deprecated (Hugo v0.158+).** Rename it to `locale` in your
+  site config:
+
+  ```diff
+  -languageCode = "en-us"
+  +locale = "en-us"
+  ```
+
+  (The theme itself already moved from `.Site.LanguageCode` to
+  `.Site.Language.Locale` internally — this site-config rename is the only
+  action needed on your end.)
+
+- **`_build` front matter key removed, not just deprecated (Hugo v0.145+).**
+  Any page using the underscore-prefixed key fails with a hard `ERROR`, not a
+  warning. Course sites commonly use this on per-week/per-module index pages
+  to hide them from section lists:
+
+  ```diff
+  -_build:
+  +build:
+      render: false
+      list: never
+  ```
+
+  Check for it up front: `grep -rl '^_build:$' content/`.
+
+- **Markdown-format shortcode templates now enforce their call delimiter.** A
+  shortcode whose *template file* is `.md` (e.g.
+  `layouts/shortcodes/dimbox.md`) must be invoked with `{{% %}}`, not
+  `{{< >}}` — older Hugo tolerated the mismatch silently; newer Hugo
+  hard-errors (`no compatible template found for shortcode "x" in [...]; note
+  that to use plain text template shortcodes in HTML you need to use the
+  shortcode {{% delimiter`). This can surface on *any* shortcode call in the
+  site's content, not just ones the theme changed — it's exposing a
+  pre-existing mismatch, not introducing one. If you hit it, check how every
+  other call to the same shortcode in the site is delimited
+  (`grep -rn '{{[<%]\s*shortcodename' content/`) — if the rest of the site
+  already uses `{{% %}}`, the offending call is almost certainly a stray typo,
+  and the fix is to match the delimiter, not to touch the template.
+
+- **If your local Hugo surfaces anything else** — any build error or warning
+  beyond these known ones — **stop and confirm with whoever's directing the
+  work before working around it.** Hugo-version drift is open-ended in a way
+  the theme changelog isn't. (This list only grows because someone hit an
+  "anything else" case, resolved it, and added it here — if you resolve a new
+  one, do the same.)
+
+**Then bring CI in line with what you verified.** Update the pinned
+`HUGO_VERSION` (or Hugo-install step) in `.github/workflows/*.yml` to match
+your local `hugo version` — CI should build with the same Hugo you tested
+against, not a stale pin.
+
+---
+
+## Update path (site already post-unification)
+
+### How much verification?
+
+Pick a level from the triage facts. **Report them to whoever's directing the
+work and let them choose** — they know things the facts don't show, like
+whether this site is about to be deployed or whether they care that a footer
+string moved. Choose for them only if they've already said.
+
+- **Level A — Rebuild check** (~1 min). Move the pointer, build, confirm no
+  `ERROR`/`WARN`, commit. Confirms the site compiles; tells you nothing about
+  what changed in the output. Right for docs-only updates, and for "I'll see
+  it when I look at the site."
+- **Level B — Verified update** (~5 min). Level A plus the golden-master
+  diff: baseline *before* moving the pointer, `compare.sh` after, and confirm
+  every remaining diff is explained by the changelog. Right when a handful of
+  output-affecting files changed and you want to know exactly what moved.
+- **Level C — Full validation.** Everything: repeat-build non-determinism
+  check, golden-master loop, local-override scan, deprecation checker,
+  config-param grep. Right when many commits land at once, when the changelog
+  marks a required migration, or when you're about to deploy something you
+  can't easily roll back.
+
+**Escalate to C regardless of what was chosen** — say why first — if any of
+these holds:
+
+- Local `hugo version` differs from CI's pin, or this move crosses a Hugo
+  minor-version boundary (see the section above).
+- A changelog entry in range is marked **REQUIRED** migration, or removes
+  something with no deprecated alias.
+- The range touches `layouts/` broadly, or `assets/css/`, in a way you can't
+  summarize in a sentence.
+
+**One ordering constraint:** level B and C need a baseline captured *before*
+the pointer moves, so the level has to be chosen up front. If you guess low
+and change your mind it's recoverable — `git checkout <old-sha>` in the
+submodule, take the baseline, `git checkout origin/master` again — but it's
+friction, so decide before moving anything.
+
+### Steps
+
+Each step is tagged with the levels that need it.
+
+1. **Pre-flight — the site is healthy before you touch it.** *(A, B, C)*
+
+   Build clean: `hugo --baseURL /` (or `hugo server`) should complete with no
+   `ERROR` and no `WARN`. Fix anything you find now, or consciously decide to
+   ignore it and note why — don't carry a pre-existing warning into the
+   update where it'll look like something the new version caused.
+
+   **Additionally at level C:** rebuild 2–3 times with no changes at all and
+   diff the output. Any difference between two builds of the *identical*
+   commit is site/Hugo non-determinism, not something this move will
+   introduce or fix. Hugo's auto-generated taxonomy term titles are a known
+   source: if your content spells the same tag/category with inconsistent
+   casing across pages (`"javascript"` in one file, `"JavaScript"` in
+   another), Hugo's map-iteration tie-break picks a winner **at random per
+   build**. Fix content-casing inconsistencies now so the golden-master diff
+   isn't spent chasing a ghost.
+
+2. **Capture a baseline, then move the pointer.** *(B, C — level A skips
+   straight to the checkout)*
+
+   `tools/baseline.sh` / `tools/compare.sh` ship inside the *new* version's
+   `tools/` directory, but you need the "before" snapshot taken while still on
+   the old commit. So, in this order:
 
    ```sh
    cd themes/559Theme
@@ -156,9 +258,8 @@ session with no other context on this project. Don't push or deploy anything
    git fetch origin --tags
    ```
 
-   If your site doesn't already have local copies of the tools, pull them out
-   of the target version now, without checking it out yet (so your working
-   tree is still on the old commit for the snapshot below):
+   If your site doesn't already have current copies of the tools, pull them
+   out of the target version now, without checking it out yet:
 
    ```sh
    git show origin/master:tools/baseline.sh > ../../tools/baseline.sh
@@ -173,6 +274,9 @@ session with no other context on this project. Don't push or deploy anything
    ./tools/baseline.sh pre-bump
    ```
 
+   (These scripts write their snapshots under `/tmp`. If you're running in a
+   sandboxed environment, that path may need to be permitted.)
+
    **Only now move the pointer:**
 
    ```sh
@@ -181,147 +285,232 @@ session with no other context on this project. Don't push or deploy anything
    cd ../..
    ```
 
-3. **If you're crossing `pre-unification`** (i.e. your site had a separate
-   fallback theme before this bump), remove it now — see "Legacy fallback
-   theme cleanup" in the changelog below for the exact commands (`roadster`
-   and/or `mainroad`). Skip this step if you're already past that point.
-
-4. **Golden-master verify: build, then iterate.** Two phases, both *after*
-   step 2's checkout — the baseline itself was already captured in step 2,
-   before the pointer moved.
-
-   **a. Get it to build.** After step 2's checkout (and step 3's fallback-theme
-   cleanup, if applicable), rebuild:
+3. **Build.** *(A, B, C)*
 
    ```sh
    hugo --baseURL /
    ```
 
-   The build may **fail outright**, not just warn — some changelog entries
-   remove a feature with no deprecated alias (e.g. the `lnk` shortcode you
-   already checked for in step 1). Check the changelog below for a migration
-   tool (e.g. `tools/migrate-links.py`) before treating a build error as a
-   bug. Keep fixing and rebuilding until `hugo --baseURL /` completes clean.
+   Keep fixing and rebuilding until this completes with no `ERROR`/`WARN`.
+   Check the changelog before treating a build error as a bug — some entries
+   remove a feature with no deprecated alias, and some name a migration tool.
+   **At level A this is the finish line:** a clean build plus the knowledge
+   that nothing output-affecting changed is the whole check. Go to step 7.
 
-   **b. Iterate until it matches well enough.** Rebuild and diff against your
-   baseline:
+4. **Golden-master diff.** *(B, C)*
 
    ```sh
    ./tools/compare.sh pre-bump
    ```
 
-   `compare.sh` excludes `*.css`/`*.js` from the diff (fingerprinted filenames
-   legitimately change) and reports `HTML: IDENTICAL` when nothing else moved.
-   **Any other HTML diff is a stop-and-investigate signal** — check the
-   changelog below for what the new version intentionally changed before
-   assuming it's a regression. A few kinds of diff are *not* bump-related and
-   can be set aside once you recognize them:
+   `compare.sh` excludes `*.css`/`*.js` from the diff (fingerprinted
+   filenames legitimately change) and reports `HTML: IDENTICAL` when nothing
+   else moved. **Any other HTML diff is a stop-and-investigate signal** —
+   check the changelog for what the new version intentionally changed before
+   assuming it's a regression.
+
+   When a diff *is* expected, verify its *shape*, not just its existence. A
+   one-line theme change should produce one changed line per page and nothing
+   else: classify every changed line and confirm no files were added or
+   removed, rather than eyeballing the first screen of output. A diff that is
+   larger or differently-shaped than the changelog predicts is the signal.
+
+   Diffs that are **not** update-related, and can be set aside once
+   recognized:
 
    - `lastmod`/`pubDate` changes on any file you've edited as part of a
      migration — expected, tied to `enableGitInfo`.
-   - Non-determinism you already characterized in step 1 (Pre-flight). If you
-     skipped step 1 and see something like this now, rebuild the *old* commit
-     twice with no changes to confirm it's pre-existing before blaming the
-     new theme version.
-   - If you're crossing `pre-unification` with a fallback theme removed (step
-     3): a now-redundant `v2-styles.css` `<link>` tag disappearing from
-     `<head>` — its rules are compiled into the theme's own CSS bundle
-     instead. **This "just the one tag" expectation holds for an isolated
-     roadster removal on a site that's otherwise current.** If your pin was
-     many commits/versions behind (per step 1's tag check), you're crossing
-     every intervening internal change at once, and the diff will be much
-     bigger than any single changelog entry implies — new wrapper `<div>`s
-     around header/sidebar/footer (they exist to support a `fullwidth` mode
-     query-string toggle), CSS consolidated into one `main.css`, a
-     preset-driven Google Fonts subset (fewer families than before), footer
-     copyright wording, and similar. None of this needs site action, so
-     it's not itemized as a changelog entry — the full history is in
-     `THEME-PLAN.md`'s Execution log, not here. Treat this as expected, not
-     a regression, *provided* every diff is confined to `<head>` and
-     header/footer/sidebar chrome. Confirm by diffing a content-heavy page
-     (not a list/index page) and checking that the article body itself —
-     the actual prose between the header and footer — is byte-identical;
-     that's the real regression check, not the raw diff-line count.
+   - Non-determinism you already characterized in step 1. If you skipped that
+     check and see something like it now, rebuild the *old* commit twice with
+     no changes to confirm it's pre-existing before blaming the new version.
 
-   Loop between (a) and (b) — fix, rebuild, re-compare — until every
-   remaining diff is either `HTML: IDENTICAL` or explained by the changelog
-   below.
+   Loop between steps 3 and 4 — fix, rebuild, re-compare — until every
+   remaining diff is either `HTML: IDENTICAL` or explained by the changelog.
 
-5. **Check for local overrides that would silently swallow a core update.**
+5. **Scan for local overrides that would silently swallow a core update.**
+   *(C)*
+
    Several changes in this project *promoted* something from a per-site
    override into the core theme (course shortcodes, the search widget). If
-   your site (or an overlay theme in its `theme = [...]` list) has its own
-   local copy of something the changelog says is now in core — e.g. a local
-   `layouts/_shortcodes/`, `layouts/shortcodes/`, or `layouts/_partials/widgets/`
-   file with the same name — **your local copy still wins** (Hugo resolves
-   the site's own `layouts/` before any theme's) and you won't get the core
-   behavior at all, deprecation warnings included. Delete the local copy
-   (after checking for behavior differences) so the core version resolves.
-   To check for the promoted course shortcodes specifically:
+   your site — or an overlay theme in its `theme = [...]` list — has its own
+   local copy of something the changelog says is now in core, **your local
+   copy still wins** (Hugo resolves the site's own `layouts/` before any
+   theme's) and you won't get the core behavior at all, deprecation warnings
+   included. Delete the local copy, after checking for behavior differences,
+   so the core version resolves.
 
    ```sh
-   find layouts/shortcodes -maxdepth 1 \
+   find layouts/shortcodes layouts/_shortcodes -maxdepth 1 \
      \( -name assign-link.html -o -name assign-linkonly.html -o -name reading.html \
         -o -name moddesc.html -o -name modlo.html -o -name modname.html \
-        -o -name page.html -o -name snippet.html \)
+        -o -name page.html -o -name snippet.html \) 2>/dev/null
    ```
 
-   **Two adjacent habits worth keeping, from experience doing this kind of
-   cleanup:**
+   Two adjacent habits worth keeping, from experience doing this cleanup:
 
    - **Before deleting what looks like a "dead" config key** (e.g. a
      `mainSections`/`recentSections` entry with no matching `content/`
      directory), don't just trust a changelog's named example — confirm with
-     `find content -maxdepth 1 -type d` (or grep) that the referenced section
-     genuinely has no directory, then verify with an identical rebuild before
-     removing it. A changelog's example list is illustrative, not exhaustive;
-     the same dead-key pattern has shown up in a second, unnamed spot on more
-     than one site.
+     `find content -maxdepth 1 -type d` that the referenced section genuinely
+     has no directory, then verify with an identical rebuild before removing
+     it. A changelog's example list is illustrative, not exhaustive; the same
+     dead-key pattern has shown up in a second, unnamed spot on more than one
+     site.
    - **Before renaming a config file** (e.g. `config.toml` → `hugo.toml`),
      grep your CI workflows/scripts for the literal old filename first. Hugo
-     auto-detects either name, so a stale hardcoded reference elsewhere
-     wouldn't fail an obvious local build — it'd only surface in CI, later.
+     auto-detects either name, so a stale hardcoded reference wouldn't fail an
+     obvious local build — it'd only surface in CI, later.
 
-6. **Check for deprecated features you're still using**, both ways — do this
-   *before* making any config changes, so you actually watch the deprecation
-   warning fire and confirm the old alias currently works, rather than
-   renaming things on faith from reading the changelog alone:
+6. **Check for deprecated features you're still using.** *(C)*
 
-   - Build with `hugo server` or `hugo --baseURL /` and read the output for
-     `WARN 559Theme: ... is deprecated ...` lines — these fire only for
-     features your site actually calls, so a clean build with no warnings
-     means nothing here needs attention yet.
-   - For a fuller check (not just what one build's shortcode calls happen to
-     hit), run the theme's checker against your site — **pass an absolute
-     path**, not `.`: the script resolves any relative argument against its
-     own location (the directory containing `themes/559Theme`), not your
-     current directory, so a bare `.` silently scans the wrong tree and
-     reports "no call sites" even when your site's `content/` has one:
+   Do this *before* making any config changes, so you actually watch the
+   deprecation warning fire and confirm the old alias currently works, rather
+   than renaming things on faith from reading the changelog.
+
+   - Read the build output for `WARN 559Theme: ... is deprecated ...` lines.
+     These fire only for features your site actually calls, so a clean build
+     with no warnings means nothing here needs attention.
+   - For a fuller check, run the theme's checker against your site —
+     **pass an absolute path**, not `.`: the script resolves any relative
+     argument against its own location (the directory containing
+     `themes/559Theme`), not your current directory, so a bare `.` silently
+     scans the wrong tree and reports "no call sites" even when your
+     `content/` has one.
 
      ```sh
-     conda run -n p314 python themes/559Theme/tools/check-deprecated.py "$(pwd)"
+     python3 themes/559Theme/tools/check-deprecated.py "$(pwd)"
      ```
 
-     This only covers **shortcodes** in `content/`, `assets/`, and
-     `layouts/`, per repo passed in (see `docs/deprecation.md`) — it does not
-     scan the theme's own `layouts/_partials/widgets/` for deprecated
-     *widgets* (the `lunr` widget alias, for instance, is invisible to this
-     tool), and it does not know about deprecated `hugo.toml` params or
-     widget names (like `themestyle`/`lunr`, retired in the changelog below).
-     For those, grep your own config as a starting point, e.g.:
+     This covers **shortcodes** only, in `content/`, `assets/`, and
+     `layouts/`, per repo passed in (see `docs/deprecation.md`). It does not
+     scan for deprecated *widgets* (the `lunr` widget alias is invisible to
+     it), and it does not know about deprecated `hugo.toml` params. For those,
+     grep your own config as a starting point:
 
      ```sh
      grep -n "themestyle\|\"lunr\"" hugo.toml config.toml 2>/dev/null
      ```
 
-     the `warnf` build warnings above are the authoritative signal; the grep
-     just tells you what to search for.
+     The `warnf` build warnings are the authoritative signal; the grep just
+     tells you what to search for.
 
-   Once you've confirmed what's deprecated, apply the renames the changelog
-   calls for (e.g. `themestyle` → `params.style.preset`, `lunr` → `search`).
+   Then apply the renames the changelog calls for (e.g. `themestyle` →
+   `params.style.preset`, `lunr` → `search`).
 
-7. **Commit the bump** (submodule pointer + anything the changelog told you
-   to change), with a message noting the version/tag and what you verified.
+7. **Commit.** *(A, B, C)*
+
+   Commit the submodule pointer plus anything the changelog told you to
+   change. Note in the message which version you moved to, **which
+   verification level you ran**, and what that level actually confirmed — so
+   the next person can tell "builds clean, docs-only" from "golden-master
+   verified" without re-deriving it.
+
+---
+
+## Upgrade path — crossing `pre-unification` is a theme migration
+
+If `git merge-base --is-ancestor HEAD pre-unification` said you're at or
+before the tag, **stop thinking of this as a version bump.** The site is
+about to change themes. There is no light verification level here: run the
+Update path's steps at **level C**, plus everything in this section.
+
+### What actually changes
+
+A pre-unification site differs from a current one in all of these ways at
+once — this is the scope you're taking on:
+
+- **It has a second theme.** `theme = [...]` includes `roadster` (or
+  `mainroad`, on older pins) as a fallback. That submodule goes away
+  entirely; everything it provided now ships from 559Theme.
+- **Styling is a different system.** `themestyle = "old"|"new"` is replaced
+  by named style presets (`params.style.preset`). Three separately compiled
+  CSS bundles become one `main.css`. Dead `@if $theme-style` branches are
+  gone.
+- **Templates are a different generation.** Root `layouts/baseof.html` and
+  `_partials/` conventions (Hugo ≥0.146), replacing the older lookup layout.
+- **Search is a different implementation.** Lunr from a CDN becomes a
+  vendored MiniSearch, and the widget is renamed.
+- **Course shortcodes moved into core**, so your local copies now shadow
+  them.
+- **`lnk` is gone outright**, with no deprecated alias.
+
+### How to approach it
+
+- **Budget a working session**, not a coffee break, and don't interleave it
+  with content edits — it's a mechanical migration best verified by diffing
+  build output.
+- **Do it as its own commit series**, not one commit. Config change →
+  verify → submodule removal → verify gives you rollback points; a single
+  commit gives you none.
+- **Expect to edit content and config**, not just the pointer. That's the
+  difference between this and an update.
+- **Check the Hugo-version axis first** (section above). Sites this far back
+  on the theme are usually also far back on Hugo, and you do not want both
+  sets of diffs at once.
+
+### The specific migrations
+
+Work through the changelog below in order — every entry from
+`pre-unification` onward applies to you. The ones that need real work:
+
+1. **Remove the fallback theme.** Config change first, verify, *then* remove
+   the submodule:
+
+   ```sh
+   # 1. config: theme = ["559Theme","roadster"] -> theme = ["559Theme"]
+   #    (or drop "mainroad" if that's what your site still has)
+
+   # 2. verify with tools/compare.sh — expect only the v2-styles.css <link>
+   #    tag to disappear from <head>, nothing else
+
+   # 3. then remove the submodule for real:
+   git submodule deinit -f themes/roadster   # or themes/mainroad
+   git rm -f themes/roadster                 # or themes/mainroad
+   rm -rf .git/modules/themes/roadster       # or .../mainroad
+   ```
+
+   A site can only be tracking one of `roadster`/`mainroad` at a time (the
+   project switched from Mainroad to Roadster in 2025) — check `.gitmodules`
+   to see which, if either, you have.
+
+2. **Migrate `lnk` → `link`** (course sites). Pre-check before you move the
+   pointer, since it's a hard build error with no alias:
+
+   ```sh
+   grep -rn '{{<\s*lnk\b\|{{%\s*lnk\b' content/
+   ```
+
+   Use `tools/migrate-links.py`, then read the known-gap note in the
+   changelog entry — the tool's dry-run misses one pattern, and you want to
+   know that before it hard-errors.
+
+3. **Rename `themestyle` → `params.style.preset`**, and the `lunr` widget →
+   `search`. Both have deprecation aliases, so do them *after* a verified
+   build, watching the warnings fire.
+
+4. **Delete local copies of promoted course shortcodes** (Update path step
+   5), or you'll keep running the old ones silently.
+
+### What the diff will look like
+
+Much bigger than any single changelog entry implies — you're crossing every
+intervening internal change at once. All of the following are **expected**,
+need no site action, and are not itemized as changelog entries (the full
+history is in `THEME-PLAN.md`'s Execution log):
+
+- New wrapper `<div>`s around header/sidebar/footer (they support a
+  `fullwidth` mode query-string toggle).
+- CSS consolidated into one `main.css`.
+- A preset-driven Google Fonts subset (fewer families than before).
+- Footer copyright wording.
+
+Treat this as expected **provided every diff is confined to `<head>` and
+header/footer/sidebar chrome.** Confirm by diffing a content-heavy page (not
+a list/index page) and checking that the article body itself — the actual
+prose between header and footer — is byte-identical. That's the real
+regression check, not the raw diff-line count.
+
+---
 
 ## First-time setup (adding this theme to a new site)
 
@@ -344,8 +533,8 @@ home = ["HTML", "RSS", "JSON"]   # JSON is the search index (layouts/index.json)
 unsafe = true                     # theme partials/shortcodes emit raw HTML
 
 [params.style]
-preset = "uw-serif"               # or "mainroad-sans" — see docs/search.md's sibling
-                                   # doc-comments in assets/css/presets/*.scss for the two options
+preset = "uw-serif"               # or "mainroad-sans" — see the doc-comments in
+                                   # assets/css/presets/*.scss for the two options
 
 [params.sidebar]
 widgets = ["search", "important", "links", "recents", "categories", "taglist"]
@@ -367,45 +556,30 @@ Execution log (theme repo, versioned) — this section is the short,
 site-facing version: what you need to *do* when crossing each point, not why.
 
 - **Tag `pre-unification`** — the last commit before the unification project
-  (`63f35e4`). If a site is still here, it needs a separate `roadster` (or,
-  on very old pins, `mainroad`) theme in its `theme = [...]` list, uses
-  `themestyle` (no presets), has its own local copies of course shortcodes
-  (`assign-link`, `reading`, etc.), and its own `lunr`-based search page.
-  None of the rest of this changelog applies until you've moved past this
-  point.
+  (`63f35e4`). A site still here needs the **Upgrade path** above, not an
+  update: it has a separate `roadster` (or, on very old pins, `mainroad`)
+  theme in its `theme = [...]` list, uses `themestyle` (no presets), has its
+  own local copies of course shortcodes (`assign-link`, `reading`, etc.), and
+  its own `lunr`-based search page. None of the rest of this changelog
+  applies until you've moved past this point.
 - **Roadster absorbed into 559Theme — legacy fallback theme cleanup.** Drop
-  `roadster` (or `mainroad`, on older pins) from `theme = [...]` entirely —
-  every partial/template/static asset it provided now ships from 559Theme
-  directly. Do the config change first, verify with `compare.sh`, *then*
-  remove the actual submodule:
-
-  ```sh
-  # 1. config: theme = ["559Theme","roadster"] -> theme = ["559Theme"]
-  #    (or drop "mainroad" if that's what your site still has)
-
-  # 2. verify with tools/compare.sh — expect only the v2-styles.css <link>
-  #    tag to disappear from <head> (see step 4 above), nothing else
-
-  # 3. then remove the submodule for real:
-  git submodule deinit -f themes/roadster   # or themes/mainroad
-  git rm -f themes/roadster                 # or themes/mainroad
-  rm -rf .git/modules/themes/roadster       # or .../mainroad
-  ```
-
-  A site can only be tracking one of `roadster`/`mainroad` at a time (the
-  project switched from Mainroad to Roadster in 2025) — check `.gitmodules`
-  to see which, if either, you have.
+  `roadster` (or `mainroad`) from `theme = [...]` entirely — every
+  partial/template/static asset it provided now ships from 559Theme directly.
+  Commands and ordering: Upgrade path, "The specific migrations" §1.
 - **Style presets replace `themestyle`.** Rename `themestyle = "old"|"new"`
   to `params.style.preset = "mainroad-sans"|"uw-serif"` (`old`→`mainroad-sans`,
   `new`→`uw-serif`). The old param still works via a deprecation `warnf` — not
-  urgent, but do it before the alias is ever retired.
+  urgent, but do it before the alias is ever retired. Per-site token
+  overrides live in `params.style.vars` (e.g. `bodyFontSize`, `fontSans`) and
+  win over the preset's defaults, which is the supported way to diverge
+  without editing a shared preset.
 - **Course shortcodes promoted into the core theme** (`assign-link`,
   `assign-linkonly`, `reading`, `moddesc`, `modlo`, `modname`, `page`,
-  `snippet`). If your site or an overlay theme has local copies of these,
-  delete them so the core versions resolve instead (see step 5 above) — check
-  for behavior differences first (see `docs/data-contracts.md` for the
-  current data-source rules: whichever of `assignments.yaml`/`assigns.yaml`
-  is present is used; it's a **build error** if both exist, not a warning).
+  `snippet`). If your site or an overlay theme has local copies, delete them
+  so the core versions resolve (Update path step 5) — check for behavior
+  differences first (see `docs/data-contracts.md` for the current
+  data-source rules: whichever of `assignments.yaml`/`assigns.yaml` is
+  present is used; it's a **build error** if both exist, not a warning).
 - **`link`/`lnk` unified** (course sites only). `lnk` is **gone** — no
   deprecated alias. Two bare positional args are now a build error; use named
   params or the migration tool: `tools/migrate-links.py`.
@@ -415,27 +589,26 @@ site-facing version: what you need to *do* when crossing each point, not why.
   bareword into a single token (`"page"s` parses as one token, `pages`) — so
   it reports the call as an already-fine 1-positional case and leaves it
   untouched. Hugo's own shortcode-argument parser does *not* merge them; it
-  sees two positional args and hard-errors, but only *after* you've moved
-  the submodule pointer and the migration script has already told you
-  everything's clean. In practice this pattern is a content typo — a stray
-  trailing letter glued onto a closing quote, e.g. `{{< link
-  "genai-policy"s >}}` — not an intentional second argument, and the fix is
-  to delete the stray character. After running `migrate-links.py`, also
-  grep directly for the shape it can't see — anchored to right after
-  `link`/`lnk` so it only matches a *positional* first argument, not a
-  legitimate `name="value"` pair (an unanchored `[^}]*` before the quote
-  false-positives on any ordinary multi-attribute named call, e.g. `page="x"
-  text="y"`, which is the common case once you've applied the renames
-  above):
+  sees two positional args and hard-errors, but only *after* you've moved the
+  submodule pointer and the migration script has already told you everything's
+  clean. In practice this pattern is a content typo — a stray trailing letter
+  glued onto a closing quote, e.g. `{{< link "genai-policy"s >}}` — not an
+  intentional second argument, and the fix is to delete the stray character.
+  After running `migrate-links.py`, also grep directly for the shape it can't
+  see — anchored to right after `link`/`lnk` so it only matches a *positional*
+  first argument, not a legitimate `name="value"` pair (an unanchored
+  `[^}]*` before the quote false-positives on any ordinary multi-attribute
+  named call, e.g. `page="x" text="y"`, which is the common case once you've
+  applied the renames above):
 
   ```sh
   grep -rnE '\{\{[<%]\s*(link|lnk)\b\s+"[^"]*"[A-Za-z0-9_]' content/ assets/snippets/
   ```
 
-- **Lunr search replaced by MiniSearch** (`docs/search.md`). Rename the
-  widget `lunr` → `search` wherever your widget list names it: the
-  site-wide `params.sidebar.widgets`, or a per-page `widgets:` front-matter
-  override (a page's own `widgets:` wins over the site-wide list — see
+- **Lunr search replaced by MiniSearch** (`docs/search.md`). Rename the widget
+  `lunr` → `search` wherever your widget list names it: the site-wide
+  `params.sidebar.widgets`, or a per-page `widgets:` front-matter override (a
+  page's own `widgets:` wins over the site-wide list — see
   `layouts/_partials/sidebar.html`). The old name still works via a
   deprecation `warnf`. No more CDN dependency (`unpkg.com`) — if your site
   allowlisted that domain anywhere (CSP, etc.), it can be removed.
@@ -457,12 +630,12 @@ site-facing version: what you need to *do* when crossing each point, not why.
   `{{< tooltip` / `{{% tooltip` calls with a `color=` param and drop it.
 - **Bold math now renders correctly in Chromium.** `\mathbf{…}`/`\boldsymbol{…}`
   previously rendered at normal weight in Chromium-family browsers (a Chromium
-  MathML-Core limitation — it ignores the `mathvariant="bold"` attribute
-  KaTeX emits; Firefox was always fine). The `math`/`displaymath` shortcodes
-  now rewrite those glyphs to real Unicode bold characters at build time, so
-  bold math is correct in every browser. No site action needed — this is
-  automatic once you bump past the fix. See `docs/math.md` and
-  `docs/math-bold-research/README.md` for the mechanism and validation.
+  MathML-Core limitation — it ignores the `mathvariant="bold"` attribute KaTeX
+  emits; Firefox was always fine). The `math`/`displaymath` shortcodes now
+  rewrite those glyphs to real Unicode bold characters at build time, so bold
+  math is correct in every browser. No site action needed — this is automatic
+  once you bump past the fix. See `docs/math.md` and
+  `docs/math-bold-research/README.md`.
 - **`rimage` now truly resizes raster images; `resource-image` deprecated.**
   rimage previously shipped the full-resolution original scaled down with CSS
   (a Go-template scoping bug discarded the `.Fit` result), so pages downloaded
@@ -474,15 +647,20 @@ site-facing version: what you need to *do* when crossing each point, not why.
   to that fraction of an assumed content-column width (default 800px; set
   `params.imageColumnWidth` to tune) and prints a "percent width is
   approximate" warning while keeping the CSS width fluid; `width="native"`
-  shows a raster at its native pixel size with no resizing (raster only — it is
-  a build error on an SVG). Small images are never upscaled and never get a
+  shows a raster at its native pixel size with no resizing (raster only — a
+  build error on an SVG). Small images are never upscaled and never get a
   pointless self-link. **`resource-image` is now deprecated** — it still works
   (it also resizes correctly, so nothing breaks, workbook sites included) but
   prints a build `warnf` per call. Migrate to rimage: `size="WxH"` becomes
-  `width="W"` (rimage fits width only, height auto). List call sites with
-  `conda run -n p314 python 559Theme/tools/check-deprecated.py`. `resource-svg`
-  is unchanged and deliberately kept — its `inline`/`highlight`/`link` modes
-  have no rimage equivalent.
+  `width="W"` (rimage fits width only, height auto). `resource-svg` is
+  unchanged and deliberately kept — its `inline`/`highlight`/`link` modes have
+  no rimage equivalent.
+
+  **Note for site maintainers:** this fix only applies to images displayed
+  *through* a theme shortcode. A site with its own local layout that emits
+  `<img src="{{ .RelPermalink }}">` directly still ships full-size originals,
+  and no theme update can fix that — check your own `layouts/` for raw
+  `.RelPermalink` image tags if page weight matters to you.
 - **`figure` deprecated — REQUIRED migration to `rimage`.** The theme's `figure`
   is a modified copy of Hugo's built-in that adds `rsrc` (page/site resource
   lookup) and captions, but it does **not** resize — it ships the full-size
@@ -490,24 +668,28 @@ site-facing version: what you need to *do* when crossing each point, not why.
   `figure` override is going away. Migrate now: `{{< figure rsrc="X" caption="…"
   attr="…" attrlink="…" >}}` becomes `{{< rimage src="X" caption="…" attr="…"
   attrlink="…" >}}` (add a `width` to size it; `rsrc` globs work as `src`). It
-  still builds today but prints a deprecation `warnf` per call; find call sites
-  with `conda run -n p314 python 559Theme/tools/check-deprecated.py`. **Why
-  required, not optional:** once the theme's `figure.html` is removed, `{{<
-  figure >}}` falls back to Hugo's *built-in* figure, which has no `rsrc`
-  parameter — so any un-migrated `rsrc` figure will silently stop finding its
-  image. One caveat: `rimage` has no raw external `src="https://…"` mode; the
-  rare figure that points at an external URL (none in the course sites) should
-  stay on Hugo's built-in `figure` with `src=`.
+  still builds today but prints a deprecation `warnf` per call. **Why required,
+  not optional:** once the theme's `figure.html` is removed, `{{< figure >}}`
+  falls back to Hugo's *built-in* figure, which has no `rsrc` parameter — so any
+  un-migrated `rsrc` figure will silently stop finding its image. One caveat:
+  `rimage` has no raw external `src="https://…"` mode; the rare figure that
+  points at an external URL (none in the course sites) should stay on Hugo's
+  built-in `figure` with `src=`.
 
 ## What this guide doesn't cover yet
 
 - A full semantic-version tagging scheme — right now there's `pre-unification`
   and a tag per notable rollout (see the theme repo's tag list), not a formal
   version number per commit. If that becomes painful, consider tagging more
-  granularly going forward.
+  granularly going forward. A real version scheme would also let the
+  update/upgrade distinction above be read off a version number instead of an
+  `is-ancestor` check.
 - Automated checking of deprecated **params**/**widget names** (only
   shortcodes are covered by `tools/check-deprecated.py` today) — extending it
   would need a second scan mode over `hugo.toml` files.
-- Automated non-determinism detection (step 1 asks you to rebuild a few times
+- Automated non-determinism detection (level C asks you to rebuild a few times
   by hand and eyeball the diff) — could be folded into `compare.sh` itself
   (build twice before touching the submodule, fail loudly if they disagree).
+- A `triage.sh` that runs the "which operation is this?" block and prints a
+  recommended level. The commands are short enough to paste today, but
+  scripting them would remove the chance of running the wrong one.
