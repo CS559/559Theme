@@ -29,6 +29,11 @@ full migration checklist on a docs-only update is wasted work, and treating
 the unification crossing as a casual bump means discovering the scope of it
 one build error at a time.
 
+*If you're an agent with the `upgrade-theme` skill available, it automates
+the triage below and picks the path. The versioned original lives in this
+repo at `skills/upgrade-theme/` — see `skills/README.md`. This document
+remains authoritative on procedure either way.*
+
 **Read this whole guide once, start to finish, before running anything** —
 including the path you don't think you're on, so you'd recognize it if you
 were. The steps are ordered and reference each other (e.g. the update path's
