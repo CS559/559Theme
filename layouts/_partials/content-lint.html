@@ -1,0 +1,21 @@
+{{/* content-lint — build-time checks for content mistakes that Hugo accepts
+     WITHOUT complaint, so nothing in a normal build reveals them.
+
+     Called once per page from baseof.html. Emits no markup — only warnf.
+     Add a check here whenever you find a mistake that fails silently; a
+     mistake that already produces an ERROR or a WARN does not belong here.
+
+     Checks:
+
+     1. Spaced summary divider. Hugo's divider is exactly `<!--more-->`.
+        `<!-- more -->` is NOT recognised: the page keeps .Truncated = false
+        and .Summary falls back to a summaryLength-word auto-cut. The intended
+        lead-paragraph split silently does not happen, and because the auto-cut
+        ends on a sentence boundary the result still looks deliberate — which
+        is exactly why this is worth a build warning. */}}
+
+{{- with .File -}}
+	{{- with findRE "<!--[ \t]+more[ \t]*-->|<!--[ \t]*more[ \t]+-->" $.RawContent 1 -}}
+		{{- warnf "559Theme content-lint: %s uses a spaced summary divider (%s). Hugo only recognises <!--more--> with no spaces, so the divider is IGNORED and .Summary falls back to auto-truncation. Remove the spaces." $.File.Path (index . 0) -}}
+	{{- end -}}
+{{- end -}}
