@@ -13,7 +13,7 @@ Header convention (top of each shortcode):
 */ -}}
 ```
 
-51 shortcodes: 47 active, 4 deprecated/dead-weight. Deep-dives: `link` → `docs/link-shortcode.md`; course-data shortcodes (`assign-*`, `reading`, `mod*`, `page`) → `docs/data-contracts.md`; math (`math`, `displaymath`, `eqref`) → `docs/math.md`.
+52 shortcodes: 48 active, 4 deprecated/dead-weight. Deep-dives: `link` → `docs/link-shortcode.md`; course-data shortcodes (`assign-*`, `reading`, `mod*`, `page`) → `docs/data-contracts.md`; math (`math`, `displaymath`, `eqref`) → `docs/math.md`.
 
 ## Index
 
@@ -57,6 +57,7 @@ Header convention (top of each shortcode):
 | [`pages`](#pages) | `pages.md` | DEAD tombstone: errorf's on ANY use. Superseded by `link` (or `page`). | dead-weight |
 | [`prev`](#prev) | `prev.html` | link to the "previous" page in the section (Hugo's .Page.Next). |  |
 | [`quote`](#quote) | `quote.html` | a <blockquote> of the inner markdown, with an optional citation. |  |
+| [`reading-link`](#reading-link) | `reading-link.html` | link to one resource of a reading in data/readings.yaml |  |
 | [`reading`](#reading) | `reading.html` | look up a reading and put the html in the page |  |
 | [`resource-file`](#resource-file) | `resource-file.html` | just returns a link to a page resource - actually makes a line, using the name |  |
 | [`resource-image`](#resource-image) | `resource-image.html` | a <figure> for an image resource, linking the full image to a fitted copy. | deprecated |
@@ -562,6 +563,40 @@ usage: {{% quote "Author, Source" %}}the quoted text{{% /quote %}}
 params: 0 = citation (optional, markdown, shown in <cite>); inner = the quote body.
 ```
 
+### reading-link
+
+<sup>`layouts/_shortcodes/reading-link.html`</sup>
+
+link to one resource of a reading in data/readings.yaml
+
+```text
+   Where `reading` prints a reading's whole citation, `reading-link` makes a
+   single <a> pointing at one of its resources, so a reading can be referred
+   to inline in prose.
+
+   usage (positional):
+     {{< reading-link "CM84" >}}                  text = the reading's title
+     {{< reading-link "CM84" "this paper" >}}     custom link text
+     {{< reading-link "CM84" "" "pdf" >}}         pick the field; "" keeps the
+                                                  default text
+   usage (named — Hugo forbids MIXING the two forms in one call, so use this
+   when you want a field but the default text):
+     {{< reading-link key="CM84" field="pdf" >}}
+     {{< reading-link key="CM84" text="this paper" field="pdf" >}}
+
+   field is one of: cfile url pdf doi library video summary
+     * `cfile` resolves to the entry's cfile_url (the Canvas link), since the
+       raw cfile is a filename, not a URL.
+     * A named field that the entry does not have is a build error — asking
+       for a reading's pdf should say so, not silently link somewhere else.
+     * With no field, the first of these that the entry has wins:
+           cfile, url, pdf, doi, library, video, summary
+
+   Link text defaults to the entry's `title`, which is rendered HTML (it may
+   carry inline markup), so it is emitted with safeHTML. Explicit text is
+   treated the same way, so a call site can pass markup deliberately.
+```
+
 ### reading
 
 <sup>`layouts/_shortcodes/reading.html`</sup>
@@ -574,6 +609,9 @@ look up a reading and put the html in the page
        where "reading-id" is the key in data/readings.yaml
        and "type" is the kind of reading
        "required" "optional" "alternate" etc.
+
+       Each readings.yaml entry is a map: .html is the rendered citation,
+       alongside the individual fields (title, cfile, doi, url, ...).
 ```
 
 ### resource-file

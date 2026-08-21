@@ -1,0 +1,94 @@
+{{/* reading-link — link to one resource of a reading in data/readings.yaml
+
+    Where `reading` prints a reading's whole citation, `reading-link` makes a
+    single <a> pointing at one of its resources, so a reading can be referred
+    to inline in prose.
+
+    usage (positional):
+      {{< reading-link "CM84" >}}                  text = the reading's title
+      {{< reading-link "CM84" "this paper" >}}     custom link text
+      {{< reading-link "CM84" "" "pdf" >}}         pick the field; "" keeps the
+                                                   default text
+    usage (named — Hugo forbids MIXING the two forms in one call, so use this
+    when you want a field but the default text):
+      {{< reading-link key="CM84" field="pdf" >}}
+      {{< reading-link key="CM84" text="this paper" field="pdf" >}}
+
+    field is one of: cfile url pdf doi library video summary
+      * `cfile` resolves to the entry's cfile_url (the Canvas link), since the
+        raw cfile is a filename, not a URL.
+      * A named field that the entry does not have is a build error — asking
+        for a reading's pdf should say so, not silently link somewhere else.
+      * With no field, the first of these that the entry has wins:
+            cfile, url, pdf, doi, library, video, summary
+
+    Link text defaults to the entry's `title`, which is rendered HTML (it may
+    carry inline markup), so it is emitted with safeHTML. Explicit text is
+    treated the same way, so a call site can pass markup deliberately.
+*/}}
+{{- $named := reflect.IsMap .Params -}}
+{{- $key := cond $named (.Get "key") (.Get 0) -}}
+{{- $text := cond $named (.Get "text") (.Get 1) -}}
+{{- $field := cond $named (.Get "field") (.Get 2) -}}
+
+{{- $fieldmap := dict
+    "cfile" "cfile_url"
+    "url" "url"
+    "pdf" "pdf"
+    "doi" "doi"
+    "library" "library"
+    "video" "video"
+    "summary" "summary" -}}
+{{- $order := slice "cfile" "url" "pdf" "doi" "library" "video" "summary" -}}
+
+{{- if not $key -}}
+    {{- errorf "reading-link: no reading key given; usage {{< reading-link \"CM84\" >}} or {{< reading-link key=\"CM84\" >}} (for %s at %s)" .Page.File .Position -}}
+{{- else -}}
+    {{- $entry := index hugo.Data.readings $key -}}
+    {{- if eq (printf "%T" $entry) "string" -}}
+        {{- errorf "reading-link: data/readings.yaml is in the old plain-string format; regenerate it with themes/559Theme/tools/seatable-to-readings.py (reading '%s' for %s at %s)" $key .Page.File .Position -}}
+    {{- else if not $entry -}}
+        {{- errorf "reading-link: reading '%s' not found in readings database (for %s at %s)" $key .Page.File .Position -}}
+    {{- else -}}
+        {{/* resolve which field to link to */}}
+        {{- $url := "" -}}
+        {{- $used := "" -}}
+        {{- if $field -}}
+            {{- $datakey := index $fieldmap $field -}}
+            {{- if not $datakey -}}
+                {{- errorf "reading-link: '%s' is not a linkable field; use one of %s (reading '%s' for %s at %s)" $field (delimit $order ", ") $key .Page.File .Position -}}
+            {{- else -}}
+                {{- $url = index $entry $datakey -}}
+                {{- if not $url -}}
+                    {{- $has := slice -}}
+                    {{- range $order -}}
+                        {{- if index $entry (index $fieldmap .) -}}{{- $has = $has | append . -}}{{- end -}}
+                    {{- end -}}
+                    {{- errorf "reading-link: reading '%s' has no %s. It has: %s (for %s at %s)" $key $field (cond (gt (len $has) 0) (delimit $has ", ") "no linkable fields at all") .Page.File .Position -}}
+                {{- else -}}
+                    {{- $used = $field -}}
+                {{- end -}}
+            {{- end -}}
+        {{- else -}}
+            {{- range $order -}}
+                {{- if and (not $url) (index $entry (index $fieldmap .)) -}}
+                    {{- $url = index $entry (index $fieldmap .) -}}
+                    {{- $used = . -}}
+                {{- end -}}
+            {{- end -}}
+            {{- if not $url -}}
+                {{- errorf "reading-link: reading '%s' has no linkable field (tried %s); it can only be cited with the `reading` shortcode (for %s at %s)" $key (delimit $order ", ") .Page.File .Position -}}
+            {{- end -}}
+        {{- end -}}
+
+        {{/* resolve the link text */}}
+        {{- if $url -}}
+            {{- $label := $text | default $entry.title -}}
+            {{- if not $label -}}
+                {{- errorf "reading-link: reading '%s' has no title, so there is no default link text; pass text explicitly (for %s at %s)" $key .Page.File .Position -}}
+            {{- else -}}
+                <a href="{{ $url }}" target="_blank">{{ $label | safeHTML }}</a>
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
