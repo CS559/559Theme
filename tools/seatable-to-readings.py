@@ -2,10 +2,11 @@
 """
 Generate a course site's ``data/readings.yaml`` from a SeaTable base.
 
-SeaTable is the human-curated source of truth for the reading list. Each row is
-rendered into a single pre-formatted HTML citation string, keyed by the row's
-``Key`` column. See ``docs/data-contracts.md`` (``readings.yaml``) for the
-column-by-column contract.
+SeaTable is the human-curated source of truth for the reading list. Each row
+becomes a record keyed by the row's ``Key`` column, holding a pre-formatted
+HTML citation under ``html`` plus the individual columns that went into it
+(``title``, ``cfile``, ``doi``, ``url``, …). See ``docs/data-contracts.md``
+(``readings.yaml``) for the field-by-field contract.
 
 Run it from anywhere inside the course repo::
 
@@ -112,37 +113,62 @@ def mdToHTML(md: str):
     return html.lstrip().rstrip()
 
 
-def render_row(row: dict, cfiles: dict) -> str:
-    """Render one SeaTable row into its HTML citation string."""
+def render_row(row: dict, cfiles: dict) -> dict:
+    """Render one SeaTable row into its readings.yaml record.
+
+    The record always carries ``html`` — the full pre-rendered citation, which
+    is what the ``reading`` shortcode prints. Alongside it sit the individual
+    SeaTable columns, so a consumer can reach a single piece (say, just the
+    Canvas link) without parsing the HTML. Empty columns are omitted rather
+    than written as nulls.
+
+    ``title``/``subtitle`` are markdown-rendered, exactly as they appear inside
+    ``html``, so the two never disagree. ``cfile`` is the raw SeaTable filename;
+    ``cfile_url`` is that filename resolved through ``files.yaml``, and is
+    absent when the reference is bad.
+    """
     cite = ""
+    rec = {}
+
     if row["Authors"]:
         cite += "{}. ".format(escape(row["Authors"]))
     if row["Title"]:
-        cite += "<b>{}</b>. ".format(mdToHTML(row["Title"].rstrip().lstrip()))
+        rec["title"] = mdToHTML(row["Title"].rstrip().lstrip())
+        cite += "<b>{}</b>. ".format(rec["title"])
     if row["Subtitle"]:
-        cite += "{}. ".format(mdToHTML(row["Subtitle"]))
+        rec["subtitle"] = mdToHTML(row["Subtitle"])
+        cite += "{}. ".format(rec["subtitle"])
     if row["citation"]:
         cite += "{}. ".format(mdToHTML(row["citation"]))
     if row["cfile"]:
+        rec["cfile"] = row["cfile"]
         if row["cfile"] in cfiles:
-            cfileurl = cfiles[row["cfile"]]["url_nodl"]
-            cite += "<a href=\"{}\">(Canvas File)</a> ".format(cfileurl)
+            rec["cfile_url"] = cfiles[row["cfile"]]["url_nodl"]
+            cite += "<a href=\"{}\">(Canvas File)</a> ".format(rec["cfile_url"])
         else:
             cite += "(BAD cfile) "
             print("{} has bad cfile {}".format(row["Key"], row["cfile"]))
     if row["doi"]:
+        rec["doi"] = row["doi"]
         cite += "<a href=\"{}\">(doi)</a> ".format(row["doi"])
     if row["pdf"]:
+        rec["pdf"] = row["pdf"]
         cite += "<a href=\"{}\">(web pdf)</a> ".format(row["pdf"])
     if row["url (web page)"]:
+        rec["url"] = row["url (web page)"]
         cite += "<a href=\"{}\">(url)</a> ".format(row["url (web page)"])
     if row["video"]:
+        rec["video"] = row["video"]
         cite += "<a href=\"{}\">(video)</a> ".format(row["video"])
     if row["library"]:
+        rec["library"] = row["library"]
         cite += "<a href=\"{}\">(UW Library)</a> ".format(row["library"])
     if row["summary"]:
+        rec["summary"] = row["summary"]
         cite += "<a href=\"{}\">(Summary)</a> ".format(row["summary"])
-    return cite
+
+    rec["html"] = cite
+    return rec
 
 
 def process_readings(site: Path):
@@ -167,11 +193,11 @@ def process_readings(site: Path):
                 print("No Key for {}:{}".format(index, row["Title"]))
                 kstr = "[BAD KEY]: "
 
-            cite = render_row(row, cfiles)
+            rec = render_row(row, cfiles)
 
-            fo.write("<li>{}</li>\n".format(kstr + cite))
+            fo.write("<li>{}</li>\n".format(kstr + rec["html"]))
             if row["Key"]:
-                rd[row["Key"]] = cite
+                rd[row["Key"]] = rec
         fo.write(HTML_FOOTER)
 
     yaml_out = site / "data" / "readings.yaml"
