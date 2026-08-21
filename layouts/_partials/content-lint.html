@@ -12,10 +12,31 @@
         and .Summary falls back to a summaryLength-word auto-cut. The intended
         lead-paragraph split silently does not happen, and because the auto-cut
         ends on a sentence boundary the result still looks deliberate — which
-        is exactly why this is worth a build warning. */}}
+        is exactly why this is worth a build warning.
+
+     2. Shortcode in a heading with no explicit id. A heading's id is generated
+        from the RAW text, before shortcodes resolve, so Hugo's internal
+        placeholder token lands in the id:
+
+            #### Module 1: {{<modname 1>}}
+            → id="module-1-hahahugoshortcode20s5hbhb"
+
+        That counter is not stable between builds, so the id changes on every
+        rebuild and any deep link into the heading breaks. The rendered heading
+        text looks perfectly correct, which is why this goes unnoticed.
+        Fix by pinning the id: `#### Module 1: {{<modname 1>}} {#module-1}`.
+
+        Caveat: matches on raw text, so a heading inside a fenced code block
+        can false-positive. Give it an id, or reword the example. */}}
 
 {{- with .File -}}
 	{{- with findRE "<!--[ \t]+more[ \t]*-->|<!--[ \t]*more[ \t]+-->" $.RawContent 1 -}}
 		{{- warnf "559Theme content-lint: %s uses a spaced summary divider (%s). Hugo only recognises <!--more--> with no spaces, so the divider is IGNORED and .Summary falls back to auto-truncation. Remove the spaces." $.File.Path (index . 0) -}}
+	{{- end -}}
+
+	{{- range findRE `(?m)^#{1,6}[ \t]+.*\{\{[<%].*$` $.RawContent -}}
+		{{- if not (findRE `\{#[^}\s]+\}[ \t]*$` . 1) -}}
+			{{- warnf "559Theme content-lint: %s has a shortcode in a heading with no explicit id (%s). The id is built from the raw text, so Hugo's shortcode placeholder ends up inside it and CHANGES on every build, breaking deep links. Add an explicit id, e.g. `%s {#some-id}`." $.File.Path . . -}}
+		{{- end -}}
 	{{- end -}}
 {{- end -}}
