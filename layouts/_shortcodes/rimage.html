@@ -4,19 +4,30 @@ and figure (captions), so the caption is sized to the width of the image (captio
 
 Unlike resource-image it uses WIDTH, not SIZE — we need the width for the figure/caption sizing.
 
-Resizing behaviour (raster only; SVGs are vector and are never re-encoded, width just sets CSS):
-  - width is a number (px)  -> a copy Fit to that width is generated and shown; the figure links to the original.
-  - width is a percent      -> the file is Fit to (percent x an assumed content-column width, default 800px,
-                               set params.imageColumnWidth to tune) and a build warning notes it is approximate;
-                               the figure CSS still uses the literal % so layout stays fluid.
-  - width="native"          -> no resizing; the image is shown at its native pixel size and the figure is sized
-                               to match (raster only — it is an error on an SVG). Use for small images you do
-                               not want stretched, or when you deliberately want full resolution inline.
-  - .Fit never upscales, and we skip generating a copy entirely when the target is >= the image's native width,
-    so small images are never blown up and never get a pointless "full size" link.
+Resizing behaviour (raster: real derivatives via .Fit; SVG: vector, never re-encoded, width only ever
+affects CSS/layout, never the file itself):
+  - width is a number (px)  -> raster: a copy Fit to that width is generated and shown; figure links to the
+                               original. SVG: no derivative (can't re-encode a vector); the figure's CSS
+                               width is set to the literal px value, and it links to the original (since it's
+                               being shown smaller than the file's own size).
+  - width is a percent      -> raster: the file is Fit to (percent x an assumed content-column width,
+                               default 800px, set params.imageColumnWidth to tune) and a build warning notes
+                               it is approximate; the figure CSS still uses the literal % so layout stays
+                               fluid. SVG: the figure's CSS width is set to the literal percent; links to
+                               the original.
+  - width="native"          -> raster: no resizing; the image is shown at its native pixel size and the
+                               figure is sized to match. SVG: no CSS width is imposed at all — the figure
+                               shrinks to hug whatever intrinsic size the SVG file itself declares (still
+                               capped at 100% of the content column like any image, so it can't overflow the
+                               page). Either way, native means "shown exactly as the file declares itself",
+                               so there's no zoom link (linking to itself would be a no-op).
+  - .Fit never upscales, and we skip generating a raster copy entirely when the target is >= the image's
+    native width, so small raster images are never blown up and never get a pointless "full size" link.
 
-The <figure> links to the ORIGINAL file only when a smaller copy is actually shown (so the link is a real
-"see it bigger", never a no-op self-link).
+The <figure> links to the ORIGINAL file whenever the display is not already at full/native size: for raster
+that means an actual smaller derivative is shown; for SVG (which has no derivative to compare against) that
+means any width other than "native" — including the 80% default — since even a CSS-shrunk SVG is still the
+same file at reduced display size. This keeps the link a real "see it bigger", never a no-op self-link.
 
 arguments:
   src      - the resource name (required)
@@ -35,7 +46,6 @@ arguments:
 {{- $isSvg := or (hasSuffix $name ".svg") (hasSuffix $name ".SVG") -}}
 {{- $width := .Get "width" | default (cond $isSvg "80%" "300") -}}
 {{- $native := eq $width "native" -}}
-{{- if and $native $isSvg }}{{ errorf "rimage: width=\"native\" is for raster images; %q is an SVG (vector) — omit width or use a percent" $name }}{{ end -}}
 {{- $alt := .Get "alt" | default $name }}
 {{- $class := .Get "class" | default "" }}
 {{- $styles := .Get "styles" | default "" }}
@@ -48,25 +58,35 @@ arguments:
 {{- with $img }}
 {{- $orig := . -}}
 {{- $src := . -}}
-{{- if and (not $isSvg) (not $native) -}}
-    {{- $fitw := 0 -}}
-    {{- if hasSuffix $width "%" -}}
-        {{- $colw := $page.Site.Params.imageColumnWidth | default 800 -}}
-        {{- $fitw = int (math.Round (mul (div (float (strings.TrimSuffix "%" $width)) 100.0) $colw)) -}}
-        {{- warnf "rimage: percent width (%s) on raster %q is approximate (assumes %dpx content column; set params.imageColumnWidth to tune)" $width $name $colw -}}
+{{- $reduced := false -}}
+{{- $widthCSS := "" -}}
+{{- if $isSvg -}}
+    {{- if $native -}}
+        {{- $widthCSS = "width: max-content; max-width: 100%; box-sizing: border-box;" -}}
     {{- else -}}
-        {{- $fitw = int $width -}}
+        {{- $widthCSS = printf "width: %v%s;" $width (cond (hasSuffix $width "%") "" "px") -}}
+        {{- $reduced = true -}}
     {{- end -}}
-    {{- if lt $fitw $orig.Width -}}
-        {{- $src = .Fit (printf "%dx5000" $fitw) -}}
+{{- else -}}
+    {{- if $native -}}
+        {{- $width = printf "%d" $orig.Width -}}
+    {{- else -}}
+        {{- $fitw := 0 -}}
+        {{- if hasSuffix $width "%" -}}
+            {{- $colw := $page.Site.Params.imageColumnWidth | default 800 -}}
+            {{- $fitw = int (math.Round (mul (div (float (strings.TrimSuffix "%" $width)) 100.0) $colw)) -}}
+            {{- warnf "rimage: percent width (%s) on raster %q is approximate (assumes %dpx content column; set params.imageColumnWidth to tune)" $width $name $colw -}}
+        {{- else -}}
+            {{- $fitw = int $width -}}
+        {{- end -}}
+        {{- if lt $fitw $orig.Width -}}
+            {{- $src = .Fit (printf "%dx5000" $fitw) -}}
+        {{- end -}}
     {{- end -}}
+    {{- $widthCSS = printf "width: %v%s;" $width (cond (hasSuffix $width "%") "" "px") -}}
+    {{- $reduced = ne $src.RelPermalink $orig.RelPermalink -}}
 {{- end -}}
-{{- if $native -}}{{- $width = printf "%d" $orig.Width -}}{{- end -}}
-{{- $pct := "%" -}}
-{{- $px := "px" -}}
-{{- $ns := "" -}}
-{{- $reduced := ne $src.RelPermalink $orig.RelPermalink -}}
-<figure class="{{ $class }}" style="width: {{ $width }}{{ cond (hasSuffix $width $pct) $ns $px }}; {{ $styles | safeCSS}}">
+<figure class="{{ $class }}" style="{{ $widthCSS | safeCSS }} {{ $styles | safeCSS}}">
     {{- if $reduced }}<a href="{{ $orig.RelPermalink }}">{{ end }}
         <img src="{{ $src.RelPermalink }}" alt="{{ $alt }}" />
     {{- if $reduced }}</a>{{ end }}
