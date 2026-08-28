@@ -228,9 +228,18 @@ table {
 	}
 }
 
-// Shortcode-built tables ({{<table>}}/{{<row>}}/{{<cell>}}): trim the
-// paragraph margin markdownify adds around a cell's content so short cells
-// (a date, a single word) don't get extra vertical whitespace.
+// Shortcode-built tables ({{<table>}}/{{<row>}}/{{<cell>}}): browsers
+// vertically center <td> content by default, which looks fine until one
+// cell in a row is taller than the rest — then the shorter cells drift
+// toward the row's middle instead of lining up with the tall one. Top-align
+// by default so rows with uneven content still read as aligned.
+.sc-table td,
+.sc-table th {
+	vertical-align: top;
+}
+
+// Trim the paragraph margin markdownify adds around a cell's content so
+// short cells (a date, a single word) don't get extra vertical whitespace.
 .sc-table td > p:first-child {
 	margin-top: 0;
 }
