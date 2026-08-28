@@ -228,6 +228,16 @@ table {
 	}
 }
 
+// Shortcode-built tables ({{<table>}}/{{<row>}}/{{<cell>}}): trim the
+// paragraph margin markdownify adds around a cell's content so short cells
+// (a date, a single word) don't get extra vertical whitespace.
+.sc-table td > p:first-child {
+	margin-top: 0;
+}
+.sc-table td > p:last-child {
+	margin-bottom: 0;
+}
+
 
 .footer__copyright {
 	text-align: left;

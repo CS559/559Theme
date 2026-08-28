@@ -1,0 +1,7 @@
+{{- /*
+  cell — one cell inside {{<row>}}. Inner content is run through markdownify,
+  so plain text, inline formatting/HTML (e.g. <br> for a second line), and
+  block content like bullet lists all work.
+  usage: {{<cell>}}Sep 9<br>Lecture:{{</cell>}}
+*/ -}}
+<td>{{ .Inner | markdownify }}</td>

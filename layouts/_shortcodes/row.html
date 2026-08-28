@@ -1,0 +1,8 @@
+{{- /*
+  row — one row inside {{<table>}}. Optional "bg" param sets the row's
+  background color to any CSS color value.
+  usage: {{<row bg="#f7f7f7">}} {{<cell>}}...{{</cell>}} {{</row>}}
+*/ -}}
+<tr{{ with .Get "bg" }} style="background-color: {{ . }};"{{ end }}>
+{{ .Inner }}
+</tr>
