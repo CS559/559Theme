@@ -2,6 +2,10 @@
   cell — one cell inside {{<row>}}. Inner content is run through markdownify,
   so plain text, inline formatting/HTML (e.g. <br> for a second line), and
   block content like bullet lists all work.
+  Optional "span" param (any truthy value) makes the cell span every column
+  of the row; it reads the enclosing {{<table cols="N">}}'s "cols" param.
   usage: {{<cell>}}Sep 9<br>Lecture:{{</cell>}}
+         {{<cell span="true">}}...{{</cell>}}
 */ -}}
-<td>{{ .Inner | markdownify }}</td>
+{{- $span := or (.Get "span") (in .Params "span") -}}
+<td{{ if $span }} colspan="{{ with .Parent.Parent.Get "cols" }}{{ . }}{{ else }}{{ errorf "cell span=true requires the enclosing table to set cols=\"N\" (%s)" .Position }}{{ end }}"{{ end }}>{{ .Inner | markdownify }}</td>

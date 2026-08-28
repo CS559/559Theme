@@ -1,7 +1,8 @@
 {{- /*
   table — container for a hand-built table whose rows/cells support markdown
   content (including bullet lists) and per-row background colors.
-  usage: {{<table>}} {{<row>}}...{{</row>}} {{</table>}}
+  Set "cols" to the table's column count if any cell uses span="true".
+  usage: {{<table cols="4">}} {{<row>}}...{{</row>}} {{</table>}}
 */ -}}
 <table class="sc-table">
 {{ .Inner }}
