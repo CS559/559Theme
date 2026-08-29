@@ -4,8 +4,9 @@
   block content like bullet lists all work.
   Optional "span" param (any truthy value) makes the cell span every column
   of the row; it reads the enclosing {{<table cols="N">}}'s "cols" param.
+  Optional "class" param adds class(es) to the cell.
   usage: {{<cell>}}Sep 9<br>Lecture:{{</cell>}}
          {{<cell span="true">}}...{{</cell>}}
 */ -}}
 {{- $span := or (.Get "span") (in .Params "span") -}}
-<td{{ if $span }} colspan="{{ with .Parent.Parent.Get "cols" }}{{ . }}{{ else }}{{ errorf "cell span=true requires the enclosing table to set cols=\"N\" (%s)" .Position }}{{ end }}"{{ end }}>{{ .Inner | markdownify }}</td>
+<td{{ with .Get "class" }} class="{{ . }}"{{ end }}{{ if $span }} colspan="{{ with .Parent.Parent.Get "cols" }}{{ . }}{{ else }}{{ errorf "cell span=true requires the enclosing table to set cols=\"N\" (%s)" .Position }}{{ end }}"{{ end }}>{{ .Inner | markdownify }}</td>

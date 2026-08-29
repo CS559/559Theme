@@ -1,11 +1,12 @@
 {{- /*
   row — one row inside {{<table>}}. Optional "bg"/"fg" params set the row's
-  background/text color to any CSS color value.
+  background/text color to any CSS color value. Optional "class" param adds
+  class(es) to the row, for formatting beyond bg/fg.
   usage: {{<row bg="#375623" fg="white">}} {{<cell>}}...{{</cell>}} {{</row>}}
 */ -}}
 {{- $style := "" -}}
 {{- with .Get "bg" }}{{ $style = printf "%sbackground-color: %s;" $style . }}{{ end -}}
 {{- with .Get "fg" }}{{ $style = printf "%scolor: %s;" $style . }}{{ end -}}
-<tr{{ if $style }} style="{{ $style | safeCSS }}"{{ end }}>
+<tr{{ with .Get "class" }} class="{{ . }}"{{ end }}{{ if $style }} style="{{ $style | safeCSS }}"{{ end }}>
 {{ .Inner }}
 </tr>

@@ -2,8 +2,9 @@
   table — container for a hand-built table whose rows/cells support markdown
   content (including bullet lists) and per-row background colors.
   Set "cols" to the table's column count if any cell uses span="true".
+  Optional "class" param adds extra class(es) alongside "sc-table".
   usage: {{<table cols="4">}} {{<row>}}...{{</row>}} {{</table>}}
 */ -}}
-<table class="sc-table">
+<table class="sc-table{{ with .Get "class" }} {{ . }}{{ end }}">
 {{ .Inner }}
 </table>
