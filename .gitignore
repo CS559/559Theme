@@ -1,3 +1,4 @@
 content/old-search-html.old
 .hugo_build.lock
 public/
+tools/__pycache__/
