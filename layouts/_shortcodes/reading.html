@@ -1,37 +1,8 @@
-{{/* look up a reading and put the html in the page
-        usage: {{< reading "reading-id" "assignment" >}}
-        where "reading-id" is the key in data/readings.yaml
-        and "type" is the kind of reading
-        "required" "optional" "alternate" etc.
+{{/* 
+Look up a reading and display it in the course-specific format.
 
-        Each readings.yaml entry is a map: .html is the rendered citation,
-        alongside the individual fields (title, cfile, doi, url, ...).
-   */}}
-{{- $reading := .Get 0 -}}
-{{- $kind := .Get 1 -}}
-{{- $readinginfo := index hugo.Data.readings $reading -}}
-{{- if eq (printf "%T" $readinginfo) "string" -}}
-    {{- errorf "data/readings.yaml is in the old plain-string format; regenerate it with themes/559Theme/tools/seatable-to-readings.py (reading '%s' for %s at %s)" $reading .Page.File .Position -}}
-{{- else -}}
-    {{- with $readinginfo -}}
-        {{- with $kind -}}
-            {{- $type := . | lower -}}
-            {{- if eq $type "required" -}}
-                <span style="color:green; font-weight:300">(required)&nbsp;</span>
-            {{- else if eq $type "optional" -}}
-                <span style="color:goldenrod; font-weight:300">(optional)&nbsp;</span>
-            {{- else if eq $type "alternate" -}}
-                <span style="color:purple; font-weight:300">(alternate)&nbsp;</span>
-            {{- else if eq $type "recommended" -}}
-                <span style="color:darkcyan; font-weight:300">(optional - but recommended)&nbsp;</span>
-            {{- else if eq $type "summary" -}}
-                <span style="color:blue; font-weight:300">(ok to read summary)&nbsp;</span>
-            {{- else -}}
-                <span style="color:darkcyan; font-weight:300">( {{ . }} )&nbsp;</span>
-            {{- end -}}
-        {{- end}}
-        {{- .html | safeHTML -}}
-    {{- else -}}
-        {{- errorf "Reading '%s' not found in readings database (for %s at %s)" $reading .Page.File .Position -}}
-    {{- end -}}
-{{- end -}}
+This is by definition course-ideosyncratic, so it must be per-course.
+
+Creat an override for this shortcode in the site's layouts/_shortcodes
+*/}}
+{{<errorf "Use of 559Theme reading shortcode is not allowed - site should override!"}}

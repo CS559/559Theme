@@ -2,3 +2,4 @@ content/old-search-html.old
 .hugo_build.lock
 public/
 ThemeUpdate.code-workspace
+tools/__pycache__/
