@@ -19,7 +19,8 @@ looking for ``hugo.toml`` (override with ``--site``), then reads:
   token (``seatable-readings``) and the table name (``seatable-table``).
 - ``<site>/data/files.yaml`` — the Canvas file index, used to turn a row's
   ``cfile`` into a Canvas link. **Must be current**: a ``cfile`` that is not a
-  key here renders ``(BAD cfile)`` and warns.
+  key here renders ``(BAD cfile)`` and warns. If this file is missing, or
+  ``--nocfile`` is given, cfiles are ignored entirely (no links, no warnings).
 
 and writes:
 
@@ -28,6 +29,8 @@ and writes:
 - ``<site>/tmp/readings.html`` — a human-readable preview listing (``tmp/`` is
   gitignored).
 """
+
+from __future__ import annotations
 
 import argparse
 import sys
@@ -97,13 +100,22 @@ def load_config(site: Path) -> tuple[str, str]:
     return config[TOKEN_KEY], config[TABLE_KEY]
 
 
-def load_cfiles(site: Path) -> dict:
-    """Read the Canvas file index that `cfile` references resolve against."""
+def load_cfiles(site: Path, nocfile: bool) -> dict | None:
+    """Read the Canvas file index that `cfile` references resolve against.
+
+    Returns ``None`` (with a warning) if ``--nocfile`` was given or if
+    ``files.yaml`` is missing; callers then skip cfile links entirely.
+    """
+    if nocfile:
+        print("No Files information - ignoring cfiles")
+        return None
+
     path = site / "data" / "files.yaml"
     try:
         return yaml.safe_load(path.read_text())
     except FileNotFoundError:
-        die("the Canvas files list ({}) could not be found".format(path))
+        print("No Files information - ignoring cfiles")
+        return None
 
 
 def mdToHTML(md: str):
@@ -113,7 +125,7 @@ def mdToHTML(md: str):
     return html.lstrip().rstrip()
 
 
-def render_row(row: dict, cfiles: dict) -> dict:
+def render_row(row: dict, cfiles: dict | None) -> dict:
     """Render one SeaTable row into its readings.yaml record.
 
     The record always carries ``html`` — the full pre-rendered citation, which
@@ -125,7 +137,8 @@ def render_row(row: dict, cfiles: dict) -> dict:
     ``title``/``subtitle`` are markdown-rendered, exactly as they appear inside
     ``html``, so the two never disagree. ``cfile`` is the raw SeaTable filename;
     ``cfile_url`` is that filename resolved through ``files.yaml``, and is
-    absent when the reference is bad.
+    absent when the reference is bad. If ``cfiles`` is ``None`` (no
+    ``files.yaml``, or ``--nocfile``), ``cfile`` is ignored entirely.
     """
     cite = ""
     rec = {}
@@ -140,7 +153,7 @@ def render_row(row: dict, cfiles: dict) -> dict:
         cite += "{}. ".format(rec["subtitle"])
     if row["citation"]:
         cite += "{}. ".format(mdToHTML(row["citation"]))
-    if row["cfile"]:
+    if row["cfile"] and cfiles is not None:
         rec["cfile"] = row["cfile"]
         if row["cfile"] in cfiles:
             rec["cfile_url"] = cfiles[row["cfile"]]["url_nodl"]
@@ -171,9 +184,9 @@ def render_row(row: dict, cfiles: dict) -> dict:
     return rec
 
 
-def process_readings(site: Path):
+def process_readings(site: Path, nocfile: bool):
     api_token, table_name = load_config(site)
-    cfiles = load_cfiles(site)
+    cfiles = load_cfiles(site, nocfile)
 
     base = Base(api_token, SERVER_URL)
     base.auth()
@@ -215,11 +228,16 @@ def main():
         type=Path,
         help="course site root (default: search upward from the current directory)",
     )
+    parser.add_argument(
+        "--nocfile",
+        action="store_true",
+        help="ignore cfiles even if data/files.yaml is present",
+    )
     args = parser.parse_args()
 
     site = args.site.resolve() if args.site else find_site_root(Path.cwd().resolve())
     print("site root: {}".format(site))
-    process_readings(site)
+    process_readings(site, args.nocfile)
 
 
 if __name__ == "__main__":
